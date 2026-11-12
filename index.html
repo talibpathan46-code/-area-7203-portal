@@ -98,14 +98,14 @@
             
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <span id="loggedInBadge" class="hidden sm:inline-block bg-slblue-800 border border-slblue-700 text-slgold text-[11px] font-bold px-3 py-1.5 rounded-lg">ADMIN MODE</span>
-                <button id="btnSaveBackup" onclick="exportDatabaseBackup()" class="admin-only bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5" title="Download backup file to your computer">
+                <button id="btnSaveBackup" onclick="exportDatabaseBackup()" class="admin-only bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5" title="Download backup file">
                     <i class="fa-solid fa-download"></i><span>Save Backup</span>
                 </button>
-                <label id="btnLoadBackup" class="admin-only bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5 cursor-pointer" title="Restore data from backup file">
+                <label id="btnLoadBackup" class="admin-only bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5 cursor-pointer" title="Restore data">
                     <i class="fa-solid fa-upload"></i><span>Load Backup</span>
                     <input type="file" id="importFile" onchange="importDatabaseBackup(event)" class="hidden" accept=".json">
                 </label>
-                <button onclick="logoutPortal()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Logout / Lock Portal">
+                <button onclick="logoutPortal()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Logout">
                     <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
                 </button>
             </div>
@@ -499,14 +499,27 @@
             },
             { code: "0272255", name: "NAVEED ADIL RAJPUT", role: "SSM", months: { "OCTOBER": { fyp: 3114120, pol: 19 } }, team: [] },
             { code: "0272031", name: "MUKHTIAR AHMED ABRO", role: "SSM", months: { "OCTOBER": { fyp: 1395375, pol: 14 } }, team: [] },
-            { code: "0272328", name: "SAFIULLAH KHAN PATHAN", role: "SSM", months: { "OCTOBER": { fyp: 1400634, pol: 21 } }, team: [] },
+            { code: "0272328", name: "SAFIULLAH KHAN PATHAN", role: "SSM", months: { "OCTOBER": { fyp: 1400634, pol: 21 } }, team: [
+                {
+                    code: "0972648",
+                    name: "MRS FATIMA KHAN",
+                    role: "SM",
+                    months: { "OCTOBER": { fyp: 1400634, pol: 21 } },
+                    srs: [
+                        { code: "05734411", name: "SANAULLAH KHAN PATHAN", months: { "OCTOBER": { fyp: 434621, pol: 3 } } },
+                        { code: "05735032", name: "JAVED AHMED", months: { "OCTOBER": { fyp: 426497, pol: 4 } } },
+                        { code: "05734934", name: "GHULAM MOHIUDDIN", months: { "OCTOBER": { fyp: 397447, pol: 11 } } },
+                        { code: "05731424", name: "ZAFAR ALI", months: { "OCTOBER": { fyp: 89169, pol: 2 } } },
+                        { code: "05734851", name: "KHADIM HUSSAIN", months: { "OCTOBER": { fyp: 52900, pol: 1 } } }
+                    ]
+                }
+            ] },
             { code: "0272035", name: "SHER AHMED SAHTO", role: "SSM", months: { "OCTOBER": { fyp: 1365090, pol: 15 } }, team: [] },
             { code: "0272329", name: "MUHAMMAD IBRAHIM MUGHAL", role: "SSM", months: { "OCTOBER": { fyp: 986242, pol: 14 } }, team: [] },
             { code: "0272308", name: "ABDUL GHAFOOR LASHARI", role: "SSM", months: { "OCTOBER": { fyp: 657298, pol: 15 } }, team: [] }
         ];
 
-        // Force Default Database so new visitors never see Rs. 0
-        let portalData = JSON.parse(localStorage.getItem('area7203_master_v19')) || defaultMasterDatabase;
+        let portalData = JSON.parse(localStorage.getItem('area7203_master_v20')) || defaultMasterDatabase;
         let activeTab = 'areaHierarchy';
 
         // === ROLE-BASED AUTHENTICATION ===
@@ -546,7 +559,7 @@
                     }
                     ssm.team.forEach(sm => {
                         if (sm.code === u) {
-                            foundUser = { role: 'SM', code: sm.code, name: sm.name, parentSsmCode: ssm.code };
+                            foundUser = { role: 'SM', code: sm.code, name: sm.name, parentSsmCode: ssm.code, parentSsmName: ssm.name };
                         }
                         sm.srs.forEach(sr => {
                             if (sr.code === u) {
@@ -609,7 +622,7 @@
         }
 
         function saveToStorage() {
-            localStorage.setItem('area7203_master_v19', JSON.stringify(portalData));
+            localStorage.setItem('area7203_master_v20', JSON.stringify(portalData));
         }
 
         function exportDatabaseBackup() {
@@ -621,7 +634,7 @@
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
-            alert("✅ Backup file successfully downloaded!");
+            alert("✅ Backup successfully downloaded!");
         }
 
         function importDatabaseBackup(e) {

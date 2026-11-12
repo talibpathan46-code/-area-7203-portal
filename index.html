@@ -450,62 +450,63 @@
 
     <!-- SCRIPT CORE LOGIC -->
     <script>
-        // === DATABASE INITIALIZATION ===
-        const initialPortalDatabase = [
+        // === FULL DEFAULT MASTER DATABASE FOR AREA 7203 ===
+        const defaultMasterDatabase = [
             {
                 code: "0272033",
                 name: "MUHAMMAD AKRAM AWAN",
                 role: "SSM",
-                months: {},
+                months: { "OCTOBER": { fyp: 11989561, pol: 103 } },
                 team: [
                     {
                         code: "0972630",
                         name: "AMEET KUMAR",
                         role: "SM",
-                        months: {},
+                        months: { "OCTOBER": { fyp: 5000000, pol: 40 } },
                         srs: [
-                            { code: "05734323", name: "DEEPAK KUMAR", months: {} },
-                            { code: "05734711", name: "NANIK RAM", months: {} },
-                            { code: "05734322", name: "RAHUL KUMAR", months: {} },
-                            { code: "05735085", name: "SHIV OM", months: {} },
-                            { code: "05734350", name: "VICKY KUMAR", months: {} },
-                            { code: "05735014", name: "RAVINDER KUMAR", months: {} },
-                            { code: "05734710", name: "VIVEK KHURANA", months: {} },
-                            { code: "05735011", name: "DINESH KUMAR", months: {} },
-                            { code: "05734930", name: "ROHAN KUMAR", months: {} },
-                            { code: "05735037", name: "PRIYA KUMARI", months: {} }
+                            { code: "05734323", name: "DEEPAK KUMAR", months: { "OCTOBER": { fyp: 500000, pol: 5 } } },
+                            { code: "05734711", name: "NANIK RAM", months: { "OCTOBER": { fyp: 500000, pol: 5 } } },
+                            { code: "05734322", name: "RAHUL KUMAR", months: { "OCTOBER": { fyp: 500000, pol: 5 } } },
+                            { code: "05735085", name: "SHIV OM", months: { "OCTOBER": { fyp: 500000, pol: 5 } } },
+                            { code: "05734350", name: "VICKY KUMAR", months: { "OCTOBER": { fyp: 500000, pol: 5 } } },
+                            { code: "05735014", name: "RAVINDER KUMAR", months: { "OCTOBER": { fyp: 500000, pol: 3 } } },
+                            { code: "05734710", name: "VIVEK KHURANA", months: { "OCTOBER": { fyp: 500000, pol: 4 } } },
+                            { code: "05735011", name: "DINESH KUMAR", months: { "OCTOBER": { fyp: 500000, pol: 3 } } },
+                            { code: "05734930", name: "ROHAN KUMAR", months: { "OCTOBER": { fyp: 250000, pol: 2 } } },
+                            { code: "05735037", name: "PRIYA KUMARI", months: { "OCTOBER": { fyp: 250000, pol: 3 } } }
                         ]
                     },
-                    { code: "0972025", name: "GHULAM ASGHAR AWAN", role: "SM", months: {}, srs: [] },
-                    { code: "0874559", name: "TUFAIL AHMED ABRO", role: "SM", months: {}, srs: [{ code: "05742001", name: "IRSHAD ALI ABRO", months: {} }] },
-                    { code: "0972561", name: "JAISH TULSI", role: "SM", months: {}, srs: [] },
-                    { code: "0972578", name: "MAZHAR ALI", role: "SM", months: {}, srs: [] }
+                    { code: "0972025", name: "GHULAM ASGHAR AWAN", role: "SM", months: { "OCTOBER": { fyp: 2000000, pol: 15 } }, srs: [] },
+                    { code: "0874559", name: "TUFAIL AHMED ABRO", role: "SM", months: { "OCTOBER": { fyp: 1500000, pol: 12 } }, srs: [{ code: "05742001", name: "IRSHAD ALI ABRO", months: { "OCTOBER": { fyp: 500000, pol: 4 } } }] },
+                    { code: "0972561", name: "JAISH TULSI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 10 } }, srs: [] },
+                    { code: "0972578", name: "MAZHAR ALI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 10 } }, srs: [] }
                 ]
             },
             {
                 code: "0293119",
                 name: "MIR HAZAR MAIRI",
                 role: "SSM",
-                months: {},
+                months: { "OCTOBER": { fyp: 6064861, pol: 95 } },
                 team: [
-                    { code: "0972112", name: "ALI SHER GOLO", role: "SM", months: {}, srs: [] },
-                    { code: "0874577", name: "MUHAMMAD QASIM SOLANGI", role: "SM", months: {}, srs: [] },
-                    { code: "0874436", name: "NAWAB KHAN MAIRI", role: "SM", months: {}, srs: [] },
-                    { code: "0972579", name: "MUHAMMAD YAQOOB MAIRI", role: "SM", months: {}, srs: [] },
-                    { code: "0972174", name: "DEEPAK KUMAR", role: "SM", months: {}, srs: [] },
-                    { code: "0972378", name: "NASEERUDDIN MAIRI", role: "SM", months: {}, srs: [] },
-                    { code: "0972143", name: "KAMALUDDIN MAIRI", role: "SM", months: {}, srs: [] }
+                    { code: "0972112", name: "ALI SHER GOLO", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 15 } }, srs: [] },
+                    { code: "0874577", name: "MUHAMMAD QASIM SOLANGI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 15 } }, srs: [] },
+                    { code: "0874436", name: "NAWAB KHAN MAIRI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 15 } }, srs: [] },
+                    { code: "0972579", name: "MUHAMMAD YAQOOB MAIRI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 15 } }, srs: [] },
+                    { code: "0972174", name: "DEEPAK KUMAR", role: "SM", months: { "OCTOBER": { fyp: 800000, pol: 12 } }, srs: [] },
+                    { code: "0972378", name: "NASEERUDDIN MAIRI", role: "SM", months: { "OCTOBER": { fyp: 600000, pol: 11 } }, srs: [] },
+                    { code: "0972143", name: "KAMALUDDIN MAIRI", role: "SM", months: { "OCTOBER": { fyp: 664861, pol: 12 } }, srs: [] }
                 ]
             },
-            { code: "0272255", name: "NAVEED ADIL RAJPUT", role: "SSM", months: {}, team: [] },
-            { code: "0272031", name: "MUKHTIAR AHMED ABRO", role: "SSM", months: {}, team: [] },
-            { code: "0272328", name: "SAFIULLAH KHAN PATHAN", role: "SSM", months: {}, team: [] },
-            { code: "0272035", name: "SHER AHMED SAHTO", role: "SSM", months: {}, team: [] },
-            { code: "0272329", name: "MUHAMMAD IBRAHIM MUGHAL", role: "SSM", months: {}, team: [] },
-            { code: "0272308", name: "ABDUL GHAFOOR LASHARI", role: "SSM", months: {}, team: [] }
+            { code: "0272255", name: "NAVEED ADIL RAJPUT", role: "SSM", months: { "OCTOBER": { fyp: 3114120, pol: 19 } }, team: [] },
+            { code: "0272031", name: "MUKHTIAR AHMED ABRO", role: "SSM", months: { "OCTOBER": { fyp: 1395375, pol: 14 } }, team: [] },
+            { code: "0272328", name: "SAFIULLAH KHAN PATHAN", role: "SSM", months: { "OCTOBER": { fyp: 1400634, pol: 21 } }, team: [] },
+            { code: "0272035", name: "SHER AHMED SAHTO", role: "SSM", months: { "OCTOBER": { fyp: 1365090, pol: 15 } }, team: [] },
+            { code: "0272329", name: "MUHAMMAD IBRAHIM MUGHAL", role: "SSM", months: { "OCTOBER": { fyp: 986242, pol: 14 } }, team: [] },
+            { code: "0272308", name: "ABDUL GHAFOOR LASHARI", role: "SSM", months: { "OCTOBER": { fyp: 657298, pol: 15 } }, team: [] }
         ];
 
-        let portalData = JSON.parse(localStorage.getItem('area7203_master_v18')) || initialPortalDatabase;
+        // Force Default Database so new visitors never see Rs. 0
+        let portalData = JSON.parse(localStorage.getItem('area7203_master_v19')) || defaultMasterDatabase;
         let activeTab = 'areaHierarchy';
 
         // === ROLE-BASED AUTHENTICATION ===
@@ -527,7 +528,6 @@
             const u = document.getElementById('loginUser').value.trim();
             const p = document.getElementById('loginPass').value.trim();
 
-            // 1. Check Master Admin
             if (u === ADMIN_USER && p === ADMIN_PASS) {
                 currentUserSession = { role: 'ADMIN', code: '7203', name: 'USTAD TALIB HUSSAIN' };
                 sessionStorage.setItem('sl_portal_session', JSON.stringify(currentUserSession));
@@ -537,7 +537,6 @@
                 return;
             }
 
-            // 2. Check SSM, SM, or SR by Worker Code
             if (p === FIELD_DEFAULT_PASS) {
                 let foundUser = null;
 
@@ -609,9 +608,8 @@
             document.getElementById('loginUser').value = '';
         }
 
-        // === CORE PORTAL FUNCTIONS ===
         function saveToStorage() {
-            localStorage.setItem('area7203_master_v18', JSON.stringify(portalData));
+            localStorage.setItem('area7203_master_v19', JSON.stringify(portalData));
         }
 
         function exportDatabaseBackup() {
@@ -623,7 +621,7 @@
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
-            alert("? Backup file successfully downloaded to your computer!");
+            alert("✅ Backup file successfully downloaded!");
         }
 
         function importDatabaseBackup(e) {
@@ -638,12 +636,12 @@
                             portalData = parsedData;
                             saveToStorage();
                             renderActiveView();
-                            alert("? Backup successfully restored!");
+                            alert("✅ Backup successfully restored!");
                         } else {
-                            alert("? Ghalat file format!");
+                            alert("❌ Ghalat file format!");
                         }
                     } catch (err) {
-                        alert("? File parhnay mein ghalti hui!");
+                        alert("❌ File parhnay mein ghalti hui!");
                     }
                 };
             }
@@ -703,7 +701,6 @@
             else if (activeTab === 'addUser') populateRegSsmOptions();
         }
 
-        // 01. AREA DIRECT LISTS (ADMIN ONLY)
         function renderAreaDirectLists(month) {
             let totalAreaMonthFyp = 0, totalAreaMonthPol = 0;
             let totalAreaYtdFyp = 0, totalAreaYtdPol = 0;
@@ -833,7 +830,6 @@
             document.getElementById('srCountBadge').innerText = `${allSrList.length} SRs`;
         }
 
-        // 02. SSM UNITS HIERARCHY
         function renderSsmUnitsHierarchy(month) {
             const isAdmin = currentUserSession && currentUserSession.role === 'ADMIN';
             const targetList = isAdmin 
@@ -948,7 +944,6 @@
             }).join('');
         }
 
-        // 03. SM TEAMS HIERARCHY (FOR ADMIN & SM USERS)
         function renderSmTeamsHierarchy(month) {
             const isAdmin = currentUserSession && currentUserSession.role === 'ADMIN';
             const container = document.getElementById('smCardsContainer');
@@ -1033,7 +1028,6 @@
             container.innerHTML = smCardsHtml;
         }
 
-        // 04. PERSONAL SR READ-ONLY VIEW
         function renderSrPersonalView(month) {
             if (!currentUserSession || currentUserSession.role !== 'SR') return;
             let srObj = null;
@@ -1079,7 +1073,6 @@
             `;
         }
 
-        // PRINT FUNCTIONS
         function triggerAreaPrintView() {
             switchMainTab('areaHierarchy');
             document.getElementById('printReportTitle').innerText = "Official Full Area Cadre Business Performance Report";
@@ -1108,7 +1101,6 @@
             }, 300);
         }
 
-        // REGISTRATION & DUPLICATE CHECK (ADMIN ONLY)
         function toggleRegHierarchyFields() {
             const role = document.getElementById('regRole').value;
             const ssmCont = document.getElementById('regSsmContainer');
@@ -1160,7 +1152,7 @@
             });
 
             if (exists) {
-                alert("⚠️ WARNING: Yeh Worker Code ya Name pehle se system mein mojood hai! Dobara add nahi ho sakta.");
+                alert("⚠️ WARNING: Yeh Worker Code ya Name pehle se system mein mojood hai!");
                 return;
             }
 
@@ -1192,10 +1184,9 @@
             saveToStorage();
             renderActiveView();
             e.target.reset();
-            alert("✅ Kamyabi ke sath register ho gaya aur YTD auto-calculate ho gaya!");
+            alert("✅ Kamyabi ke sath register ho gaya!");
         }
 
-        // FULL EDIT & DELETE LOGIC (ADMIN ONLY)
         function openEditModal(role, workerCode) {
             if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
             const selectedMonth = document.getElementById('selectedMonthFilter').value;
@@ -1257,7 +1248,7 @@
                 saveToStorage();
                 renderActiveView();
                 closeEditModal();
-                alert("✅ Record updated & YTD Auto-Calculated successfully!");
+                alert("✅ Record updated successfully!");
             }
         }
 

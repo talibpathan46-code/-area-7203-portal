@@ -98,7 +98,7 @@
             
             <div class="flex items-center space-x-2">
                 <span id="loggedInBadge" class="hidden sm:inline-block bg-slblue-800 border border-slblue-700 text-slgold text-[11px] font-bold px-3 py-1.5 rounded-lg">ADMIN MODE</span>
-                <button onclick="hardResetDatabase()" class="bg-amber-700 hover:bg-amber-800 text-white text-[11px] font-bold px-2.5 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Reset all data to fix double business">
+                <button onclick="hardResetDatabase()" class="bg-amber-700 hover:bg-amber-800 text-white text-[11px] font-bold px-2.5 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Fresh Reset">
                     <i class="fa-solid fa-rotate-right"></i><span class="hidden sm:inline">Reset Data</span>
                 </button>
                 <button onclick="logoutPortal()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Logout">
@@ -449,7 +449,7 @@
 
     <!-- SCRIPT CORE LOGIC -->
     <script>
-        // === STRICT DEFAULT CLEAN MASTER DATABASE FOR AREA 7203 ===
+        // === COMPLETE AREA 7203 MASTER DATABASE (NON-DUPLICATE ACCURATE MAPPING) ===
         const defaultMasterDatabase = [
             {
                 code: "0272033",
@@ -476,7 +476,15 @@
                         ]
                     },
                     { code: "0972025", name: "GHULAM ASGHAR AWAN", role: "SM", months: { "OCTOBER": { fyp: 2000000, pol: 15 } }, srs: [] },
-                    { code: "0874559", name: "TUFAIL AHMED ABRO", role: "SM", months: { "OCTOBER": { fyp: 1500000, pol: 12 } }, srs: [{ code: "05742001", name: "IRSHAD ALI ABRO", months: { "OCTOBER": { fyp: 500000, pol: 4 } } }] },
+                    { 
+                        code: "0874559", 
+                        name: "TUFAIL AHMED ABRO", 
+                        role: "SM", 
+                        months: { "OCTOBER": { fyp: 1500000, pol: 12 } }, 
+                        srs: [
+                            { code: "05742001", name: "IRSHAD ALI ABRO", months: { "OCTOBER": { fyp: 500000, pol: 4 } } }
+                        ] 
+                    },
                     { code: "0972561", name: "JAISH TULSI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 10 } }, srs: [] },
                     { code: "0972578", name: "MAZHAR ALI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 10 } }, srs: [] }
                 ]
@@ -498,28 +506,33 @@
             },
             { code: "0272255", name: "NAVEED ADIL RAJPUT", role: "SSM", months: { "OCTOBER": { fyp: 3114120, pol: 19 } }, team: [] },
             { code: "0272031", name: "MUKHTIAR AHMED ABRO", role: "SSM", months: { "OCTOBER": { fyp: 1395375, pol: 14 } }, team: [] },
-            { code: "0272328", name: "SAFIULLAH KHAN PATHAN", role: "SSM", months: { "OCTOBER": { fyp: 1400634, pol: 21 } }, team: [
-                {
-                    code: "0972648",
-                    name: "MRS FATIMA KHAN",
-                    role: "SM",
-                    months: { "OCTOBER": { fyp: 1400634, pol: 21 } },
-                    srs: [
-                        { code: "05734411", name: "SANAULLAH KHAN PATHAN", months: { "OCTOBER": { fyp: 434621, pol: 3 } } },
-                        { code: "05735032", name: "JAVED AHMED", months: { "OCTOBER": { fyp: 426497, pol: 4 } } },
-                        { code: "05734934", name: "GHULAM MOHIUDDIN", months: { "OCTOBER": { fyp: 397447, pol: 11 } } },
-                        { code: "05731424", name: "ZAFAR ALI", months: { "OCTOBER": { fyp: 89169, pol: 2 } } },
-                        { code: "05734851", name: "KHADIM HUSSAIN", months: { "OCTOBER": { fyp: 52900, pol: 1 } } }
-                    ]
-                }
-            ] },
+            { 
+                code: "0272328", 
+                name: "SAFIULLAH KHAN PATHAN", 
+                role: "SSM", 
+                months: { "OCTOBER": { fyp: 1400634, pol: 21 } }, 
+                team: [
+                    {
+                        code: "0972648",
+                        name: "MRS FATIMA KHAN",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 1400634, pol: 21 } },
+                        srs: [
+                            { code: "05734411", name: "SANAULLAH KHAN PATHAN", months: { "OCTOBER": { fyp: 434621, pol: 3 } } },
+                            { code: "05735032", name: "JAVED AHMED", months: { "OCTOBER": { fyp: 426497, pol: 4 } } },
+                            { code: "05734934", name: "GHULAM MOHIUDDIN", months: { "OCTOBER": { fyp: 397447, pol: 11 } } },
+                            { code: "05731424", name: "ZAFAR ALI", months: { "OCTOBER": { fyp: 89169, pol: 2 } } },
+                            { code: "05734851", name: "KHADIM HUSSAIN", months: { "OCTOBER": { fyp: 52900, pol: 1 } } }
+                        ]
+                    }
+                ] 
+            },
             { code: "0272035", name: "SHER AHMED SAHTO", role: "SSM", months: { "OCTOBER": { fyp: 1365090, pol: 15 } }, team: [] },
             { code: "0272329", name: "MUHAMMAD IBRAHIM MUGHAL", role: "SSM", months: { "OCTOBER": { fyp: 986242, pol: 14 } }, team: [] },
             { code: "0272308", name: "ABDUL GHAFOOR LASHARI", role: "SSM", months: { "OCTOBER": { fyp: 657298, pol: 15 } }, team: [] }
         ];
 
-        // Always force fresh key v24 to wipe out any cached double data
-        const STORAGE_KEY = 'area7203_master_v24';
+        const STORAGE_KEY = 'area7203_master_v25';
         let portalData = JSON.parse(localStorage.getItem(STORAGE_KEY));
         if (!portalData) {
             portalData = defaultMasterDatabase;
@@ -528,7 +541,6 @@
 
         let activeTab = 'areaHierarchy';
 
-        // === ROBUST ROLE-BASED AUTHENTICATION ===
         const ADMIN_USER = "talib7203";
         const ADMIN_PASS = "statelife123";
         const FIELD_DEFAULT_PASS = "12345";
@@ -636,7 +648,7 @@
         }
 
         function hardResetDatabase() {
-            if (confirm("⚠️ Kya aap sara data default state par reset karna chahte hain? Is se double business ka masla bilkul khatam ho jaye ga.")) {
+            if (confirm("⚠️ Kya aap sara data default clean state par reset karna chahte hain?")) {
                 localStorage.removeItem(STORAGE_KEY);
                 portalData = defaultMasterDatabase;
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(portalData));
@@ -702,50 +714,75 @@
         function renderAreaDirectLists(month) {
             let totalAreaMonthFyp = 0, totalAreaMonthPol = 0;
             let totalAreaYtdFyp = 0, totalAreaYtdPol = 0;
+            let totalSmCount = 0;
+            let totalSrCount = 0;
 
             let ssmList = portalData.map(ssm => {
                 let ssmSelf = getRecordMonthStats(ssm, month);
-                let ssmYtd = getRecordYtdStats(ssm);
-                let mFyp = ssmSelf.fyp, mPol = ssmSelf.pol;
-                let yFyp = ssmYtd.fyp, yPol = ssmYtd.pol;
+                let ssmYtdSelf = getRecordYtdStats(ssm);
+                
+                let unitMonthFyp = ssmSelf.fyp;
+                let unitMonthPol = ssmSelf.pol;
+                let unitYtdFyp = ssmYtdSelf.fyp;
+                let unitYtdPol = ssmYtdSelf.pol;
                 
                 ssm.team.forEach(sm => {
+                    totalSmCount++;
                     let smM = getRecordMonthStats(sm, month);
                     let smY = getRecordYtdStats(sm);
-                    mFyp += smM.fyp; mPol += smM.pol;
-                    yFyp += smY.fyp; yPol += smY.pol;
+                    unitMonthFyp += smM.fyp; unitMonthPol += smM.pol;
+                    unitYtdFyp += smY.fyp; unitYtdPol += smY.pol;
                     
                     sm.srs.forEach(sr => {
+                        totalSrCount++;
                         let srM = getRecordMonthStats(sr, month);
                         let srY = getRecordYtdStats(sr);
-                        mFyp += srM.fyp; mPol += srM.pol;
-                        yFyp += srY.fyp; yPol += srY.pol;
+                        unitMonthFyp += srM.fyp; unitMonthPol += srM.pol;
+                        unitYtdFyp += srY.fyp; unitYtdPol += srY.pol;
                     });
                 });
-                totalAreaMonthFyp += mFyp; totalAreaMonthPol += mPol;
-                totalAreaYtdFyp += yFyp; totalAreaYtdPol += yPol;
-                return { ...ssm, monthFyp: mFyp, monthPol: mPol, ytdFyp: yFyp, ytdPol: yPol };
+
+                totalAreaMonthFyp += unitMonthFyp; 
+                totalAreaMonthPol += unitMonthPol;
+                totalAreaYtdFyp += unitYtdFyp; 
+                totalAreaYtdPol += unitYtdPol;
+
+                return { 
+                    ...ssm, 
+                    monthFyp: ssmSelf.fyp, 
+                    monthPol: ssmSelf.pol, 
+                    ytdFyp: ssmYtdSelf.fyp, 
+                    ytdPol: ssmYtdSelf.pol,
+                    unitMonthFyp, unitMonthPol, unitYtdFyp, unitYtdPol
+                };
             });
-            ssmList.sort((a, b) => b.monthFyp - a.monthFyp || b.ytdFyp - a.ytdFyp);
+            ssmList.sort((a, b) => b.unitMonthFyp - a.unitMonthFyp);
 
             let allSmList = [];
             portalData.forEach(ssm => {
                 ssm.team.forEach(sm => {
                     let smM = getRecordMonthStats(sm, month);
                     let smY = getRecordYtdStats(sm);
-                    let mFyp = smM.fyp, mPol = smM.pol;
-                    let yFyp = smY.fyp, yPol = smY.pol;
+                    let smTeamMonthFyp = smM.fyp, smTeamMonthPol = smM.pol;
+                    let smTeamYtdFyp = smY.fyp, smTeamYtdPol = smY.pol;
 
                     sm.srs.forEach(sr => {
                         let srM = getRecordMonthStats(sr, month);
                         let srY = getRecordYtdStats(sr);
-                        mFyp += srM.fyp; mPol += srM.pol;
-                        yFyp += srY.fyp; yPol += srY.pol;
+                        smTeamMonthFyp += srM.fyp; smTeamMonthPol += srM.pol;
+                        smTeamYtdFyp += srY.fyp; smTeamYtdPol += srY.pol;
                     });
-                    allSmList.push({ ...sm, parentSsmName: ssm.name, monthFyp: mFyp, monthPol: mPol, ytdFyp: yFyp, ytdPol: yPol });
+                    allSmList.push({ 
+                        ...sm, 
+                        parentSsmName: ssm.name, 
+                        monthFyp: smTeamMonthFyp, 
+                        monthPol: smTeamMonthPol, 
+                        ytdFyp: smTeamYtdFyp, 
+                        ytdPol: smTeamYtdPol 
+                    });
                 });
             });
-            allSmList.sort((a, b) => b.monthFyp - a.monthFyp || b.ytdFyp - a.ytdFyp);
+            allSmList.sort((a, b) => b.monthFyp - a.monthFyp);
 
             let allSrList = [];
             portalData.forEach(ssm => {
@@ -764,7 +801,7 @@
                     });
                 });
             });
-            allSrList.sort((a, b) => b.monthFyp - a.monthFyp || b.ytdFyp - a.ytdFyp);
+            allSrList.sort((a, b) => b.monthFyp - a.monthFyp);
 
             document.getElementById('areaSsmTableBody').innerHTML = ssmList.map((s, i) => `
                 <tr class="border-b hover:bg-slate-50">
@@ -820,12 +857,12 @@
             document.getElementById('statMonthPol').innerText = `${totalAreaMonthPol} Policies`;
             document.getElementById('statYtdFyp').innerText = formatCurrency(totalAreaYtdFyp);
             document.getElementById('statYtdPol').innerText = `${totalAreaYtdPol} YTD Policies`;
-            document.getElementById('statCadreCounts').innerText = `${ssmList.length} SSMs | ${allSmList.length} SMs`;
-            document.getElementById('statSrCount').innerText = `${allSrList.length} Sales Representatives (SRs)`;
+            document.getElementById('statCadreCounts').innerText = `${portalData.length} SSMs | ${totalSmCount} SMs`;
+            document.getElementById('statSrCount').innerText = `${totalSrCount} Sales Representatives (SRs)`;
 
-            document.getElementById('ssmCountBadge').innerText = `${ssmList.length} SSMs`;
-            document.getElementById('smCountBadge').innerText = `${allSmList.length} SMs`;
-            document.getElementById('srCountBadge').innerText = `${allSrList.length} SRs`;
+            document.getElementById('ssmCountBadge').innerText = `${portalData.length} SSMs`;
+            document.getElementById('smCountBadge').innerText = `${totalSmCount} SMs`;
+            document.getElementById('srCountBadge').innerText = `${totalSrCount} SRs`;
         }
 
         function renderSsmUnitsHierarchy(month) {

@@ -98,13 +98,9 @@
             
             <div class="flex items-center space-x-2">
                 <span id="loggedInBadge" class="hidden sm:inline-block bg-slblue-800 border border-slblue-700 text-slgold text-[11px] font-bold px-3 py-1.5 rounded-lg">ADMIN MODE</span>
-                <button id="btnSaveBackup" onclick="exportDatabaseBackup()" class="admin-only bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-2.5 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Download backup">
-                    <i class="fa-solid fa-download"></i><span class="hidden sm:inline">Save Backup</span>
+                <button onclick="hardResetDatabase()" class="bg-amber-700 hover:bg-amber-800 text-white text-[11px] font-bold px-2.5 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Reset all data to fix double business">
+                    <i class="fa-solid fa-rotate-right"></i><span class="hidden sm:inline">Reset Data</span>
                 </button>
-                <label id="btnLoadBackup" class="admin-only bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-2.5 py-2 rounded-lg shadow transition flex items-center space-x-1 cursor-pointer" title="Restore data">
-                    <i class="fa-solid fa-upload"></i><span class="hidden sm:inline">Load Backup</span>
-                    <input type="file" id="importFile" onchange="importDatabaseBackup(event)" class="hidden" accept=".json">
-                </label>
                 <button onclick="logoutPortal()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Logout">
                     <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
                 </button>
@@ -453,7 +449,7 @@
 
     <!-- SCRIPT CORE LOGIC -->
     <script>
-        // === FULL DEFAULT MASTER DATABASE FOR AREA 7203 ===
+        // === STRICT DEFAULT CLEAN MASTER DATABASE FOR AREA 7203 ===
         const defaultMasterDatabase = [
             {
                 code: "0272033",
@@ -522,7 +518,14 @@
             { code: "0272308", name: "ABDUL GHAFOOR LASHARI", role: "SSM", months: { "OCTOBER": { fyp: 657298, pol: 15 } }, team: [] }
         ];
 
-        let portalData = JSON.parse(localStorage.getItem('area7203_master_v23')) || defaultMasterDatabase;
+        // Always force fresh key v24 to wipe out any cached double data
+        const STORAGE_KEY = 'area7203_master_v24';
+        let portalData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!portalData) {
+            portalData = defaultMasterDatabase;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(portalData));
+        }
+
         let activeTab = 'areaHierarchy';
 
         // === ROBUST ROLE-BASED AUTHENTICATION ===
@@ -629,41 +632,16 @@
         }
 
         function saveToStorage() {
-            localStorage.setItem('area7203_master_v23', JSON.stringify(portalData));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(portalData));
         }
 
-        function exportDatabaseBackup() {
-            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(portalData, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `Area_7203_Backup_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            alert("✅ Backup successfully downloaded!");
-        }
-
-        function importDatabaseBackup(e) {
-            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
-            const fileReader = new FileReader();
-            if (e.target.files[0]) {
-                fileReader.readAsText(e.target.files[0], "UTF-8");
-                fileReader.onload = function(event) {
-                    try {
-                        const parsedData = JSON.parse(event.target.result);
-                        if (Array.isArray(parsedData)) {
-                            portalData = parsedData;
-                            saveToStorage();
-                            renderActiveView();
-                            alert("✅ Backup successfully restored!");
-                        } else {
-                            alert("❌ Ghalat file format!");
-                        }
-                    } catch (err) {
-                        alert("❌ File parhnay mein ghalti hui!");
-                    }
-                };
+        function hardResetDatabase() {
+            if (confirm("⚠️ Kya aap sara data default state par reset karna chahte hain? Is se double business ka masla bilkul khatam ho jaye ga.")) {
+                localStorage.removeItem(STORAGE_KEY);
+                portalData = defaultMasterDatabase;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(portalData));
+                alert("✅ Data reset ho gaya hai!");
+                location.reload();
             }
         }
 

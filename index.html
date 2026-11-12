@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>State Life Area 7203 Executive Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slblue: { 50: '#e6f0ff', 100: '#cce0ff', 500: '#0066cc', 600: '#004080', 700: '#003366', 800: '#00264d', 900: '#001a33', 950: '#000d1a' },
+                        slgold: '#d4af37'
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #004080; border-radius: 3px; }
+        
+        @media print {
+            body * { visibility: hidden !important; }
+            #printContainer, #printContainer * { visibility: visible !important; }
+            #printContainer {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 15px !important;
+                background: white !important;
+            }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-slblue-900 text-white shadow-md border-b border-slblue-950 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slgold to-yellow-600 flex items-center justify-center font-extrabold text-slate-950 text-lg shadow">
+                    SL
+                </div>
+                <div>
+                    <h1 class="font-bold text-base leading-tight">STATE LIFE INSURANCE CORPORATION</h1>
+                    <p class="text-xs text-blue-200">Area 7203 Management Portal | Ustad Talib Hussain Edition</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <button onclick="exportDatabaseBackup()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5" title="Download backup file to your computer">
+                    <i class="fa-solid fa-download"></i><span>Save Backup</span>
+                </button>
+                <label class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5 cursor-pointer" title="Restore data from backup file">
+                    <i class="fa-solid fa-upload"></i><span>Load Backup</span>
+                    <input type="file" id="importFile" onchange="importDatabaseBackup(event)" class="hidden" accept=".json">
+                </label>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Bar -->
+    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-30 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto">
+            <div class="flex space-x-1 py-2">
+                <button onclick="switchMainTab('areaHierarchy')" id="btn-tab-areaHierarchy" class="px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 bg-slblue-700 text-white shadow">
+                    <i class="fa-solid fa-sitemap"></i><span>01. Area Hierarchy &amp; Business</span>
+                </button>
+                <button onclick="switchMainTab('ssmHierarchy')" id="btn-tab-ssmHierarchy" class="px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
+                    <i class="fa-solid fa-user-tie"></i><span>02. SSM Units Hierarchy</span>
+                </button>
+                <button onclick="switchMainTab('smHierarchy')" id="btn-tab-smHierarchy" class="px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
+                    <i class="fa-solid fa-users-gear"></i><span>03. SM Teams Hierarchy</span>
+                </button>
+                <button onclick="switchMainTab('addUser')" id="btn-tab-addUser" class="px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
+                    <i class="fa-solid fa-user-plus"></i><span>04. Add New Team Member</span>
+                </button>
+            </div>
+
+            <!-- Month Filter -->
+            <div class="flex items-center space-x-2 py-2">
+                <label class="text-xs font-bold text-slate-600 uppercase">Select Month:</label>
+                <select id="selectedMonthFilter" onchange="renderActiveView()" class="px-3 py-1.5 bg-slate-100 border border-slate-300 rounded-lg text-xs font-bold text-slblue-700 outline-none focus:border-slblue-600">
+                    <option value="JANUARY">JANUARY</option>
+                    <option value="FEBRUARY">FEBRUARY</option>
+                    <option value="MARCH">MARCH</option>
+                    <option value="APRIL">APRIL</option>
+                    <option value="MAY">MAY</option>
+                    <option value="JUNE">JUNE</option>
+                    <option value="JULY">JULY</option>
+                    <option value="AUGUST">AUGUST</option>
+                    <option value="SEPTEMBER">SEPTEMBER</option>
+                    <option value="OCTOBER" selected>OCTOBER</option>
+                    <option value="NOVEMBER">NOVEMBER</option>
+                    <option value="DECEMBER">DECEMBER</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 space-y-6">
+
+        <!-- STATS OVERVIEW CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-slate-500">Selected Month Business</p>
+                        <h3 id="statMonthFyp" class="text-xl font-extrabold text-slblue-700 mt-1">Rs. 0</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-slblue-50 text-slblue-700 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2" id="statMonthPol">0 Policies</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-slate-500">Year To Date (YTD) Total</p>
+                        <h3 id="statYtdFyp" class="text-xl font-extrabold text-emerald-700 mt-1">Rs. 0</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2" id="statYtdPol">0 YTD Policies</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-slate-500">Total Active Cadres</p>
+                        <h3 id="statCadreCounts" class="text-xl font-extrabold text-purple-700 mt-1">0 SSMs | 0 SMs</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-700 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2" id="statSrCount">0 Sales Representatives (SRs)</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-center">
+                <button onclick="triggerAreaPrintView()" class="w-full bg-gradient-to-r from-slblue-700 to-slblue-900 hover:from-slblue-800 hover:to-slblue-950 text-white font-bold py-3 px-4 rounded-lg shadow transition flex items-center justify-center space-x-2 text-xs uppercase tracking-wider">
+                    <i class="fa-solid fa-print text-sm"></i>
+                    <span>Print Area Full Report</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- PRINTABLE CONTAINER WRAPPER -->
+        <div id="printContainer" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
+
+            <!-- Dynamic Print Header -->
+            <div class="hidden print-header border-b-2 border-slate-900 pb-3">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-xl font-black text-slblue-950">STATE LIFE INSURANCE CORPORATION OF PAKISTAN</h1>
+                        <h2 class="text-sm font-bold text-slate-700">AREA MANAGER PORTAL - AREA CODE 7203 (LARKANA ZONE)</h2>
+                        <p class="text-xs text-slate-500 mt-0.5" id="printReportTitle">Official Area Cadre Business Performance Report</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="bg-slblue-900 text-white text-xs font-bold px-3 py-1 rounded">AREA 7203</span>
+                        <p class="text-[11px] font-semibold text-slate-600 mt-1" id="printReportMonth">Month: OCTOBER 2026</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 01: AREA HIERARCHY & PRINT VIEW -->
+            <div id="view-areaHierarchy" class="portal-view space-y-6">
+                <div class="flex justify-between items-center border-b pb-3 no-print">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">01. Area 7203 Full Direct Cadre Report</h2>
+                        <p class="text-xs text-slate-500">Is view mein SSMs, SMs aur SRs apnay business ke hisab se alag alag sorted show honge (chahe zero entry kyun na ho).</p>
+                    </div>
+                    <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow flex items-center space-x-1.5">
+                        <i class="fa-solid fa-print"></i><span>Print Area Report</span>
+                    </button>
+                </div>
+
+                <!-- 1. SSM Direct Table -->
+                <div class="space-y-3">
+                    <div class="bg-slblue-900 text-white px-4 py-2.5 rounded-lg flex items-center justify-between shadow-sm">
+                        <span class="font-extrabold text-xs uppercase tracking-wider"><i class="fa-solid fa-award mr-2 text-slgold"></i>1. Senior Sales Managers (SSMs) List</span>
+                        <span class="text-xs bg-slblue-800 px-2.5 py-0.5 rounded font-mono text-slgold" id="ssmCountBadge">0 SSMs</span>
+                    </div>
+                    <div class="overflow-x-auto border rounded-xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b font-bold">
+                                    <th class="p-3 border-r w-12 text-center">#</th>
+                                    <th class="p-3 border-r w-28">CODE</th>
+                                    <th class="p-3 border-r">SSM NAME</th>
+                                    <th class="p-3 border-r text-right">SELECTED MONTH FYP</th>
+                                    <th class="p-3 border-r text-center">POLICIES</th>
+                                    <th class="p-3 border-r text-right">YTD TOTAL FYP</th>
+                                    <th class="p-3 border-r text-center">YTD POLICIES</th>
+                                    <th class="p-3 text-center no-print w-32">ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody id="areaSsmTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. SM Direct Table -->
+                <div class="space-y-3 pt-4">
+                    <div class="bg-purple-900 text-white px-4 py-2.5 rounded-lg flex items-center justify-between shadow-sm">
+                        <span class="font-extrabold text-xs uppercase tracking-wider"><i class="fa-solid fa-users-gear mr-2 text-purple-300"></i>2. Sales Managers (SMs) List (Chahe Zero Entry Ho)</span>
+                        <span class="text-xs bg-purple-800 px-2.5 py-0.5 rounded font-mono text-purple-200" id="smCountBadge">0 SMs</span>
+                    </div>
+                    <div class="overflow-x-auto border rounded-xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b font-bold">
+                                    <th class="p-3 border-r w-12 text-center">#</th>
+                                    <th class="p-3 border-r w-28">CODE</th>
+                                    <th class="p-3 border-r">SM NAME</th>
+                                    <th class="p-3 border-r">REPORTING SSM</th>
+                                    <th class="p-3 border-r text-right">MONTH FYP</th>
+                                    <th class="p-3 border-r text-center">POLICIES</th>
+                                    <th class="p-3 border-r text-right">YTD FYP</th>
+                                    <th class="p-3 border-r text-center">YTD POL</th>
+                                    <th class="p-3 text-center no-print w-32">ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody id="areaSmTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. SR Direct Table -->
+                <div class="space-y-3 pt-4">
+                    <div class="bg-slate-800 text-white px-4 py-2.5 rounded-lg flex items-center justify-between shadow-sm">
+                        <span class="font-extrabold text-xs uppercase tracking-wider"><i class="fa-solid fa-user-group mr-2 text-emerald-400"></i>3. Sales Representatives (SRs) List (Entire Area)</span>
+                        <span class="text-xs bg-slate-700 px-2.5 py-0.5 rounded font-mono text-emerald-300" id="srCountBadge">0 SRs</span>
+                    </div>
+                    <div class="overflow-x-auto border rounded-xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b font-bold">
+                                    <th class="p-3 border-r w-12 text-center">#</th>
+                                    <th class="p-3 border-r w-28">CODE</th>
+                                    <th class="p-3 border-r">SR NAME</th>
+                                    <th class="p-3 border-r">REPORTING SM</th>
+                                    <th class="p-3 border-r text-right">MONTH FYP</th>
+                                    <th class="p-3 border-r text-center">POLICIES</th>
+                                    <th class="p-3 border-r text-right">YTD FYP</th>
+                                    <th class="p-3 border-r text-center">YTD POL</th>
+                                    <th class="p-3 text-center no-print w-32">ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody id="areaSrTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 02: SSM HIERARCHY UNITS & SINGLE PRINT VIEW -->
+            <div id="view-ssmHierarchy" class="portal-view space-y-6 hidden">
+                <div class="flex justify-between items-center border-b pb-3 no-print">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">02. SSM Units Hierarchy &amp; Individual Print View</h2>
+                        <p class="text-xs text-slate-500">Aap kisi bhi SSM unit par click karke uske andar ke SMs/SRs dekh saktay hain ya us specific SSM ka alag print nikal saktay hain.</p>
+                    </div>
+                </div>
+                <div id="ssmCardsContainer" class="space-y-4"></div>
+            </div>
+
+            <!-- TAB 03: SM HIERARCHY TEAMS & SINGLE PRINT VIEW -->
+            <div id="view-smHierarchy" class="portal-view space-y-6 hidden">
+                <div class="flex justify-between items-center border-b pb-3 no-print">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">03. SM Teams Hierarchy &amp; SRs Management</h2>
+                        <p class="text-xs text-slate-500">Tamam SMs aur unke zair-e-nugrani SRs ki individual report aur details.</p>
+                    </div>
+                </div>
+                <div id="smCardsContainer" class="space-y-4"></div>
+            </div>
+
+            <!-- TAB 04: ADD USER / TEAM -->
+            <div id="view-addUser" class="portal-view space-y-6 hidden no-print">
+                <div class="max-w-2xl mx-auto bg-slate-50 border border-slate-200 p-6 rounded-xl shadow-sm space-y-4">
+                    <div class="border-b pb-3">
+                        <h3 class="text-base font-bold text-slate-900 uppercase">Register New Worker / Team Member</h3>
+                        <p class="text-xs text-slate-500">Naya SSM, SM ya SR system mein shamil karein.</p>
+                    </div>
+                    <form onsubmit="handleNewUserRegistration(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Select Role</label>
+                            <select id="regRole" onchange="toggleRegHierarchyFields()" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-bold outline-none">
+                                <option value="SSM">Senior Sales Manager (SSM)</option>
+                                <option value="SM">Sales Manager (SM)</option>
+                                <option value="SR" selected>Sales Representative (SR)</option>
+                            </select>
+                        </div>
+                        <div id="regSsmContainer">
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Select Parent SSM Unit</label>
+                            <select id="regSsmSelect" onchange="updateRegSmOptions()" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs outline-none"></select>
+                        </div>
+                        <div id="regSmContainer">
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Select Reporting SM</label>
+                            <select id="regSmSelect" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs outline-none"></select>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Worker Code</label>
+                                <input type="text" id="regCode" placeholder="e.g. 05735090" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-mono outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Worker Full Name</label>
+                                <input type="text" id="regName" placeholder="Worker Full Name" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs uppercase outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase text-slate-600 mb-1">Month FYP (Rs.) [Auto adds to YTD]</label>
+                                <input type="number" id="regFyp" value="0" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs outline-none font-bold text-slblue-700">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase text-slate-600 mb-1">Month Policies (POL) [Auto adds to YTD]</label>
+                                <input type="number" id="regPol" value="0" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs outline-none font-bold text-slblue-700">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-slblue-700 hover:bg-slblue-800 text-white font-bold py-3 rounded-lg shadow text-xs uppercase transition">Add Member Now</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FULL EDIT FORM MODAL -->
+    <div id="editModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-slate-200">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="font-extrabold text-slate-900 text-sm uppercase" id="editModalTitle">Edit Cadre Record</h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleSaveEditModal(event)" class="space-y-4">
+                <input type="hidden" id="editTargetRole">
+                <input type="hidden" id="editOldCode">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Worker Code</label>
+                        <input type="text" id="editWorkerCode" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Worker Name</label>
+                        <input type="text" id="editWorkerName" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs uppercase font-bold">
+                    </div>
+                </div>
+
+                <div class="p-4 bg-slblue-50/70 rounded-xl border border-slblue-200 space-y-3">
+                    <h4 class="text-xs font-extrabold text-slblue-900 uppercase">Auto-Accumulate Business (<span id="editMonthLabel">OCTOBER</span>)</h4>
+                    <p class="text-[11px] text-slate-600">Yahan naya business enter karen — system pichle saare business mein ise khud-ba-khud plus kardega!</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">New FYP to Add (Rs.)</label>
+                            <input type="number" id="editMonthFyp" required class="w-full px-3 py-2 bg-white border rounded text-xs font-bold text-slblue-700" value="0">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">New Policies to Add (POL)</label>
+                            <input type="number" id="editMonthPol" required class="w-full px-3 py-2 bg-white border rounded text-xs font-bold text-slblue-700" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-3 border-t">
+                    <button type="button" onclick="handleDeleteRecord()" class="px-3 py-2 text-xs font-bold bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 transition">
+                        <i class="fa-solid fa-trash mr-1"></i> Delete Record
+                    </button>
+                    <div class="space-x-2">
+                        <button type="button" onclick="closeEditModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                        <button type="submit" class="px-5 py-2 text-xs font-bold bg-slblue-700 text-white rounded-lg shadow hover:bg-slblue-800">Auto-Update Record</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT CORE LOGIC -->
+    <script>
+        const initialPortalDatabase = [
+            {
+                code: "0272033",
+                name: "MUHAMMAD AKRAM AWAN",
+                role: "SSM",
+                months: {},
+                team: [
+                    {
+                        code: "0972630",
+                        name: "AMEET KUMAR",
+                        role: "SM",
+                        months: {},
+                        srs: [
+                            { code: "05734323", name: "DEEPAK KUMAR", months: {} },
+                            { code: "05734711", name: "NANIK RAM", months: {} },
+                            { code: "05734322", name: "RAHUL KUMAR", months: {} },
+                            { code: "05735085", name: "SHIV OM", months: {} },
+                            { code: "05734350", name: "VICKY KUMAR", months: {} },
+                            { code: "05735014", name: "RAVINDER KUMAR", months: {} },
+                            { code: "05734710", name: "VIVEK KHURANA", months: {} },
+                            { code: "05735011", name: "DINESH KUMAR", months: {} },
+                            { code: "05734930", name: "ROHAN KUMAR", months: {} },
+                            { code: "05735037", name: "PRIYA KUMARI", months: {} }
+                        ]
+                    },
+                    { code: "0972025", name: "GHULAM ASGHAR AWAN", role: "SM", months: {}, srs: [] },
+                    { code: "0874559", name: "TUFAIL AHMED ABRO", role: "SM", months: {}, srs: [{ code: "05742001", name: "IRSHAD ALI ABRO", months: {} }] },
+                    { code: "0972561", name: "JAISH TULSI", role: "SM", months: {}, srs: [] },
+                    { code: "0972578", name: "MAZHAR ALI", role: "SM", months: {}, srs: [] }
+                ]
+            },
+            {
+                code: "0293119",
+                name: "MIR HAZAR MAIRI",
+                role: "SSM",
+                months: {},
+                team: [
+                    { code: "0972112", name: "ALI SHER GOLO", role: "SM", months: {}, srs: [] },
+                    { code: "0874577", name: "MUHAMMAD QASIM SOLANGI", role: "SM", months: {}, srs: [] },
+                    { code: "0874436", name: "NAWAB KHAN MAIRI", role: "SM", months: {}, srs: [] },
+                    { code: "0972579", name: "MUHAMMAD YAQOOB MAIRI", role: "SM", months: {}, srs: [] },
+                    { code: "0972174", name: "DEEPAK KUMAR", role: "SM", months: {}, srs: [] },
+                    { code: "0972378", name: "NASEERUDDIN MAIRI", role: "SM", months: {}, srs: [] },
+                    { code: "0972143", name: "KAMALUDDIN MAIRI", role: "SM", months: {}, srs: [] }
+                ]
+            },
+            { code: "0272255", name: "NAVEED ADIL RAJPUT", role: "SSM", months: {}, team: [] },
+            { code: "0272031", name: "MUKHTIAR AHMED ABRO", role: "SSM", months: {}, team: [] },
+            { code: "0272328", name: "SAFIULLAH KHAN PATHAN", role: "SSM", months: {}, team: [] },
+            { code: "0272035", name: "SHER AHMED SAHTO", role: "SSM", months: {}, team: [] },
+            { code: "0272329", name: "MUHAMMAD IBRAHIM MUGHAL", role: "SSM", months: {}, team: [] },
+            { code: "0272308", name: "ABDUL GHAFOOR LASHARI", role: "SSM", months: {}, team: [] }
+        ];
+
+        let portalData = JSON.parse(localStorage.getItem('area7203_master_v18')) || initialPortalDatabase;
+        let activeTab = 'areaHierarchy';
+
+        function saveToStorage() {
+            localStorage.setItem('area7203_master_v18', JSON.stringify(portalData));
+        }
+
+        function exportDatabaseBackup() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(portalData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Area_7203_Backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            alert("? Backup file successfully downloaded to your computer!");
+        }
+
+        function importDatabaseBackup(e) {
+            const fileReader = new FileReader();
+            if (e.target.files[0]) {
+                fileReader.readAsText(e.target.files[0], "UTF-8");
+                fileReader.onload = function(event) {
+                    try {
+                        const parsedData = JSON.parse(event.target.result);
+                        if (Array.isArray(parsedData)) {
+                            portalData = parsedData;
+                            saveToStorage();
+                            renderActiveView();
+                            alert("? Backup successfully restored!");
+                        } else {
+                            alert("? Ghalat file format!");
+                        }
+                    } catch (err) {
+                        alert("? File parhnay mein ghalti hui!");
+                    }
+                };
+            }
+        }
+
+        function formatCurrency(num) {
+            return 'Rs. ' + Number(num || 0).toLocaleString('en-PK');
+        }
+
+        function getRecordMonthStats(obj, month) {
+            if (!obj.months) obj.months = {};
+            if (!obj.months[month]) obj.months[month] = { fyp: 0, pol: 0 };
+            return obj.months[month];
+        }
+
+        function getRecordYtdStats(obj) {
+            let totalFyp = 0;
+            let totalPol = 0;
+            if (obj.months) {
+                Object.values(obj.months).forEach(m => {
+                    totalFyp += Number(m.fyp || 0);
+                    totalPol += Number(m.pol || 0);
+                });
+            }
+            return { fyp: totalFyp, pol: totalPol };
+        }
+
+        function switchMainTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll('.portal-view').forEach(el => el.classList.add('hidden'));
+            document.getElementById('view-' + tabId).classList.remove('hidden');
+
+            ['areaHierarchy', 'ssmHierarchy', 'smHierarchy', 'addUser'].forEach(t => {
+                const btn = document.getElementById('btn-tab-' + t);
+                if (t === tabId) {
+                    btn.className = 'px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 bg-slblue-700 text-white shadow';
+                } else {
+                    btn.className = 'px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100';
+                }
+            });
+
+            renderActiveView();
+        }
+
+        function renderActiveView() {
+            const selectedMonth = document.getElementById('selectedMonthFilter').value;
+            document.getElementById('printReportMonth').innerText = `Month: ${selectedMonth} 2026`;
+
+            if (activeTab === 'areaHierarchy') renderAreaDirectLists(selectedMonth);
+            else if (activeTab === 'ssmHierarchy') renderSsmUnitsHierarchy(selectedMonth);
+            else if (activeTab === 'smHierarchy') renderSmTeamsHierarchy(selectedMonth);
+            else if (activeTab === 'addUser') populateRegSsmOptions();
+        }
+
+        // 01. AREA DIRECT LISTS
+        function renderAreaDirectLists(month) {
+            let totalAreaMonthFyp = 0, totalAreaMonthPol = 0;
+            let totalAreaYtdFyp = 0, totalAreaYtdPol = 0;
+
+            let ssmList = portalData.map(ssm => {
+                let ssmSelf = getRecordMonthStats(ssm, month);
+                let ssmYtd = getRecordYtdStats(ssm);
+                let mFyp = ssmSelf.fyp, mPol = ssmSelf.pol;
+                let yFyp = ssmYtd.fyp, yPol = ssmYtd.pol;
+                
+                ssm.team.forEach(sm => {
+                    let smM = getRecordMonthStats(sm, month);
+                    let smY = getRecordYtdStats(sm);
+                    mFyp += smM.fyp; mPol += smM.pol;
+                    yFyp += smY.fyp; yPol += smY.pol;
+                    
+                    sm.srs.forEach(sr => {
+                        let srM = getRecordMonthStats(sr, month);
+                        let srY = getRecordYtdStats(sr);
+                        mFyp += srM.fyp; mPol += srM.pol;
+                        yFyp += srY.fyp; yPol += srY.pol;
+                    });
+                });
+                totalAreaMonthFyp += mFyp; totalAreaMonthPol += mPol;
+                totalAreaYtdFyp += yFyp; totalAreaYtdPol += yPol;
+                return { ...ssm, monthFyp: mFyp, monthPol: mPol, ytdFyp: yFyp, ytdPol: yPol };
+            });
+            ssmList.sort((a, b) => b.monthFyp - a.monthFyp || b.ytdFyp - a.ytdFyp);
+
+            let allSmList = [];
+            portalData.forEach(ssm => {
+                ssm.team.forEach(sm => {
+                    let smM = getRecordMonthStats(sm, month);
+                    let smY = getRecordYtdStats(sm);
+                    let mFyp = smM.fyp, mPol = smM.pol;
+                    let yFyp = smY.fyp, yPol = smY.pol;
+
+                    sm.srs.forEach(sr => {
+                        let srM = getRecordMonthStats(sr, month);
+                        let srY = getRecordYtdStats(sr);
+                        mFyp += srM.fyp; mPol += srM.pol;
+                        yFyp += srY.fyp; yPol += srY.pol;
+                    });
+                    allSmList.push({ ...sm, parentSsmName: ssm.name, monthFyp: mFyp, monthPol: mPol, ytdFyp: yFyp, ytdPol: yPol });
+                });
+            });
+            allSmList.sort((a, b) => b.monthFyp - a.monthFyp || b.ytdFyp - a.ytdFyp);
+
+            let allSrList = [];
+            portalData.forEach(ssm => {
+                ssm.team.forEach(sm => {
+                    sm.srs.forEach(sr => {
+                        let srM = getRecordMonthStats(sr, month);
+                        let srY = getRecordYtdStats(sr);
+                        allSrList.push({
+                            ...sr,
+                            parentSmName: sm.name,
+                            monthFyp: srM.fyp,
+                            monthPol: srM.pol,
+                            ytdFyp: srY.fyp,
+                            ytdPol: srY.pol
+                        });
+                    });
+                });
+            });
+            allSrList.sort((a, b) => b.monthFyp - a.monthFyp || b.ytdFyp - a.ytdFyp);
+
+            document.getElementById('areaSsmTableBody').innerHTML = ssmList.map((s, i) => `
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-3 border-r text-center font-bold">${i + 1}</td>
+                    <td class="p-3 border-r font-mono font-bold">${s.code}</td>
+                    <td class="p-3 border-r font-extrabold text-slate-800">${s.name}</td>
+                    <td class="p-3 border-r text-right font-bold text-slblue-700">${formatCurrency(s.monthFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${s.monthPol} POL</td>
+                    <td class="p-3 border-r text-right font-bold text-emerald-700">${formatCurrency(s.ytdFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${s.ytdPol} POL</td>
+                    <td class="p-3 text-center no-print space-x-1">
+                        <button onclick="openEditModal('SSM', '${s.code}')" class="bg-slate-100 hover:bg-slate-200 border px-2 py-1 rounded text-[11px] font-bold"><i class="fa-solid fa-pen"></i> Edit</button>
+                        <button onclick="directDeleteRecord('SSM', '${s.code}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 py-1 rounded text-[11px] font-bold"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('areaSmTableBody').innerHTML = allSmList.map((sm, i) => `
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-3 border-r text-center font-bold">${i + 1}</td>
+                    <td class="p-3 border-r font-mono font-bold">${sm.code}</td>
+                    <td class="p-3 border-r font-bold">${sm.name}</td>
+                    <td class="p-3 border-r text-slate-500 text-[11px] font-semibold">${sm.parentSsmName}</td>
+                    <td class="p-3 border-r text-right font-bold text-slblue-700">${formatCurrency(sm.monthFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${sm.monthPol} POL</td>
+                    <td class="p-3 border-r text-right font-bold text-emerald-700">${formatCurrency(sm.ytdFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${sm.ytdPol} POL</td>
+                    <td class="p-3 text-center no-print space-x-1">
+                        <button onclick="openEditModal('SM', '${sm.code}')" class="bg-slate-100 hover:bg-slate-200 border px-2 py-1 rounded text-[11px] font-bold"><i class="fa-solid fa-pen"></i> Edit</button>
+                        <button onclick="directDeleteRecord('SM', '${sm.code}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 py-1 rounded text-[11px] font-bold"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('areaSrTableBody').innerHTML = allSrList.map((sr, i) => `
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-3 border-r text-center font-bold">${i + 1}</td>
+                    <td class="p-3 border-r font-mono font-bold">${sr.code}</td>
+                    <td class="p-3 border-r font-bold">${sr.name}</td>
+                    <td class="p-3 border-r text-slate-500 text-[11px] font-semibold">${sr.parentSmName}</td>
+                    <td class="p-3 border-r text-right font-bold text-slblue-700">${formatCurrency(sr.monthFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${sr.monthPol} POL</td>
+                    <td class="p-3 border-r text-right font-bold text-emerald-700">${formatCurrency(sr.ytdFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${sr.ytdPol} POL</td>
+                    <td class="p-3 text-center no-print space-x-1">
+                        <button onclick="openEditModal('SR', '${sr.code}')" class="bg-slate-100 hover:bg-slate-200 border px-2 py-1 rounded text-[11px] font-bold"><i class="fa-solid fa-pen"></i> Edit</button>
+                        <button onclick="directDeleteRecord('SR', '${sr.code}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 py-1 rounded text-[11px] font-bold"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('statMonthFyp').innerText = formatCurrency(totalAreaMonthFyp);
+            document.getElementById('statMonthPol').innerText = `${totalAreaMonthPol} Policies`;
+            document.getElementById('statYtdFyp').innerText = formatCurrency(totalAreaYtdFyp);
+            document.getElementById('statYtdPol').innerText = `${totalAreaYtdPol} YTD Policies`;
+            document.getElementById('statCadreCounts').innerText = `${ssmList.length} SSMs | ${allSmList.length} SMs`;
+            document.getElementById('statSrCount').innerText = `${allSrList.length} Sales Representatives (SRs)`;
+
+            document.getElementById('ssmCountBadge').innerText = `${ssmList.length} SSMs`;
+            document.getElementById('smCountBadge').innerText = `${allSmList.length} SMs`;
+            document.getElementById('srCountBadge').innerText = `${allSrList.length} SRs`;
+        }
+
+        // 02. SSM UNITS HIERARCHY
+        function renderSsmUnitsHierarchy(month) {
+            const container = document.getElementById('ssmCardsContainer');
+            container.innerHTML = portalData.map((ssm, idx) => {
+                let ssmSelf = getRecordMonthStats(ssm, month);
+                let ssmYtdSelf = getRecordYtdStats(ssm);
+                let ssmMonthFyp = ssmSelf.fyp, ssmMonthPol = ssmSelf.pol;
+                let ssmYtdFyp = ssmYtdSelf.fyp, ssmYtdPol = ssmYtdSelf.pol;
+                
+                let smRows = ssm.team.map((sm, smIdx) => {
+                    let smM = getRecordMonthStats(sm, month);
+                    let smY = getRecordYtdStats(sm);
+                    let mFyp = smM.fyp, mPol = smM.pol;
+                    let yFyp = smY.fyp, yPol = smY.pol;
+                    
+                    let srRows = sm.srs.map(sr => {
+                        let srM = getRecordMonthStats(sr, month);
+                        let srY = getRecordYtdStats(sr);
+                        mFyp += srM.fyp; mPol += srM.pol;
+                        yFyp += srY.fyp; yPol += srY.pol;
+                        return `
+                            <tr class="border-b bg-white">
+                                <td class="p-2.5 border-r font-mono text-center font-bold text-slate-500">-</td>
+                                <td class="p-2.5 border-r font-mono font-bold text-slate-700">${sr.code}</td>
+                                <td class="p-2.5 border-r font-semibold">+- ${sr.name}</td>
+                                <td class="p-2.5 border-r text-right font-bold text-slblue-700">${formatCurrency(srM.fyp)}</td>
+                                <td class="p-2.5 border-r text-center font-bold">${srM.pol} POL</td>
+                                <td class="p-2.5 border-r text-right font-bold text-emerald-700">${formatCurrency(srY.fyp)}</td>
+                                <td class="p-2.5 border-r text-center font-bold text-emerald-800">${srY.pol} POL</td>
+                                <td class="p-2.5 text-center no-print space-x-1">
+                                    <button onclick="openEditModal('SR', '${sr.code}')" class="text-xs bg-slate-100 px-2 py-0.5 border rounded"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="directDeleteRecord('SR', '${sr.code}')" class="text-xs bg-red-50 text-red-600 px-2 py-0.5 border border-red-200 rounded"><i class="fa-solid fa-trash"></i></button>
+                                </td>
+                            </tr>`;
+                    }).join('');
+
+                    ssmMonthFyp += mFyp; ssmMonthPol += mPol;
+                    ssmYtdFyp += yFyp; ssmYtdPol += yPol;
+
+                    return `
+                        <tr class="border-b bg-purple-50/40">
+                            <td class="p-2.5 border-r font-bold text-center">${smIdx + 1}</td>
+                            <td class="p-2.5 border-r font-mono font-bold">${sm.code}</td>
+                            <td class="p-2.5 border-r font-extrabold text-slate-900">${sm.name}</td>
+                            <td class="p-2.5 border-r text-right font-bold text-slblue-700">${formatCurrency(mFyp)}</td>
+                            <td class="p-2.5 border-r text-center font-bold">${mPol} POL</td>
+                            <td class="p-2.5 border-r text-right font-bold text-emerald-700">${formatCurrency(yFyp)}</td>
+                            <td class="p-2.5 border-r text-center font-bold text-emerald-800">${yPol} POL</td>
+                            <td class="p-2.5 text-center no-print space-x-1">
+                                <button onclick="openEditModal('SM', '${sm.code}')" class="bg-white border px-2 py-1 rounded text-xs font-bold"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="directDeleteRecord('SM', '${sm.code}')" class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        ${srRows}`;
+                }).join('');
+
+                return `
+                    <div class="border rounded-xl bg-white shadow-sm overflow-hidden" id="ssm-unit-card-${ssm.code}">
+                        <div class="p-4 bg-slate-50 border-b flex items-center justify-between">
+                            <div>
+                                <span class="bg-slblue-100 text-slblue-800 text-[10px] font-extrabold px-2 py-0.5 rounded">SSM UNIT ${idx + 1}</span>
+                                <h3 class="text-base font-extrabold text-slate-900 mt-1">${ssm.name} (${ssm.code})</h3>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <p class="text-[11px] text-slate-500 font-bold uppercase">Unit Month FYP</p>
+                                    <p class="text-sm font-black text-slblue-700">${formatCurrency(ssmMonthFyp)} (${ssmMonthPol} POL)</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[11px] text-slate-500 font-bold uppercase">Unit YTD Total</p>
+                                    <p class="text-sm font-black text-emerald-700">${formatCurrency(ssmYtdFyp)} (${ssmYtdPol} POL)</p>
+                                </div>
+                                <button onclick="printSingleSsmUnit('${ssm.code}')" class="bg-slblue-700 hover:bg-slblue-800 text-white px-3 py-1.5 rounded text-xs font-bold no-print flex items-center space-x-1">
+                                    <i class="fa-solid fa-print"></i><span>Print Unit</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4 overflow-x-auto">
+                            <table class="w-full text-left text-xs border rounded">
+                                <thead>
+                                    <tr class="bg-slate-100 border-b text-slate-700 font-bold">
+                                        <th class="p-2.5 border-r w-10 text-center">#</th>
+                                        <th class="p-2.5 border-r w-24">CODE</th>
+                                        <th class="p-2.5 border-r">NAME &amp; TEAM SRs</th>
+                                        <th class="p-2.5 border-r text-right">MONTH FYP</th>
+                                        <th class="p-2.5 border-r text-center">POLICIES</th>
+                                        <th class="p-2.5 border-r text-right">YTD TOTAL FYP</th>
+                                        <th class="p-2.5 border-r text-center">YTD POL</th>
+                                        <th class="p-2.5 text-center no-print w-28">ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${smRows || '<tr><td colspan="8" class="p-3 text-center text-slate-400">No SMs registered.</td></tr>'}</tbody>
+                            </table>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        // 03. SM TEAMS HIERARCHY
+        function renderSmTeamsHierarchy(month) {
+            const container = document.getElementById('smCardsContainer');
+            let smCardsHtml = '';
+
+            portalData.forEach(ssm => {
+                ssm.team.forEach(sm => {
+                    let smM = getRecordMonthStats(sm, month);
+                    let smY = getRecordYtdStats(sm);
+                    let mFyp = smM.fyp, mPol = smM.pol;
+                    let yFyp = smY.fyp, yPol = smY.pol;
+
+                    let srRows = sm.srs.map((sr, i) => {
+                        let srM = getRecordMonthStats(sr, month);
+                        let srY = getRecordYtdStats(sr);
+                        mFyp += srM.fyp; mPol += srM.pol;
+                        yFyp += srY.fyp; yPol += srY.pol;
+
+                        return `
+                            <tr class="border-b">
+                                <td class="p-2.5 border-r text-center">${i + 1}</td>
+                                <td class="p-2.5 border-r font-mono font-bold">${sr.code}</td>
+                                <td class="p-2.5 border-r font-bold">${sr.name}</td>
+                                <td class="p-2.5 border-r text-right font-bold text-slblue-700">${formatCurrency(srM.fyp)}</td>
+                                <td class="p-2.5 border-r text-center font-bold">${srM.pol} POL</td>
+                                <td class="p-2.5 border-r text-right font-bold text-emerald-700">${formatCurrency(srY.fyp)}</td>
+                                <td class="p-2.5 border-r text-center font-bold text-emerald-800">${srY.pol} POL</td>
+                                <td class="p-2.5 text-center no-print space-x-1">
+                                    <button onclick="openEditModal('SR', '${sr.code}')" class="bg-slate-100 border px-2 py-0.5 rounded text-xs font-bold"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="directDeleteRecord('SR', '${sr.code}')" class="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+                                </td>
+                            </tr>`;
+                    }).join('');
+
+                    smCardsHtml += `
+                        <div class="border rounded-xl bg-white p-4 shadow-sm space-y-3" id="sm-card-${sm.code}">
+                            <div class="flex justify-between items-center border-b pb-2">
+                                <div>
+                                    <span class="text-[10px] font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded">REPORTING SSM: ${ssm.name}</span>
+                                    <h4 class="text-sm font-extrabold text-slate-900 mt-1">${sm.name} (${sm.code})</h4>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <div class="text-right">
+                                        <p class="text-[10px] text-slate-500 font-bold uppercase">MONTH TEAM FYP</p>
+                                        <p class="text-xs font-black text-slblue-700">${formatCurrency(mFyp)} (${mPol} POL)</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-[10px] text-slate-500 font-bold uppercase">YTD TEAM TOTAL</p>
+                                        <p class="text-xs font-black text-emerald-700">${formatCurrency(yFyp)} (${yPol} POL)</p>
+                                    </div>
+                                    <button onclick="printSingleSmTeam('${sm.code}')" class="bg-purple-700 text-white px-3 py-1 rounded text-xs font-bold no-print"><i class="fa-solid fa-print"></i> Print SM</button>
+                                </div>
+                            </div>
+                            <table class="w-full text-left text-xs border rounded">
+                                <thead>
+                                    <tr class="bg-slate-100 border-b text-slate-700 font-bold">
+                                        <th class="p-2.5 border-r w-10 text-center">#</th>
+                                        <th class="p-2.5 border-r w-24">SR CODE</th>
+                                        <th class="p-2.5 border-r">SR NAME</th>
+                                        <th class="p-2.5 border-r text-right">MONTH FYP</th>
+                                        <th class="p-2.5 border-r text-center">POL</th>
+                                        <th class="p-2.5 border-r text-right">YTD FYP</th>
+                                        <th class="p-2.5 border-r text-center">YTD POL</th>
+                                        <th class="p-2.5 text-center no-print w-28">ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${srRows || '<tr><td colspan="8" class="p-3 text-center text-slate-400">No SRs registered under this SM.</td></tr>'}</tbody>
+                            </table>
+                        </div>`;
+                });
+            });
+
+            container.innerHTML = smCardsHtml;
+        }
+
+        // PRINT FUNCTIONS
+        function triggerAreaPrintView() {
+            switchMainTab('areaHierarchy');
+            document.getElementById('printReportTitle').innerText = "Official Full Area Cadre Business Performance Report";
+            setTimeout(() => { window.print(); }, 300);
+        }
+
+        function printSingleSsmUnit(ssmCode) {
+            switchMainTab('ssmHierarchy');
+            document.querySelectorAll('[id^="ssm-unit-card-"]').forEach(el => {
+                if (el.id !== `ssm-unit-card-${ssmCode}`) el.classList.add('no-print');
+            });
+            setTimeout(() => {
+                window.print();
+                document.querySelectorAll('[id^="ssm-unit-card-"]').forEach(el => el.classList.remove('no-print'));
+            }, 300);
+        }
+
+        function printSingleSmTeam(smCode) {
+            switchMainTab('smHierarchy');
+            document.querySelectorAll('[id^="sm-card-"]').forEach(el => {
+                if (el.id !== `sm-card-${smCode}`) el.classList.add('no-print');
+            });
+            setTimeout(() => {
+                window.print();
+                document.querySelectorAll('[id^="sm-card-"]').forEach(el => el.classList.remove('no-print'));
+            }, 300);
+        }
+
+        // REGISTRATION & DUPLICATE CHECK
+        function toggleRegHierarchyFields() {
+            const role = document.getElementById('regRole').value;
+            const ssmCont = document.getElementById('regSsmContainer');
+            const smCont = document.getElementById('regSmContainer');
+            if (role === 'SSM') { ssmCont.classList.add('hidden'); smCont.classList.add('hidden'); }
+            else if (role === 'SM') { ssmCont.classList.remove('hidden'); smCont.classList.add('hidden'); }
+            else { ssmCont.classList.remove('hidden'); ssmCont.classList.remove('hidden'); populateRegSsmOptions(); }
+        }
+
+        function populateRegSsmOptions() {
+            const select = document.getElementById('regSsmSelect');
+            select.innerHTML = portalData.map(s => `<option value="${s.code}">${s.name} (${s.code})</option>`).join('');
+            updateRegSmOptions();
+        }
+
+        function updateRegSmOptions() {
+            const ssmCode = document.getElementById('regSsmSelect').value;
+            const select = document.getElementById('regSmSelect');
+            const ssm = portalData.find(s => s.code === ssmCode);
+            const smList = ssm ? ssm.team : [];
+            
+            if (smList.length === 0) {
+                select.innerHTML = `<option value="">?? No SMs in this SSM Unit (Please register SM first)</option>`;
+            } else {
+                select.innerHTML = smList.map(m => `<option value="${m.code}">${m.name} (${m.code})</option>`).join('');
+            }
+        }
+
+        function handleNewUserRegistration(e) {
+            e.preventDefault();
+            const role = document.getElementById('regRole').value;
+            const code = document.getElementById('regCode').value.trim();
+            const name = document.getElementById('regName').value.trim().toUpperCase();
+            const month = document.getElementById('selectedMonthFilter').value;
+            const fyp = Number(document.getElementById('regFyp').value) || 0;
+            const pol = Number(document.getElementById('regPol').value) || 0;
+
+            let exists = false;
+            portalData.forEach(ssm => {
+                if (ssm.code === code || ssm.name === name) exists = true;
+                ssm.team.forEach(sm => {
+                    if (sm.code === code || sm.name === name) exists = true;
+                    sm.srs.forEach(sr => {
+                        if (sr.code === code || sr.name === name) exists = true;
+                    });
+                });
+            });
+
+            if (exists) {
+                alert("?? WARNING: Yeh Worker Code ya Name pehle se system mein mojood hai! Dobara add nahi ho sakta.");
+                return;
+            }
+
+            if (role === 'SSM') {
+                portalData.push({ code, name, role: 'SSM', months: { [month]: { fyp, pol } }, team: [] });
+            } else if (role === 'SM') {
+                const ssmCode = document.getElementById('regSsmSelect').value;
+                const ssm = portalData.find(s => s.code === ssmCode);
+                if (ssm) {
+                    ssm.team.push({ code, name, role: 'SM', months: { [month]: { fyp, pol } }, srs: [] });
+                }
+            } else if (role === 'SR') {
+                const ssmCode = document.getElementById('regSsmSelect').value;
+                const smCode = document.getElementById('regSmSelect').value;
+                if (!smCode) {
+                    alert("? Pehle is SSM Unit mein koi Sales Manager (SM) register karein!");
+                    return;
+                }
+                const ssm = portalData.find(s => s.code === ssmCode);
+                if (ssm) {
+                    const sm = ssm.team.find(m => m.code === smCode);
+                    if (sm) {
+                        if (!sm.srs) sm.srs = [];
+                        sm.srs.push({ code, name, months: { [month]: { fyp, pol } } });
+                    }
+                }
+            }
+
+            saveToStorage();
+            renderActiveView();
+            e.target.reset();
+            alert("? Kamyabi ke sath register ho gaya aur YTD auto-calculate ho gaya!");
+        }
+
+        // FULL EDIT & AUTO-ACCUMULATE LOGIC
+        function openEditModal(role, workerCode) {
+            const selectedMonth = document.getElementById('selectedMonthFilter').value;
+            document.getElementById('editTargetRole').value = role;
+            document.getElementById('editOldCode').value = workerCode;
+            document.getElementById('editMonthLabel').innerText = selectedMonth;
+            document.getElementById('editModalTitle').innerText = `Edit / Add Business (${role} - ${workerCode})`;
+
+            let record = null;
+            if (role === 'SSM') {
+                record = portalData.find(s => s.code === workerCode);
+            } else if (role === 'SM') {
+                portalData.forEach(s => { const sm = s.team.find(m => m.code === workerCode); if (sm) record = sm; });
+            } else if (role === 'SR') {
+                portalData.forEach(s => s.team.forEach(m => { const sr = m.srs.find(r => r.code === workerCode); if (sr) record = sr; }));
+            }
+
+            if (record) {
+                document.getElementById('editWorkerCode').value = record.code;
+                document.getElementById('editWorkerName').value = record.name;
+                const stats = getRecordMonthStats(record, selectedMonth);
+                document.getElementById('editMonthFyp').value = stats.fyp;
+                document.getElementById('editMonthPol').value = stats.pol;
+                document.getElementById('editModal').classList.remove('hidden');
+            }
+        }
+
+        function closeEditModal() { document.getElementById('editModal').classList.add('hidden'); }
+
+        function handleSaveEditModal(e) {
+            e.preventDefault();
+            const role = document.getElementById('editTargetRole').value;
+            const oldCode = document.getElementById('editOldCode').value;
+            const newCode = document.getElementById('editWorkerCode').value.trim();
+            const newName = document.getElementById('editWorkerName').value.trim().toUpperCase();
+            const selectedMonth = document.getElementById('selectedMonthFilter').value;
+
+            const addFyp = Number(document.getElementById('editMonthFyp').value) || 0;
+            const addPol = Number(document.getElementById('editMonthPol').value) || 0;
+
+            let record = null;
+            if (role === 'SSM') {
+                record = portalData.find(s => s.code === oldCode);
+            } else if (role === 'SM') {
+                portalData.forEach(s => { const sm = s.team.find(m => m.code === oldCode); if (sm) record = sm; });
+            } else if (role === 'SR') {
+                portalData.forEach(s => s.team.forEach(m => { const sr = m.srs.find(r => r.code === oldCode); if (sr) record = sr; }));
+            }
+
+            if (record) {
+                record.code = newCode;
+                record.name = newName;
+                const stats = getRecordMonthStats(record, selectedMonth);
+                stats.fyp = addFyp; 
+                stats.pol = addPol;
+
+                saveToStorage();
+                renderActiveView();
+                closeEditModal();
+                alert("? Record updated & YTD Auto-Calculated successfully!");
+            }
+        }
+
+        function directDeleteRecord(role, code) {
+            if (!confirm(`?? Kya aap waqai is ${role} record (${code}) ko delete karna chahte hain?`)) return;
+
+            if (role === 'SSM') {
+                portalData = portalData.filter(s => s.code !== code);
+            } else if (role === 'SM') {
+                portalData.forEach(s => { s.team = s.team.filter(m => m.code !== code); });
+            } else if (role === 'SR') {
+                portalData.forEach(s => s.team.forEach(m => { m.srs = m.srs.filter(r => r.code !== code); }));
+            }
+
+            saveToStorage();
+            renderActiveView();
+            alert("??? Record deleted successfully!");
+        }
+
+        function handleDeleteRecord() {
+            const role = document.getElementById('editTargetRole').value;
+            const oldCode = document.getElementById('editOldCode').value;
+            closeEditModal();
+            directDeleteRecord(role, oldCode);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderActiveView();
+        });
+    </script>
+</body>
+</html>

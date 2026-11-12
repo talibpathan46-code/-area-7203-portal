@@ -578,9 +578,10 @@
             if (role === 'ADMIN') {
                 badge.innerText = "ADMIN: FULL ACCESS";
                 document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+                document.getElementById('btn-tab-ssmHierarchy').classList.remove('hidden');
+                document.getElementById('btn-tab-smHierarchy').classList.remove('hidden');
                 switchMainTab('areaHierarchy');
             } else {
-                // Hide all Admin-only controls (Edit, Delete, Backup, Add Member, Full Area Stats)
                 document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
                 badge.innerText = `${role} READ-ONLY: ${currentUserSession.name}`;
 
@@ -676,7 +677,7 @@
             const targetView = document.getElementById('view-' + tabId);
             if (targetView) targetView.classList.remove('hidden');
 
-            ['areaHierarchy', 'ssmHierarchy', 'smHierarchy', 'addUser'].forEach(t => {
+            ['areaHierarchy', 'ssmHierarchy', 'smHierarchy', 'addUser', 'srPersonal'].forEach(t => {
                 const btn = document.getElementById('btn-tab-' + t);
                 if (!btn) return;
                 if (t === tabId) {
@@ -832,7 +833,7 @@
             document.getElementById('srCountBadge').innerText = `${allSrList.length} SRs`;
         }
 
-        // 02. SSM UNITS HIERARCHY (FILTERED FOR SSM USER, FULL FOR ADMIN)
+        // 02. SSM UNITS HIERARCHY
         function renderSsmUnitsHierarchy(month) {
             const isAdmin = currentUserSession && currentUserSession.role === 'ADMIN';
             const targetList = isAdmin 
@@ -947,7 +948,7 @@
             }).join('');
         }
 
-        // 03. SM TEAMS HIERARCHY (FILTERED FOR SM USER, FULL FOR ADMIN)
+        // 03. SM TEAMS HIERARCHY (FOR ADMIN & SM USERS)
         function renderSmTeamsHierarchy(month) {
             const isAdmin = currentUserSession && currentUserSession.role === 'ADMIN';
             const container = document.getElementById('smCardsContainer');
@@ -1130,7 +1131,7 @@
             const smList = ssm ? ssm.team : [];
             
             if (smList.length === 0) {
-                select.innerHTML = `<option value="">?? No SMs in this SSM Unit (Please register SM first)</option>`;
+                select.innerHTML = `<option value="">⚠️ No SMs in this SSM Unit (Please register SM first)</option>`;
             } else {
                 select.innerHTML = smList.map(m => `<option value="${m.code}">${m.name} (${m.code})</option>`).join('');
             }
@@ -1159,7 +1160,7 @@
             });
 
             if (exists) {
-                alert("?? WARNING: Yeh Worker Code ya Name pehle se system mein mojood hai! Dobara add nahi ho sakta.");
+                alert("⚠️ WARNING: Yeh Worker Code ya Name pehle se system mein mojood hai! Dobara add nahi ho sakta.");
                 return;
             }
 
@@ -1175,7 +1176,7 @@
                 const ssmCode = document.getElementById('regSsmSelect').value;
                 const smCode = document.getElementById('regSmSelect').value;
                 if (!smCode) {
-                    alert("? Pehle is SSM Unit mein koi Sales Manager (SM) register karein!");
+                    alert("❌ Pehle is SSM Unit mein koi Sales Manager (SM) register karein!");
                     return;
                 }
                 const ssm = portalData.find(s => s.code === ssmCode);
@@ -1191,7 +1192,7 @@
             saveToStorage();
             renderActiveView();
             e.target.reset();
-            alert("? Kamyabi ke sath register ho gaya aur YTD auto-calculate ho gaya!");
+            alert("✅ Kamyabi ke sath register ho gaya aur YTD auto-calculate ho gaya!");
         }
 
         // FULL EDIT & DELETE LOGIC (ADMIN ONLY)
@@ -1256,13 +1257,13 @@
                 saveToStorage();
                 renderActiveView();
                 closeEditModal();
-                alert("? Record updated & YTD Auto-Calculated successfully!");
+                alert("✅ Record updated & YTD Auto-Calculated successfully!");
             }
         }
 
         function directDeleteRecord(role, code) {
             if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
-            if (!confirm(`?? Kya aap waqai is ${role} record (${code}) ko delete karna chahte hain?`)) return;
+            if (!confirm(`⚠️ Kya aap waqai is ${role} record (${code}) ko delete karna chahte hain?`)) return;
 
             if (role === 'SSM') {
                 portalData = portalData.filter(s => s.code !== code);
@@ -1274,7 +1275,7 @@
 
             saveToStorage();
             renderActiveView();
-            alert("??? Record deleted successfully!");
+            alert("🗑️ Record deleted successfully!");
         }
 
         function handleDeleteRecord() {

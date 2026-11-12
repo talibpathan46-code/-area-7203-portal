@@ -98,7 +98,7 @@
             
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <span id="loggedInBadge" class="hidden sm:inline-block bg-slblue-800 border border-slblue-700 text-slgold text-[11px] font-bold px-3 py-1.5 rounded-lg">ADMIN MODE</span>
-                <button id="btnSaveBackup" onclick="exportDatabaseBackup()" class="admin-only bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5" title="Download backup file">
+                <button id="btnSaveBackup" onclick="exportDatabaseBackup()" class="admin-only bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5" title="Download backup">
                     <i class="fa-solid fa-download"></i><span>Save Backup</span>
                 </button>
                 <label id="btnLoadBackup" class="admin-only bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5 cursor-pointer" title="Restore data">
@@ -522,10 +522,10 @@
             { code: "0272308", name: "ABDUL GHAFOOR LASHARI", role: "SSM", months: { "OCTOBER": { fyp: 657298, pol: 15 } }, team: [] }
         ];
 
-        let portalData = JSON.parse(localStorage.getItem('area7203_master_v21')) || defaultMasterDatabase;
+        let portalData = JSON.parse(localStorage.getItem('area7203_master_v22')) || defaultMasterDatabase;
         let activeTab = 'areaHierarchy';
 
-        // === ROLE-BASED AUTHENTICATION ===
+        // === ROBUST ROLE-BASED AUTHENTICATION ===
         const ADMIN_USER = "talib7203";
         const ADMIN_PASS = "statelife123";
         const FIELD_DEFAULT_PASS = "12345";
@@ -629,7 +629,7 @@
         }
 
         function saveToStorage() {
-            localStorage.setItem('area7203_master_v21', JSON.stringify(portalData));
+            localStorage.setItem('area7203_master_v22', JSON.stringify(portalData));
         }
 
         function exportDatabaseBackup() {

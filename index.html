@@ -125,6 +125,9 @@
                 <button onclick="switchMainTab('smHierarchy')" id="btn-tab-smHierarchy" class="px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
                     <i class="fa-solid fa-users-gear"></i><span>03. SM Teams Hierarchy</span>
                 </button>
+                <button onclick="switchMainTab('srPersonal')" id="btn-tab-srPersonal" class="hidden px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
+                    <i class="fa-solid fa-user"></i><span>My Personal Report</span>
+                </button>
                 <button onclick="switchMainTab('addUser')" id="btn-tab-addUser" class="admin-only px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
                     <i class="fa-solid fa-user-plus"></i><span>04. Add New Team Member</span>
                 </button>
@@ -519,7 +522,7 @@
             { code: "0272308", name: "ABDUL GHAFOOR LASHARI", role: "SSM", months: { "OCTOBER": { fyp: 657298, pol: 15 } }, team: [] }
         ];
 
-        let portalData = JSON.parse(localStorage.getItem('area7203_master_v20')) || defaultMasterDatabase;
+        let portalData = JSON.parse(localStorage.getItem('area7203_master_v21')) || defaultMasterDatabase;
         let activeTab = 'areaHierarchy';
 
         // === ROLE-BASED AUTHENTICATION ===
@@ -592,6 +595,7 @@
                 document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
                 document.getElementById('btn-tab-ssmHierarchy').classList.remove('hidden');
                 document.getElementById('btn-tab-smHierarchy').classList.remove('hidden');
+                document.getElementById('btn-tab-srPersonal').classList.add('hidden');
                 switchMainTab('areaHierarchy');
             } else {
                 document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
@@ -600,14 +604,17 @@
                 if (role === 'SSM') {
                     document.getElementById('btn-tab-ssmHierarchy').classList.remove('hidden');
                     document.getElementById('btn-tab-smHierarchy').classList.add('hidden');
+                    document.getElementById('btn-tab-srPersonal').classList.add('hidden');
                     switchMainTab('ssmHierarchy');
                 } else if (role === 'SM') {
                     document.getElementById('btn-tab-ssmHierarchy').classList.add('hidden');
                     document.getElementById('btn-tab-smHierarchy').classList.remove('hidden');
+                    document.getElementById('btn-tab-srPersonal').classList.add('hidden');
                     switchMainTab('smHierarchy');
                 } else if (role === 'SR') {
                     document.getElementById('btn-tab-ssmHierarchy').classList.add('hidden');
                     document.getElementById('btn-tab-smHierarchy').classList.add('hidden');
+                    document.getElementById('btn-tab-srPersonal').classList.remove('hidden');
                     switchMainTab('srPersonal');
                 }
             }
@@ -622,7 +629,7 @@
         }
 
         function saveToStorage() {
-            localStorage.setItem('area7203_master_v20', JSON.stringify(portalData));
+            localStorage.setItem('area7203_master_v21', JSON.stringify(portalData));
         }
 
         function exportDatabaseBackup() {

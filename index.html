@@ -52,15 +52,15 @@
                     SL
                 </div>
                 <h2 class="text-lg font-extrabold text-slblue-950 tracking-tight">STATE LIFE INSURANCE</h2>
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Area 7203 Executive Portal | Security Lock</p>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Area 7203 Portal | Executive &amp; Field Login</p>
             </div>
 
             <form onsubmit="verifyPortalLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Executive User ID</label>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">User ID / Worker Code</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"><i class="fa-solid fa-user"></i></span>
-                        <input type="text" id="loginUser" required placeholder="Enter User ID" class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-bold text-slate-800 outline-none focus:border-slblue-700">
+                        <input type="text" id="loginUser" required placeholder="Admin ID ya Apna Worker Code" class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-bold text-slate-800 outline-none focus:border-slblue-700">
                     </div>
                 </div>
                 <div>
@@ -73,10 +73,13 @@
                 <p id="loginError" class="text-xs font-bold text-red-600 text-center hidden">❌ Ghalat User ID ya Password! Dobara koshish karein.</p>
                 <button type="submit" class="w-full bg-slblue-800 hover:bg-slblue-900 text-white font-bold py-3 rounded-lg shadow-md text-xs uppercase tracking-wider transition flex items-center justify-center space-x-2">
                     <i class="fa-solid fa-right-to-bracket"></i>
-                    <span>Unlock Portal</span>
+                    <span>Login to Portal</span>
                 </button>
             </form>
-            <p class="text-[11px] text-center text-slate-400 font-medium">Authorized Access Only — Ustad Talib Hussain Edition</p>
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-center space-y-1">
+                <p class="text-[11px] text-slate-600 font-semibold">SSM / SM / SR Apna Business Dekhne Ke Liye:</p>
+                <p class="text-[10px] text-slate-500">ID mein apna <b>Worker Code</b> aur Password mein <b>12345</b> likhein.</p>
+            </div>
         </div>
     </div>
 
@@ -89,20 +92,21 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-base leading-tight">STATE LIFE INSURANCE CORPORATION</h1>
-                    <p class="text-xs text-blue-200">Area 7203 Management Portal | Ustad Talib Hussain Edition</p>
+                    <p class="text-xs text-blue-200" id="headerSubtitle">Area 7203 Management Portal | Ustad Talib Hussain Edition</p>
                 </div>
             </div>
             
             <div class="flex items-center space-x-2 sm:space-x-3">
-                <button onclick="exportDatabaseBackup()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5" title="Download backup file to your computer">
+                <span id="loggedInBadge" class="hidden sm:inline-block bg-slblue-800 border border-slblue-700 text-slgold text-[11px] font-bold px-3 py-1.5 rounded-lg">ADMIN MODE</span>
+                <button id="btnSaveBackup" onclick="exportDatabaseBackup()" class="admin-only bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5" title="Download backup file to your computer">
                     <i class="fa-solid fa-download"></i><span>Save Backup</span>
                 </button>
-                <label class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5 cursor-pointer" title="Restore data from backup file">
+                <label id="btnLoadBackup" class="admin-only bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5 cursor-pointer" title="Restore data from backup file">
                     <i class="fa-solid fa-upload"></i><span>Load Backup</span>
                     <input type="file" id="importFile" onchange="importDatabaseBackup(event)" class="hidden" accept=".json">
                 </label>
-                <button onclick="logoutPortal()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Lock Portal">
-                    <i class="fa-solid fa-lock"></i><span class="hidden sm:inline">Lock</span>
+                <button onclick="logoutPortal()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Logout / Lock Portal">
+                    <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
                 </button>
             </div>
         </div>
@@ -111,8 +115,8 @@
     <!-- Main Navigation Bar -->
     <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-30 no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto">
-            <div class="flex space-x-1 py-2">
-                <button onclick="switchMainTab('areaHierarchy')" id="btn-tab-areaHierarchy" class="px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 bg-slblue-700 text-white shadow">
+            <div class="flex space-x-1 py-2" id="navTabsContainer">
+                <button onclick="switchMainTab('areaHierarchy')" id="btn-tab-areaHierarchy" class="admin-only px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 bg-slblue-700 text-white shadow">
                     <i class="fa-solid fa-sitemap"></i><span>01. Area Hierarchy &amp; Business</span>
                 </button>
                 <button onclick="switchMainTab('ssmHierarchy')" id="btn-tab-ssmHierarchy" class="px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
@@ -121,7 +125,7 @@
                 <button onclick="switchMainTab('smHierarchy')" id="btn-tab-smHierarchy" class="px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
                     <i class="fa-solid fa-users-gear"></i><span>03. SM Teams Hierarchy</span>
                 </button>
-                <button onclick="switchMainTab('addUser')" id="btn-tab-addUser" class="px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
+                <button onclick="switchMainTab('addUser')" id="btn-tab-addUser" class="admin-only px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
                     <i class="fa-solid fa-user-plus"></i><span>04. Add New Team Member</span>
                 </button>
             </div>
@@ -150,8 +154,8 @@
     <!-- Main Content Container -->
     <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 space-y-6">
 
-        <!-- STATS OVERVIEW CARDS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
+        <!-- STATS OVERVIEW CARDS (ADMIN ONLY) -->
+        <div id="adminStatsOverview" class="admin-only grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div>
@@ -208,7 +212,7 @@
                     <div>
                         <h1 class="text-xl font-black text-slblue-950">STATE LIFE INSURANCE CORPORATION OF PAKISTAN</h1>
                         <h2 class="text-sm font-bold text-slate-700">AREA MANAGER PORTAL - AREA CODE 7203 (LARKANA ZONE)</h2>
-                        <p class="text-xs text-slate-500 mt-0.5" id="printReportTitle">Official Area Cadre Business Performance Report</p>
+                        <p class="text-xs text-slate-500 mt-0.5" id="printReportTitle">Official Cadre Business Performance Report</p>
                     </div>
                     <div class="text-right">
                         <span class="bg-slblue-900 text-white text-xs font-bold px-3 py-1 rounded">AREA 7203</span>
@@ -217,12 +221,12 @@
                 </div>
             </div>
 
-            <!-- TAB 01: AREA HIERARCHY & PRINT VIEW -->
+            <!-- TAB 01: AREA HIERARCHY & PRINT VIEW (ADMIN ONLY) -->
             <div id="view-areaHierarchy" class="portal-view space-y-6">
                 <div class="flex justify-between items-center border-b pb-3 no-print">
                     <div>
                         <h2 class="text-lg font-bold text-slate-900">01. Area 7203 Full Direct Cadre Report</h2>
-                        <p class="text-xs text-slate-500">Is view mein SSMs, SMs aur SRs apnay business ke hisab se alag alag sorted show honge (chahe zero entry kyun na ho).</p>
+                        <p class="text-xs text-slate-500">Is view mein SSMs, SMs aur SRs apnay business ke hisab se alag alag sorted show honge.</p>
                     </div>
                     <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow flex items-center space-x-1.5">
                         <i class="fa-solid fa-print"></i><span>Print Area Report</span>
@@ -257,7 +261,7 @@
                 <!-- 2. SM Direct Table -->
                 <div class="space-y-3 pt-4">
                     <div class="bg-purple-900 text-white px-4 py-2.5 rounded-lg flex items-center justify-between shadow-sm">
-                        <span class="font-extrabold text-xs uppercase tracking-wider"><i class="fa-solid fa-users-gear mr-2 text-purple-300"></i>2. Sales Managers (SMs) List (Chahe Zero Entry Ho)</span>
+                        <span class="font-extrabold text-xs uppercase tracking-wider"><i class="fa-solid fa-users-gear mr-2 text-purple-300"></i>2. Sales Managers (SMs) List</span>
                         <span class="text-xs bg-purple-800 px-2.5 py-0.5 rounded font-mono text-purple-200" id="smCountBadge">0 SMs</span>
                     </div>
                     <div class="overflow-x-auto border rounded-xl">
@@ -283,7 +287,7 @@
                 <!-- 3. SR Direct Table -->
                 <div class="space-y-3 pt-4">
                     <div class="bg-slate-800 text-white px-4 py-2.5 rounded-lg flex items-center justify-between shadow-sm">
-                        <span class="font-extrabold text-xs uppercase tracking-wider"><i class="fa-solid fa-user-group mr-2 text-emerald-400"></i>3. Sales Representatives (SRs) List (Entire Area)</span>
+                        <span class="font-extrabold text-xs uppercase tracking-wider"><i class="fa-solid fa-user-group mr-2 text-emerald-400"></i>3. Sales Representatives (SRs) List</span>
                         <span class="text-xs bg-slate-700 px-2.5 py-0.5 rounded font-mono text-emerald-300" id="srCountBadge">0 SRs</span>
                     </div>
                     <div class="overflow-x-auto border rounded-xl">
@@ -311,8 +315,8 @@
             <div id="view-ssmHierarchy" class="portal-view space-y-6 hidden">
                 <div class="flex justify-between items-center border-b pb-3 no-print">
                     <div>
-                        <h2 class="text-lg font-bold text-slate-900">02. SSM Units Hierarchy &amp; Individual Print View</h2>
-                        <p class="text-xs text-slate-500">Aap kisi bhi SSM unit par click karke uske andar ke SMs/SRs dekh saktay hain ya us specific SSM ka alag print nikal saktay hain.</p>
+                        <h2 class="text-lg font-bold text-slate-900" id="ssmViewTitle">02. SSM Units Hierarchy &amp; Individual Print View</h2>
+                        <p class="text-xs text-slate-500" id="ssmViewDesc">SSM unit ke andar ke SMs/SRs ki tafseel aur print report.</p>
                     </div>
                 </div>
                 <div id="ssmCardsContainer" class="space-y-4"></div>
@@ -322,14 +326,28 @@
             <div id="view-smHierarchy" class="portal-view space-y-6 hidden">
                 <div class="flex justify-between items-center border-b pb-3 no-print">
                     <div>
-                        <h2 class="text-lg font-bold text-slate-900">03. SM Teams Hierarchy &amp; SRs Management</h2>
-                        <p class="text-xs text-slate-500">Tamam SMs aur unke zair-e-nugrani SRs ki individual report aur details.</p>
+                        <h2 class="text-lg font-bold text-slate-900" id="smViewTitle">03. SM Teams Hierarchy &amp; SRs Management</h2>
+                        <p class="text-xs text-slate-500" id="smViewDesc">SM aur unke zair-e-nugrani SRs ki individual report aur details.</p>
                     </div>
                 </div>
                 <div id="smCardsContainer" class="space-y-4"></div>
             </div>
 
-            <!-- TAB 04: ADD USER / TEAM -->
+            <!-- TAB 04: INDIVIDUAL SR PERSONAL VIEW (READ-ONLY) -->
+            <div id="view-srPersonal" class="portal-view space-y-6 hidden">
+                <div class="flex justify-between items-center border-b pb-3 no-print">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Personal Business Performance Report (Read-Only)</h2>
+                        <p class="text-xs text-slate-500">Aapka apna mahana aur salana (YTD) business record.</p>
+                    </div>
+                    <button onclick="window.print()" class="bg-slblue-700 hover:bg-slblue-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow flex items-center space-x-1.5">
+                        <i class="fa-solid fa-print"></i><span>Print My Report</span>
+                    </button>
+                </div>
+                <div id="srPersonalCardContainer"></div>
+            </div>
+
+            <!-- TAB 05: ADD USER / TEAM (ADMIN ONLY) -->
             <div id="view-addUser" class="portal-view space-y-6 hidden no-print">
                 <div class="max-w-2xl mx-auto bg-slate-50 border border-slate-200 p-6 rounded-xl shadow-sm space-y-4">
                     <div class="border-b pb-3">
@@ -381,7 +399,7 @@
         </div>
     </main>
 
-    <!-- FULL EDIT FORM MODAL -->
+    <!-- FULL EDIT FORM MODAL (ADMIN ONLY) -->
     <div id="editModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
         <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-slate-200">
             <div class="flex items-center justify-between border-b pb-3">
@@ -404,15 +422,14 @@
                 </div>
 
                 <div class="p-4 bg-slblue-50/70 rounded-xl border border-slblue-200 space-y-3">
-                    <h4 class="text-xs font-extrabold text-slblue-900 uppercase">Auto-Accumulate Business (<span id="editMonthLabel">OCTOBER</span>)</h4>
-                    <p class="text-[11px] text-slate-600">Yahan naya business enter karen — system pichle saare business mein ise khud-ba-khud plus kardega!</p>
+                    <h4 class="text-xs font-extrabold text-slblue-900 uppercase">Update Business (<span id="editMonthLabel">OCTOBER</span>)</h4>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">New FYP to Add (Rs.)</label>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Month FYP (Rs.)</label>
                             <input type="number" id="editMonthFyp" required class="w-full px-3 py-2 bg-white border rounded text-xs font-bold text-slblue-700" value="0">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">New Policies to Add (POL)</label>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Month Policies (POL)</label>
                             <input type="number" id="editMonthPol" required class="w-full px-3 py-2 bg-white border rounded text-xs font-bold text-slblue-700" value="0">
                         </div>
                     </div>
@@ -424,7 +441,7 @@
                     </button>
                     <div class="space-x-2">
                         <button type="button" onclick="closeEditModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
-                        <button type="submit" class="px-5 py-2 text-xs font-bold bg-slblue-700 text-white rounded-lg shadow hover:bg-slblue-800">Auto-Update Record</button>
+                        <button type="submit" class="px-5 py-2 text-xs font-bold bg-slblue-700 text-white rounded-lg shadow hover:bg-slblue-800">Update Record</button>
                     </div>
                 </div>
             </form>
@@ -433,36 +450,7 @@
 
     <!-- SCRIPT CORE LOGIC -->
     <script>
-        // === SECURITY LOGIN CHECK ===
-        const VALID_USER = "talib7203";
-        const VALID_PASS = "statelife123";
-
-        function checkLoginStatus() {
-            if (sessionStorage.getItem('sl_portal_unlocked') === 'true') {
-                document.getElementById('loginOverlay').classList.add('hidden');
-            }
-        }
-
-        function verifyPortalLogin(e) {
-            e.preventDefault();
-            const u = document.getElementById('loginUser').value.trim();
-            const p = document.getElementById('loginPass').value.trim();
-            if (u === VALID_USER && p === VALID_PASS) {
-                sessionStorage.setItem('sl_portal_unlocked', 'true');
-                document.getElementById('loginOverlay').classList.add('hidden');
-                document.getElementById('loginError').classList.add('hidden');
-            } else {
-                document.getElementById('loginError').classList.remove('hidden');
-            }
-        }
-
-        function logoutPortal() {
-            sessionStorage.removeItem('sl_portal_unlocked');
-            document.getElementById('loginOverlay').classList.remove('hidden');
-            document.getElementById('loginPass').value = '';
-        }
-
-        // === ORIGINAL PORTAL DATA & LOGIC ===
+        // === DATABASE INITIALIZATION ===
         const initialPortalDatabase = [
             {
                 code: "0272033",
@@ -520,11 +508,113 @@
         let portalData = JSON.parse(localStorage.getItem('area7203_master_v18')) || initialPortalDatabase;
         let activeTab = 'areaHierarchy';
 
+        // === ROLE-BASED AUTHENTICATION ===
+        const ADMIN_USER = "talib7203";
+        const ADMIN_PASS = "statelife123";
+        const FIELD_DEFAULT_PASS = "12345";
+
+        let currentUserSession = JSON.parse(sessionStorage.getItem('sl_portal_session')) || null;
+
+        function checkLoginStatus() {
+            if (currentUserSession) {
+                document.getElementById('loginOverlay').classList.add('hidden');
+                applyRolePermissions();
+            }
+        }
+
+        function verifyPortalLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUser').value.trim();
+            const p = document.getElementById('loginPass').value.trim();
+
+            // 1. Check Master Admin
+            if (u === ADMIN_USER && p === ADMIN_PASS) {
+                currentUserSession = { role: 'ADMIN', code: '7203', name: 'USTAD TALIB HUSSAIN' };
+                sessionStorage.setItem('sl_portal_session', JSON.stringify(currentUserSession));
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('loginError').classList.add('hidden');
+                applyRolePermissions();
+                return;
+            }
+
+            // 2. Check SSM, SM, or SR by Worker Code
+            if (p === FIELD_DEFAULT_PASS) {
+                let foundUser = null;
+
+                portalData.forEach(ssm => {
+                    if (ssm.code === u) {
+                        foundUser = { role: 'SSM', code: ssm.code, name: ssm.name };
+                    }
+                    ssm.team.forEach(sm => {
+                        if (sm.code === u) {
+                            foundUser = { role: 'SM', code: sm.code, name: sm.name, parentSsmCode: ssm.code };
+                        }
+                        sm.srs.forEach(sr => {
+                            if (sr.code === u) {
+                                foundUser = { role: 'SR', code: sr.code, name: sr.name, parentSmName: sm.name, parentSsmName: ssm.name };
+                            }
+                        });
+                    });
+                });
+
+                if (foundUser) {
+                    currentUserSession = foundUser;
+                    sessionStorage.setItem('sl_portal_session', JSON.stringify(currentUserSession));
+                    document.getElementById('loginOverlay').classList.add('hidden');
+                    document.getElementById('loginError').classList.add('hidden');
+                    applyRolePermissions();
+                    return;
+                }
+            }
+
+            document.getElementById('loginError').classList.remove('hidden');
+        }
+
+        function applyRolePermissions() {
+            if (!currentUserSession) return;
+            const role = currentUserSession.role;
+            const badge = document.getElementById('loggedInBadge');
+
+            if (role === 'ADMIN') {
+                badge.innerText = "ADMIN: FULL ACCESS";
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+                switchMainTab('areaHierarchy');
+            } else {
+                // Hide all Admin-only controls (Edit, Delete, Backup, Add Member, Full Area Stats)
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
+                badge.innerText = `${role} READ-ONLY: ${currentUserSession.name}`;
+
+                if (role === 'SSM') {
+                    document.getElementById('btn-tab-ssmHierarchy').classList.remove('hidden');
+                    document.getElementById('btn-tab-smHierarchy').classList.add('hidden');
+                    switchMainTab('ssmHierarchy');
+                } else if (role === 'SM') {
+                    document.getElementById('btn-tab-ssmHierarchy').classList.add('hidden');
+                    document.getElementById('btn-tab-smHierarchy').classList.remove('hidden');
+                    switchMainTab('smHierarchy');
+                } else if (role === 'SR') {
+                    document.getElementById('btn-tab-ssmHierarchy').classList.add('hidden');
+                    document.getElementById('btn-tab-smHierarchy').classList.add('hidden');
+                    switchMainTab('srPersonal');
+                }
+            }
+        }
+
+        function logoutPortal() {
+            sessionStorage.removeItem('sl_portal_session');
+            currentUserSession = null;
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('loginPass').value = '';
+            document.getElementById('loginUser').value = '';
+        }
+
+        // === CORE PORTAL FUNCTIONS ===
         function saveToStorage() {
             localStorage.setItem('area7203_master_v18', JSON.stringify(portalData));
         }
 
         function exportDatabaseBackup() {
+            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(portalData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
@@ -536,6 +626,7 @@
         }
 
         function importDatabaseBackup(e) {
+            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
             const fileReader = new FileReader();
             if (e.target.files[0]) {
                 fileReader.readAsText(e.target.files[0], "UTF-8");
@@ -582,14 +673,18 @@
         function switchMainTab(tabId) {
             activeTab = tabId;
             document.querySelectorAll('.portal-view').forEach(el => el.classList.add('hidden'));
-            document.getElementById('view-' + tabId).classList.remove('hidden');
+            const targetView = document.getElementById('view-' + tabId);
+            if (targetView) targetView.classList.remove('hidden');
 
             ['areaHierarchy', 'ssmHierarchy', 'smHierarchy', 'addUser'].forEach(t => {
                 const btn = document.getElementById('btn-tab-' + t);
+                if (!btn) return;
                 if (t === tabId) {
-                    btn.className = 'px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 bg-slblue-700 text-white shadow';
+                    btn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                    btn.classList.add('bg-slblue-700', 'text-white', 'shadow');
                 } else {
-                    btn.className = 'px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100';
+                    btn.classList.remove('bg-slblue-700', 'text-white', 'shadow');
+                    btn.classList.add('text-slate-600', 'hover:bg-slate-100');
                 }
             });
 
@@ -603,10 +698,11 @@
             if (activeTab === 'areaHierarchy') renderAreaDirectLists(selectedMonth);
             else if (activeTab === 'ssmHierarchy') renderSsmUnitsHierarchy(selectedMonth);
             else if (activeTab === 'smHierarchy') renderSmTeamsHierarchy(selectedMonth);
+            else if (activeTab === 'srPersonal') renderSrPersonalView(selectedMonth);
             else if (activeTab === 'addUser') populateRegSsmOptions();
         }
 
-        // 01. AREA DIRECT LISTS
+        // 01. AREA DIRECT LISTS (ADMIN ONLY)
         function renderAreaDirectLists(month) {
             let totalAreaMonthFyp = 0, totalAreaMonthPol = 0;
             let totalAreaYtdFyp = 0, totalAreaYtdPol = 0;
@@ -736,10 +832,15 @@
             document.getElementById('srCountBadge').innerText = `${allSrList.length} SRs`;
         }
 
-        // 02. SSM UNITS HIERARCHY
+        // 02. SSM UNITS HIERARCHY (FILTERED FOR SSM USER, FULL FOR ADMIN)
         function renderSsmUnitsHierarchy(month) {
+            const isAdmin = currentUserSession && currentUserSession.role === 'ADMIN';
+            const targetList = isAdmin 
+                ? portalData 
+                : portalData.filter(s => s.code === currentUserSession.code);
+
             const container = document.getElementById('ssmCardsContainer');
-            container.innerHTML = portalData.map((ssm, idx) => {
+            container.innerHTML = targetList.map((ssm, idx) => {
                 let ssmSelf = getRecordMonthStats(ssm, month);
                 let ssmYtdSelf = getRecordYtdStats(ssm);
                 let ssmMonthFyp = ssmSelf.fyp, ssmMonthPol = ssmSelf.pol;
@@ -756,6 +857,14 @@
                         let srY = getRecordYtdStats(sr);
                         mFyp += srM.fyp; mPol += srM.pol;
                         yFyp += srY.fyp; yPol += srY.pol;
+
+                        const actionCell = isAdmin 
+                            ? `<td class="p-2.5 text-center no-print space-x-1">
+                                <button onclick="openEditModal('SR', '${sr.code}')" class="text-xs bg-slate-100 px-2 py-0.5 border rounded"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="directDeleteRecord('SR', '${sr.code}')" class="text-xs bg-red-50 text-red-600 px-2 py-0.5 border border-red-200 rounded"><i class="fa-solid fa-trash"></i></button>
+                               </td>` 
+                            : '';
+
                         return `
                             <tr class="border-b bg-white">
                                 <td class="p-2.5 border-r font-mono text-center font-bold text-slate-500">-</td>
@@ -765,15 +874,19 @@
                                 <td class="p-2.5 border-r text-center font-bold">${srM.pol} POL</td>
                                 <td class="p-2.5 border-r text-right font-bold text-emerald-700">${formatCurrency(srY.fyp)}</td>
                                 <td class="p-2.5 border-r text-center font-bold text-emerald-800">${srY.pol} POL</td>
-                                <td class="p-2.5 text-center no-print space-x-1">
-                                    <button onclick="openEditModal('SR', '${sr.code}')" class="text-xs bg-slate-100 px-2 py-0.5 border rounded"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick="directDeleteRecord('SR', '${sr.code}')" class="text-xs bg-red-50 text-red-600 px-2 py-0.5 border border-red-200 rounded"><i class="fa-solid fa-trash"></i></button>
-                                </td>
+                                ${actionCell}
                             </tr>`;
                     }).join('');
 
                     ssmMonthFyp += mFyp; ssmMonthPol += mPol;
                     ssmYtdFyp += yFyp; ssmYtdPol += yPol;
+
+                    const smActionCell = isAdmin 
+                        ? `<td class="p-2.5 text-center no-print space-x-1">
+                            <button onclick="openEditModal('SM', '${sm.code}')" class="bg-white border px-2 py-1 rounded text-xs font-bold"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="directDeleteRecord('SM', '${sm.code}')" class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+                           </td>` 
+                        : '';
 
                     return `
                         <tr class="border-b bg-purple-50/40">
@@ -784,19 +897,19 @@
                             <td class="p-2.5 border-r text-center font-bold">${mPol} POL</td>
                             <td class="p-2.5 border-r text-right font-bold text-emerald-700">${formatCurrency(yFyp)}</td>
                             <td class="p-2.5 border-r text-center font-bold text-emerald-800">${yPol} POL</td>
-                            <td class="p-2.5 text-center no-print space-x-1">
-                                <button onclick="openEditModal('SM', '${sm.code}')" class="bg-white border px-2 py-1 rounded text-xs font-bold"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="directDeleteRecord('SM', '${sm.code}')" class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
-                            </td>
+                            ${smActionCell}
                         </tr>
                         ${srRows}`;
                 }).join('');
 
+                const actionHeader = isAdmin ? `<th class="p-2.5 text-center no-print w-28">ACTION</th>` : '';
+                const emptyColspan = isAdmin ? 8 : 7;
+
                 return `
                     <div class="border rounded-xl bg-white shadow-sm overflow-hidden" id="ssm-unit-card-${ssm.code}">
-                        <div class="p-4 bg-slate-50 border-b flex items-center justify-between">
+                        <div class="p-4 bg-slate-50 border-b flex flex-wrap gap-3 items-center justify-between">
                             <div>
-                                <span class="bg-slblue-100 text-slblue-800 text-[10px] font-extrabold px-2 py-0.5 rounded">SSM UNIT ${idx + 1}</span>
+                                <span class="bg-slblue-100 text-slblue-800 text-[10px] font-extrabold px-2 py-0.5 rounded">SSM UNIT REPORT</span>
                                 <h3 class="text-base font-extrabold text-slate-900 mt-1">${ssm.name} (${ssm.code})</h3>
                             </div>
                             <div class="flex items-center space-x-4">
@@ -824,23 +937,26 @@
                                         <th class="p-2.5 border-r text-center">POLICIES</th>
                                         <th class="p-2.5 border-r text-right">YTD TOTAL FYP</th>
                                         <th class="p-2.5 border-r text-center">YTD POL</th>
-                                        <th class="p-2.5 text-center no-print w-28">ACTION</th>
+                                        ${actionHeader}
                                     </tr>
                                 </thead>
-                                <tbody>${smRows || '<tr><td colspan="8" class="p-3 text-center text-slate-400">No SMs registered.</td></tr>'}</tbody>
+                                <tbody>${smRows || `<tr><td colspan="${emptyColspan}" class="p-3 text-center text-slate-400">No SMs registered.</td></tr>`}</tbody>
                             </table>
                         </div>
                     </div>`;
             }).join('');
         }
 
-        // 03. SM TEAMS HIERARCHY
+        // 03. SM TEAMS HIERARCHY (FILTERED FOR SM USER, FULL FOR ADMIN)
         function renderSmTeamsHierarchy(month) {
+            const isAdmin = currentUserSession && currentUserSession.role === 'ADMIN';
             const container = document.getElementById('smCardsContainer');
             let smCardsHtml = '';
 
             portalData.forEach(ssm => {
                 ssm.team.forEach(sm => {
+                    if (!isAdmin && sm.code !== currentUserSession.code) return;
+
                     let smM = getRecordMonthStats(sm, month);
                     let smY = getRecordYtdStats(sm);
                     let mFyp = smM.fyp, mPol = smM.pol;
@@ -852,6 +968,13 @@
                         mFyp += srM.fyp; mPol += srM.pol;
                         yFyp += srY.fyp; yPol += srY.pol;
 
+                        const srActionCell = isAdmin 
+                            ? `<td class="p-2.5 text-center no-print space-x-1">
+                                <button onclick="openEditModal('SR', '${sr.code}')" class="bg-slate-100 border px-2 py-0.5 rounded text-xs font-bold"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="directDeleteRecord('SR', '${sr.code}')" class="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+                               </td>` 
+                            : '';
+
                         return `
                             <tr class="border-b">
                                 <td class="p-2.5 border-r text-center">${i + 1}</td>
@@ -861,16 +984,16 @@
                                 <td class="p-2.5 border-r text-center font-bold">${srM.pol} POL</td>
                                 <td class="p-2.5 border-r text-right font-bold text-emerald-700">${formatCurrency(srY.fyp)}</td>
                                 <td class="p-2.5 border-r text-center font-bold text-emerald-800">${srY.pol} POL</td>
-                                <td class="p-2.5 text-center no-print space-x-1">
-                                    <button onclick="openEditModal('SR', '${sr.code}')" class="bg-slate-100 border px-2 py-0.5 rounded text-xs font-bold"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick="directDeleteRecord('SR', '${sr.code}')" class="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
-                                </td>
+                                ${srActionCell}
                             </tr>`;
                     }).join('');
 
+                    const actionHeader = isAdmin ? `<th class="p-2.5 text-center no-print w-28">ACTION</th>` : '';
+                    const emptyColspan = isAdmin ? 8 : 7;
+
                     smCardsHtml += `
                         <div class="border rounded-xl bg-white p-4 shadow-sm space-y-3" id="sm-card-${sm.code}">
-                            <div class="flex justify-between items-center border-b pb-2">
+                            <div class="flex flex-wrap gap-3 justify-between items-center border-b pb-2">
                                 <div>
                                     <span class="text-[10px] font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded">REPORTING SSM: ${ssm.name}</span>
                                     <h4 class="text-sm font-extrabold text-slate-900 mt-1">${sm.name} (${sm.code})</h4>
@@ -897,16 +1020,62 @@
                                         <th class="p-2.5 border-r text-center">POL</th>
                                         <th class="p-2.5 border-r text-right">YTD FYP</th>
                                         <th class="p-2.5 border-r text-center">YTD POL</th>
-                                        <th class="p-2.5 text-center no-print w-28">ACTION</th>
+                                        ${actionHeader}
                                     </tr>
                                 </thead>
-                                <tbody>${srRows || '<tr><td colspan="8" class="p-3 text-center text-slate-400">No SRs registered under this SM.</td></tr>'}</tbody>
+                                <tbody>${srRows || `<tr><td colspan="${emptyColspan}" class="p-3 text-center text-slate-400">No SRs registered under this SM.</td></tr>`}</tbody>
                             </table>
                         </div>`;
                 });
             });
 
             container.innerHTML = smCardsHtml;
+        }
+
+        // 04. PERSONAL SR READ-ONLY VIEW
+        function renderSrPersonalView(month) {
+            if (!currentUserSession || currentUserSession.role !== 'SR') return;
+            let srObj = null;
+
+            portalData.forEach(ssm => {
+                ssm.team.forEach(sm => {
+                    const found = sm.srs.find(r => r.code === currentUserSession.code);
+                    if (found) srObj = found;
+                });
+            });
+
+            const container = document.getElementById('srPersonalCardContainer');
+            if (!srObj) {
+                container.innerHTML = `<p class="text-sm text-red-600 font-bold">Record not found.</p>`;
+                return;
+            }
+
+            const mStats = getRecordMonthStats(srObj, month);
+            const yStats = getRecordYtdStats(srObj);
+
+            container.innerHTML = `
+                <div class="border rounded-xl bg-slate-50 p-6 space-y-6">
+                    <div class="flex flex-wrap justify-between items-center border-b pb-4">
+                        <div>
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-2.5 py-1 rounded">SALES REPRESENTATIVE (SR)</span>
+                            <h3 class="text-xl font-black text-slate-900 mt-2">${srObj.name}</h3>
+                            <p class="text-xs font-mono font-bold text-slate-600">Code: ${srObj.code} | SM: ${currentUserSession.parentSmName} | SSM: ${currentUserSession.parentSsmName}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                            <p class="text-xs font-bold uppercase text-slate-500">${month} BUSINESS (FYP)</p>
+                            <p class="text-2xl font-black text-slblue-700 mt-1">${formatCurrency(mStats.fyp)}</p>
+                            <p class="text-xs font-bold text-slate-600 mt-1">Policies: ${mStats.pol} POL</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                            <p class="text-xs font-bold uppercase text-slate-500">YEAR TO DATE (YTD) TOTAL</p>
+                            <p class="text-2xl font-black text-emerald-700 mt-1">${formatCurrency(yStats.fyp)}</p>
+                            <p class="text-xs font-bold text-slate-600 mt-1">YTD Policies: ${yStats.pol} POL</p>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         // PRINT FUNCTIONS
@@ -938,7 +1107,7 @@
             }, 300);
         }
 
-        // REGISTRATION & DUPLICATE CHECK
+        // REGISTRATION & DUPLICATE CHECK (ADMIN ONLY)
         function toggleRegHierarchyFields() {
             const role = document.getElementById('regRole').value;
             const ssmCont = document.getElementById('regSsmContainer');
@@ -969,6 +1138,8 @@
 
         function handleNewUserRegistration(e) {
             e.preventDefault();
+            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
+
             const role = document.getElementById('regRole').value;
             const code = document.getElementById('regCode').value.trim();
             const name = document.getElementById('regName').value.trim().toUpperCase();
@@ -1023,13 +1194,14 @@
             alert("? Kamyabi ke sath register ho gaya aur YTD auto-calculate ho gaya!");
         }
 
-        // FULL EDIT & AUTO-ACCUMULATE LOGIC
+        // FULL EDIT & DELETE LOGIC (ADMIN ONLY)
         function openEditModal(role, workerCode) {
+            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
             const selectedMonth = document.getElementById('selectedMonthFilter').value;
             document.getElementById('editTargetRole').value = role;
             document.getElementById('editOldCode').value = workerCode;
             document.getElementById('editMonthLabel').innerText = selectedMonth;
-            document.getElementById('editModalTitle').innerText = `Edit / Add Business (${role} - ${workerCode})`;
+            document.getElementById('editModalTitle').innerText = `Edit Business (${role} - ${workerCode})`;
 
             let record = null;
             if (role === 'SSM') {
@@ -1054,6 +1226,8 @@
 
         function handleSaveEditModal(e) {
             e.preventDefault();
+            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
+
             const role = document.getElementById('editTargetRole').value;
             const oldCode = document.getElementById('editOldCode').value;
             const newCode = document.getElementById('editWorkerCode').value.trim();
@@ -1087,6 +1261,7 @@
         }
 
         function directDeleteRecord(role, code) {
+            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
             if (!confirm(`?? Kya aap waqai is ${role} record (${code}) ko delete karna chahte hain?`)) return;
 
             if (role === 'SSM') {
@@ -1111,7 +1286,9 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             checkLoginStatus();
-            renderActiveView();
+            if (!currentUserSession) {
+                renderActiveView();
+            }
         });
     </script>
 </body>

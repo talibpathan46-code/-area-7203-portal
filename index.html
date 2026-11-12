@@ -44,6 +44,42 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
+    <!-- SECURITY LOGIN LOCK SCREEN -->
+    <div id="loginOverlay" class="fixed inset-0 bg-slblue-950 z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border-t-4 border-slgold space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-slgold to-yellow-600 flex items-center justify-center font-black text-slate-950 text-2xl shadow-lg mx-auto">
+                    SL
+                </div>
+                <h2 class="text-lg font-extrabold text-slblue-950 tracking-tight">STATE LIFE INSURANCE</h2>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Area 7203 Executive Portal | Security Lock</p>
+            </div>
+
+            <form onsubmit="verifyPortalLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Executive User ID</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" id="loginUser" required placeholder="Enter User ID" class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-bold text-slate-800 outline-none focus:border-slblue-700">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Password</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" id="loginPass" required placeholder="Enter Password" class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-bold text-slate-800 outline-none focus:border-slblue-700">
+                    </div>
+                </div>
+                <p id="loginError" class="text-xs font-bold text-red-600 text-center hidden">❌ Ghalat User ID ya Password! Dobara koshish karein.</p>
+                <button type="submit" class="w-full bg-slblue-800 hover:bg-slblue-900 text-white font-bold py-3 rounded-lg shadow-md text-xs uppercase tracking-wider transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Unlock Portal</span>
+                </button>
+            </form>
+            <p class="text-[11px] text-center text-slate-400 font-medium">Authorized Access Only — Ustad Talib Hussain Edition</p>
+        </div>
+    </div>
+
     <!-- Top Navigation Header -->
     <header class="bg-slblue-900 text-white shadow-md border-b border-slblue-950 no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -57,7 +93,7 @@
                 </div>
             </div>
             
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2 sm:space-x-3">
                 <button onclick="exportDatabaseBackup()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5" title="Download backup file to your computer">
                     <i class="fa-solid fa-download"></i><span>Save Backup</span>
                 </button>
@@ -65,6 +101,9 @@
                     <i class="fa-solid fa-upload"></i><span>Load Backup</span>
                     <input type="file" id="importFile" onchange="importDatabaseBackup(event)" class="hidden" accept=".json">
                 </label>
+                <button onclick="logoutPortal()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Lock Portal">
+                    <i class="fa-solid fa-lock"></i><span class="hidden sm:inline">Lock</span>
+                </button>
             </div>
         </div>
     </header>
@@ -366,7 +405,7 @@
 
                 <div class="p-4 bg-slblue-50/70 rounded-xl border border-slblue-200 space-y-3">
                     <h4 class="text-xs font-extrabold text-slblue-900 uppercase">Auto-Accumulate Business (<span id="editMonthLabel">OCTOBER</span>)</h4>
-                    <p class="text-[11px] text-slate-600">Yahan naya business enter karen � system pichle saare business mein ise khud-ba-khud plus kardega!</p>
+                    <p class="text-[11px] text-slate-600">Yahan naya business enter karen — system pichle saare business mein ise khud-ba-khud plus kardega!</p>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[11px] font-bold text-slate-700 mb-1">New FYP to Add (Rs.)</label>
@@ -394,6 +433,36 @@
 
     <!-- SCRIPT CORE LOGIC -->
     <script>
+        // === SECURITY LOGIN CHECK ===
+        const VALID_USER = "talib7203";
+        const VALID_PASS = "statelife123";
+
+        function checkLoginStatus() {
+            if (sessionStorage.getItem('sl_portal_unlocked') === 'true') {
+                document.getElementById('loginOverlay').classList.add('hidden');
+            }
+        }
+
+        function verifyPortalLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUser').value.trim();
+            const p = document.getElementById('loginPass').value.trim();
+            if (u === VALID_USER && p === VALID_PASS) {
+                sessionStorage.setItem('sl_portal_unlocked', 'true');
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('loginError').classList.add('hidden');
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+
+        function logoutPortal() {
+            sessionStorage.removeItem('sl_portal_unlocked');
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('loginPass').value = '';
+        }
+
+        // === ORIGINAL PORTAL DATA & LOGIC ===
         const initialPortalDatabase = [
             {
                 code: "0272033",
@@ -1041,6 +1110,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
             renderActiveView();
         });
     </script>

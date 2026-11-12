@@ -21,7 +21,7 @@
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #004080; border-radius: 3px; }
@@ -42,11 +42,11 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
 
     <!-- SECURITY LOGIN LOCK SCREEN -->
     <div id="loginOverlay" class="fixed inset-0 bg-slblue-950 z-[100] flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border-t-4 border-slgold space-y-6">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 border-t-4 border-slgold space-y-6">
             <div class="text-center space-y-2">
                 <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-slgold to-yellow-600 flex items-center justify-center font-black text-slate-950 text-2xl shadow-lg mx-auto">
                     SL
@@ -91,18 +91,18 @@
                     SL
                 </div>
                 <div>
-                    <h1 class="font-bold text-base leading-tight">STATE LIFE INSURANCE CORPORATION</h1>
-                    <p class="text-xs text-blue-200" id="headerSubtitle">Area 7203 Management Portal | Ustad Talib Hussain Edition</p>
+                    <h1 class="font-bold text-sm sm:text-base leading-tight">STATE LIFE INSURANCE</h1>
+                    <p class="text-[10px] sm:text-xs text-blue-200" id="headerSubtitle">Area 7203 Management Portal | Ustad Talib Hussain Edition</p>
                 </div>
             </div>
             
-            <div class="flex items-center space-x-2 sm:space-x-3">
+            <div class="flex items-center space-x-2">
                 <span id="loggedInBadge" class="hidden sm:inline-block bg-slblue-800 border border-slblue-700 text-slgold text-[11px] font-bold px-3 py-1.5 rounded-lg">ADMIN MODE</span>
-                <button id="btnSaveBackup" onclick="exportDatabaseBackup()" class="admin-only bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5" title="Download backup">
-                    <i class="fa-solid fa-download"></i><span>Save Backup</span>
+                <button id="btnSaveBackup" onclick="exportDatabaseBackup()" class="admin-only bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-2.5 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Download backup">
+                    <i class="fa-solid fa-download"></i><span class="hidden sm:inline">Save Backup</span>
                 </button>
-                <label id="btnLoadBackup" class="admin-only bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1.5 cursor-pointer" title="Restore data">
-                    <i class="fa-solid fa-upload"></i><span>Load Backup</span>
+                <label id="btnLoadBackup" class="admin-only bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-2.5 py-2 rounded-lg shadow transition flex items-center space-x-1 cursor-pointer" title="Restore data">
+                    <i class="fa-solid fa-upload"></i><span class="hidden sm:inline">Load Backup</span>
                     <input type="file" id="importFile" onchange="importDatabaseBackup(event)" class="hidden" accept=".json">
                 </label>
                 <button onclick="logoutPortal()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1" title="Logout">
@@ -116,26 +116,26 @@
     <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-30 no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto">
             <div class="flex space-x-1 py-2" id="navTabsContainer">
-                <button onclick="switchMainTab('areaHierarchy')" id="btn-tab-areaHierarchy" class="admin-only px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 bg-slblue-700 text-white shadow">
-                    <i class="fa-solid fa-sitemap"></i><span>01. Area Hierarchy &amp; Business</span>
+                <button onclick="switchMainTab('areaHierarchy')" id="btn-tab-areaHierarchy" class="admin-only px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 bg-slblue-700 text-white shadow whitespace-nowrap">
+                    <i class="fa-solid fa-sitemap"></i><span>01. Area Hierarchy</span>
                 </button>
-                <button onclick="switchMainTab('ssmHierarchy')" id="btn-tab-ssmHierarchy" class="px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
-                    <i class="fa-solid fa-user-tie"></i><span>02. SSM Units Hierarchy</span>
+                <button onclick="switchMainTab('ssmHierarchy')" id="btn-tab-ssmHierarchy" class="px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-user-tie"></i><span>02. SSM Units</span>
                 </button>
-                <button onclick="switchMainTab('smHierarchy')" id="btn-tab-smHierarchy" class="px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
-                    <i class="fa-solid fa-users-gear"></i><span>03. SM Teams Hierarchy</span>
+                <button onclick="switchMainTab('smHierarchy')" id="btn-tab-smHierarchy" class="px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-users-gear"></i><span>03. SM Teams</span>
                 </button>
-                <button onclick="switchMainTab('srPersonal')" id="btn-tab-srPersonal" class="hidden px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
+                <button onclick="switchMainTab('srPersonal')" id="btn-tab-srPersonal" class="hidden px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100 whitespace-nowrap">
                     <i class="fa-solid fa-user"></i><span>My Personal Report</span>
                 </button>
-                <button onclick="switchMainTab('addUser')" id="btn-tab-addUser" class="admin-only px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100">
-                    <i class="fa-solid fa-user-plus"></i><span>04. Add New Team Member</span>
+                <button onclick="switchMainTab('addUser')" id="btn-tab-addUser" class="admin-only px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-user-plus"></i><span>04. Add Member</span>
                 </button>
             </div>
 
             <!-- Month Filter -->
-            <div class="flex items-center space-x-2 py-2">
-                <label class="text-xs font-bold text-slate-600 uppercase">Select Month:</label>
+            <div class="flex items-center space-x-2 py-2 pl-4">
+                <label class="text-xs font-bold text-slate-600 uppercase hidden md:inline">Month:</label>
                 <select id="selectedMonthFilter" onchange="renderActiveView()" class="px-3 py-1.5 bg-slate-100 border border-slate-300 rounded-lg text-xs font-bold text-slblue-700 outline-none focus:border-slblue-600">
                     <option value="JANUARY">JANUARY</option>
                     <option value="FEBRUARY">FEBRUARY</option>
@@ -522,7 +522,7 @@
             { code: "0272308", name: "ABDUL GHAFOOR LASHARI", role: "SSM", months: { "OCTOBER": { fyp: 657298, pol: 15 } }, team: [] }
         ];
 
-        let portalData = JSON.parse(localStorage.getItem('area7203_master_v22')) || defaultMasterDatabase;
+        let portalData = JSON.parse(localStorage.getItem('area7203_master_v23')) || defaultMasterDatabase;
         let activeTab = 'areaHierarchy';
 
         // === ROBUST ROLE-BASED AUTHENTICATION ===
@@ -629,7 +629,7 @@
         }
 
         function saveToStorage() {
-            localStorage.setItem('area7203_master_v22', JSON.stringify(portalData));
+            localStorage.setItem('area7203_master_v23', JSON.stringify(portalData));
         }
 
         function exportDatabaseBackup() {

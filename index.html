@@ -127,6 +127,9 @@
                 <button onclick="switchMainTab('addUser')" id="btn-tab-addUser" class="admin-only px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100 whitespace-nowrap">
                     <i class="fa-solid fa-user-plus"></i><span>04. Add Member</span>
                 </button>
+                <button onclick="switchMainTab('backupSystem')" id="btn-tab-backupSystem" class="admin-only px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-database"></i><span>05. Save Backup</span>
+                </button>
             </div>
 
             <!-- Month Filter -->
@@ -395,6 +398,60 @@
                 </div>
             </div>
 
+            <!-- TAB 06: BACKUP & RESTORE SYSTEM (ADMIN ONLY) -->
+            <div id="view-backupSystem" class="portal-view space-y-6 hidden no-print">
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <div class="border-b pb-3">
+                        <h2 class="text-lg font-bold text-slate-900"><i class="fa-solid fa-shield-halved text-slblue-700 mr-2"></i>05. Data Backup &amp; Restore System</h2>
+                        <p class="text-xs text-slate-500">Apne tamam entries aur updates ko computer mein mehfooz (Save) karein ya purana backup wapas load karein.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Save Backup Card -->
+                        <div class="bg-emerald-50/60 border border-emerald-200 p-6 rounded-xl shadow-sm flex flex-col justify-between space-y-4">
+                            <div class="space-y-2">
+                                <div class="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow">
+                                    <i class="fa-solid fa-download"></i>
+                                </div>
+                                <h3 class="text-base font-extrabold text-emerald-950 uppercase">1. Save Backup File</h3>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Portal ka tamam maujooda data (SSMs, SMs, SRs aur tamam mahino ke figures) ek JSON file ki shakal mein aapke computer ke <b>Downloads</b> folder mein save ho jayega.
+                                </p>
+                            </div>
+                            <div class="space-y-2 pt-2">
+                                <p id="lastBackupStatus" class="text-[11px] font-semibold text-emerald-800 bg-white/80 px-3 py-1.5 rounded border border-emerald-200">
+                                    <i class="fa-solid fa-clock mr-1"></i>Last Backup: Abhi tak nahi liya gaya
+                                </p>
+                                <button onclick="downloadPortalBackup()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg shadow transition flex items-center justify-center space-x-2 text-xs uppercase tracking-wider">
+                                    <i class="fa-solid fa-floppy-disk text-sm"></i>
+                                    <span>Save Backup Now</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Restore Backup Card -->
+                        <div class="bg-slblue-50/60 border border-slblue-200 p-6 rounded-xl shadow-sm flex flex-col justify-between space-y-4">
+                            <div class="space-y-2">
+                                <div class="w-12 h-12 rounded-xl bg-slblue-700 text-white flex items-center justify-center text-xl shadow">
+                                    <i class="fa-solid fa-upload"></i>
+                                </div>
+                                <h3 class="text-base font-extrabold text-slblue-950 uppercase">2. Restore From Backup</h3>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Agar browser history clear ho jaye ya aap kisi doosre computer par portal kholein, toh apni save ki hui <b>.json</b> backup file select karke sara data wapas le aayein.
+                                </p>
+                            </div>
+                            <div class="space-y-2 pt-2">
+                                <input type="file" id="restoreFileInput" accept=".json" onchange="handleRestoreBackupFile(event)" class="hidden">
+                                <button onclick="document.getElementById('restoreFileInput').click()" class="w-full bg-slblue-700 hover:bg-slblue-800 text-white font-bold py-3 px-4 rounded-lg shadow transition flex items-center justify-center space-x-2 text-xs uppercase tracking-wider">
+                                    <i class="fa-solid fa-folder-open text-sm"></i>
+                                    <span>Upload &amp; Restore File</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -449,74 +506,217 @@
 
     <!-- SCRIPT CORE LOGIC -->
     <script>
-        // === COMPLETE AREA 7203 MASTER DATABASE (NON-DUPLICATE ACCURATE MAPPING) ===
         const defaultMasterDatabase = [
             {
                 code: "0272033",
                 name: "MUHAMMAD AKRAM AWAN",
                 role: "SSM",
-                months: { "OCTOBER": { fyp: 11989561, pol: 103 } },
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
                 team: [
                     {
                         code: "0972630",
                         name: "AMEET KUMAR",
                         role: "SM",
-                        months: { "OCTOBER": { fyp: 5000000, pol: 40 } },
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
                         srs: [
-                            { code: "05734323", name: "DEEPAK KUMAR", months: { "OCTOBER": { fyp: 500000, pol: 5 } } },
-                            { code: "05734711", name: "NANIK RAM", months: { "OCTOBER": { fyp: 500000, pol: 5 } } },
-                            { code: "05734322", name: "RAHUL KUMAR", months: { "OCTOBER": { fyp: 500000, pol: 5 } } },
-                            { code: "05735085", name: "SHIV OM", months: { "OCTOBER": { fyp: 500000, pol: 5 } } },
-                            { code: "05734350", name: "VICKY KUMAR", months: { "OCTOBER": { fyp: 500000, pol: 5 } } },
-                            { code: "05735014", name: "RAVINDER KUMAR", months: { "OCTOBER": { fyp: 500000, pol: 3 } } },
-                            { code: "05734710", name: "VIVEK KHURANA", months: { "OCTOBER": { fyp: 500000, pol: 4 } } },
-                            { code: "05735011", name: "DINESH KUMAR", months: { "OCTOBER": { fyp: 500000, pol: 3 } } },
-                            { code: "05734930", name: "ROHAN KUMAR", months: { "OCTOBER": { fyp: 250000, pol: 2 } } },
-                            { code: "05735037", name: "PRIYA KUMARI", months: { "OCTOBER": { fyp: 250000, pol: 3 } } }
+                            { code: "05734323", name: "DEEPAK KUMAR", months: { "OCTOBER": { fyp: 3290201, pol: 14 } } },
+                            { code: "05734711", name: "NANIK RAM", months: { "OCTOBER": { fyp: 1396864, pol: 12 } } },
+                            { code: "05734322", name: "RAHUL KUMAR", months: { "OCTOBER": { fyp: 1279781, pol: 7 } } },
+                            { code: "05735085", name: "SHIV OM", months: { "OCTOBER": { fyp: 600393, pol: 9 } } },
+                            { code: "05734350", name: "VICKY KUMAR", months: { "OCTOBER": { fyp: 305806, pol: 4 } } },
+                            { code: "05735014", name: "RAVINDER KUMAR", months: { "OCTOBER": { fyp: 271647, pol: 3 } } },
+                            { code: "05734710", name: "VIVEK KHURANA", months: { "OCTOBER": { fyp: 266743, pol: 4 } } },
+                            { code: "05735011", name: "DINESH KUMAR", months: { "OCTOBER": { fyp: 216720, pol: 1 } } },
+                            { code: "05734930", name: "ROHAN KUMAR", months: { "OCTOBER": { fyp: 369291, pol: 4 } } },
+                            { code: "05735037", name: "PRIYA KUMARI", months: { "OCTOBER": { fyp: 52451, pol: 2 } } }
                         ]
                     },
-                    { code: "0972025", name: "GHULAM ASGHAR AWAN", role: "SM", months: { "OCTOBER": { fyp: 2000000, pol: 15 } }, srs: [] },
-                    { 
-                        code: "0874559", 
-                        name: "TUFAIL AHMED ABRO", 
-                        role: "SM", 
-                        months: { "OCTOBER": { fyp: 1500000, pol: 12 } }, 
+                    {
+                        code: "0972025",
+                        name: "GHULAM ASGHAR AWAN",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
                         srs: [
-                            { code: "05742001", name: "IRSHAD ALI ABRO", months: { "OCTOBER": { fyp: 500000, pol: 4 } } }
-                        ] 
+                            { code: "05735220", name: "ASADULLAH BURIRO", months: { "OCTOBER": { fyp: 322824, pol: 6 } } },
+                            { code: "05729561", name: "SHOIB ALI AWAN", months: { "OCTOBER": { fyp: 255660, pol: 3 } } },
+                            { code: "05735036", name: "GHULAM ABBAS KHOSO", months: { "OCTOBER": { fyp: 196835, pol: 6 } } },
+                            { code: "05733845", name: "AMEET KUMAR 1", months: { "OCTOBER": { fyp: 99999, pol: 1 } } }
+                        ]
                     },
-                    { code: "0972561", name: "JAISH TULSI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 10 } }, srs: [] },
-                    { code: "0972578", name: "MAZHAR ALI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 10 } }, srs: [] }
+                    {
+                        code: "0874559",
+                        name: "TUFAIL AHMED ABRO",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05735238", name: "MUHAMMAD TARIQUE", months: { "OCTOBER": { fyp: 228802, pol: 2 } } },
+                            { code: "05732783", name: "MRS MANIZA ABRO", months: { "OCTOBER": { fyp: 128661, pol: 2 } } },
+                            { code: "05734753", name: "MEHAK ABRO", months: { "OCTOBER": { fyp: 114700, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972561",
+                        name: "JAISH TULSI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734349", name: "SAMEET KUMAR", months: { "OCTOBER": { fyp: 1243565, pol: 10 } } },
+                            { code: "05733185", name: "JAISH KUMAR", months: { "OCTOBER": { fyp: 579168, pol: 6 } } },
+                            { code: "05735143", name: "MRS REEMA", months: { "OCTOBER": { fyp: 567400, pol: 1 } } },
+                            { code: "05735329", name: "MUHAMMAD MOOSA", months: { "OCTOBER": { fyp: 198452, pol: 1 } } },
+                            { code: "05733637", name: "KANTESH KUMAR", months: { "OCTOBER": { fyp: 77620, pol: 2 } } },
+                            { code: "05734414", name: "SAHIL KUMAR", months: { "OCTOBER": { fyp: 25977, pol: 1 } } },
+                            { code: "05733184", name: "SHANKAR KUMAR", months: { "OCTOBER": { fyp: 1423525, pol: 3 } } }
+                        ]
+                    }
                 ]
             },
             {
                 code: "0293119",
                 name: "MIR HAZAR MAIRI",
                 role: "SSM",
-                months: { "OCTOBER": { fyp: 6064861, pol: 95 } },
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
                 team: [
-                    { code: "0972112", name: "ALI SHER GOLO", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 15 } }, srs: [] },
-                    { code: "0874577", name: "MUHAMMAD QASIM SOLANGI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 15 } }, srs: [] },
-                    { code: "0874436", name: "NAWAB KHAN MAIRI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 15 } }, srs: [] },
-                    { code: "0972579", name: "MUHAMMAD YAQOOB MAIRI", role: "SM", months: { "OCTOBER": { fyp: 1000000, pol: 15 } }, srs: [] },
-                    { code: "0972174", name: "DEEPAK KUMAR", role: "SM", months: { "OCTOBER": { fyp: 800000, pol: 12 } }, srs: [] },
-                    { code: "0972378", name: "NASEERUDDIN MAIRI", role: "SM", months: { "OCTOBER": { fyp: 600000, pol: 11 } }, srs: [] },
-                    { code: "0972143", name: "KAMALUDDIN MAIRI", role: "SM", months: { "OCTOBER": { fyp: 664861, pol: 12 } }, srs: [] }
+                    {
+                        code: "0874436",
+                        name: "NAWAB KHAN MAIRI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05731182", name: "MISS SAMEENA MAIRI", months: { "OCTOBER": { fyp: 243814, pol: 6 } } },
+                            { code: "05727991", name: "ABDUL GHAFFAR SHAH", months: { "OCTOBER": { fyp: 191200, pol: 2 } } },
+                            { code: "05728543", name: "MUHAMMAD USMAN", months: { "OCTOBER": { fyp: 153911, pol: 3 } } },
+                            { code: "05728379", name: "SIKANDAR ALI MAIRI", months: { "OCTOBER": { fyp: 78302, pol: 2 } } },
+                            { code: "03736225", name: "LIAQUAT ALI MAIRI", months: { "OCTOBER": { fyp: 30235, pol: 1 } } },
+                            { code: "05730801", name: "GHULAM HUSSAIN JAKHRANI", months: { "OCTOBER": { fyp: 20742, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972579",
+                        name: "MUHAMMAD YAQOOB MAIRI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734906", name: "RASHID ALI MAIRI", months: { "OCTOBER": { fyp: 821603, pol: 5 } } },
+                            { code: "05734027", name: "ABU BAKAR MAIRI", months: { "OCTOBER": { fyp: 416295, pol: 8 } } },
+                            { code: "05735239", name: "SOHRAB BULEDI", months: { "OCTOBER": { fyp: 152999, pol: 4 } } },
+                            { code: "05734739", name: "MUHAMMAD ILLAYAS", months: { "OCTOBER": { fyp: 107119, pol: 3 } } },
+                            { code: "05733535", name: "KHAIR MUHAMMAD", months: { "OCTOBER": { fyp: 100475, pol: 2 } } }
+                        ]
+                    },
+                    {
+                        code: "0972174",
+                        name: "DEEPAK KUMAR",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05729875", name: "PRINCE", months: { "OCTOBER": { fyp: 660163, pol: 13 } } },
+                            { code: "05729874", name: "MRS PAYAL KUMARI", months: { "OCTOBER": { fyp: 219500, pol: 1 } } },
+                            { code: "05732847", name: "AMJAD ALI LASHARI", months: { "OCTOBER": { fyp: 88424, pol: 3 } } },
+                            { code: "05734287", name: "SATESH KUMAR", months: { "OCTOBER": { fyp: 56270, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972378",
+                        name: "NASEERUDDIN MAIRI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05726503", name: "ABDUL HAKEEM MAIRI", months: { "OCTOBER": { fyp: 158591, pol: 5 } } },
+                            { code: "05732857", name: "GHULAM MUSTAFA", months: { "OCTOBER": { fyp: 150214, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972143",
+                        name: "KAMALUDDIN MAIRI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734712", name: "SIKEELADHO", months: { "OCTOBER": { fyp: 897357, pol: 10 } } },
+                            { code: "05732281", name: "SHAHMIR KHOSO", months: { "OCTOBER": { fyp: 140220, pol: 3 } } },
+                            { code: "05732358", name: "GHULAM YASIN KHOSO", months: { "OCTOBER": { fyp: 56180, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972569",
+                        name: "SYED SHAFQAT ALI SHAH SHERAZI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734722", name: "SYED ALI NAQI SHAH", months: { "OCTOBER": { fyp: 593281, pol: 4 } } }
+                        ]
+                    },
+                    {
+                        code: "0972189",
+                        name: "MUHAMMAD AKRAM KHOSO",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05729993", name: "MUHAMMAD ALI", months: { "OCTOBER": { fyp: 70216, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0874406",
+                        name: "NIAZ ALI KHOSO",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "03737269", name: "ASIF ALI KHOSO", months: { "OCTOBER": { fyp: 428376, pol: 6 } } },
+                            { code: "05732748", name: "MUHAMMAD HASSAN KHOSO", months: { "OCTOBER": { fyp: 229374, pol: 9 } } }
+                        ]
+                    }
                 ]
             },
-            { code: "0272255", name: "NAVEED ADIL RAJPUT", role: "SSM", months: { "OCTOBER": { fyp: 3114120, pol: 19 } }, team: [] },
-            { code: "0272031", name: "MUKHTIAR AHMED ABRO", role: "SSM", months: { "OCTOBER": { fyp: 1395375, pol: 14 } }, team: [] },
-            { 
-                code: "0272328", 
-                name: "SAFIULLAH KHAN PATHAN", 
-                role: "SSM", 
-                months: { "OCTOBER": { fyp: 1400634, pol: 21 } }, 
+            {
+                code: "0272255",
+                name: "NAVEED ADIL RAJPUT",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972307",
+                        name: "MRS MEHREEN NAVEED",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05731250", name: "MISS MAHEEN", months: { "OCTOBER": { fyp: 2231005, pol: 6 } } },
+                            { code: "05735033", name: "MUHAMMAD ASGHAR", months: { "OCTOBER": { fyp: 150044, pol: 2 } } },
+                            { code: "05735026", name: "ABDULLAH KHAN", months: { "OCTOBER": { fyp: 135081, pol: 4 } } },
+                            { code: "05735120", name: "MUHAMMAD HUSSAIN", months: { "OCTOBER": { fyp: 56734, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972522",
+                        name: "NAVEED SARWAR LASHARI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05735237", name: "OSAMA", months: { "OCTOBER": { fyp: 221691, pol: 2 } } },
+                            { code: "05735105", name: "SHOIB AHMED", months: { "OCTOBER": { fyp: 62313, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972306",
+                        name: "SYED MUHAMMAD ALI SHAH",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05731246", name: "SYED ALI AHMED SHAH", months: { "OCTOBER": { fyp: 257252, pol: 3 } } }
+                        ]
+                    }
+                ]
+            },
+            {
+                code: "0272328",
+                name: "SAFIULLAH KHAN PATHAN",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
                 team: [
                     {
                         code: "0972648",
                         name: "MRS FATIMA KHAN",
                         role: "SM",
-                        months: { "OCTOBER": { fyp: 1400634, pol: 21 } },
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
                         srs: [
                             { code: "05734411", name: "SANAULLAH KHAN PATHAN", months: { "OCTOBER": { fyp: 434621, pol: 3 } } },
                             { code: "05735032", name: "JAVED AHMED", months: { "OCTOBER": { fyp: 426497, pol: 4 } } },
@@ -525,14 +725,137 @@
                             { code: "05734851", name: "KHADIM HUSSAIN", months: { "OCTOBER": { fyp: 52900, pol: 1 } } }
                         ]
                     }
-                ] 
+                ]
             },
-            { code: "0272035", name: "SHER AHMED SAHTO", role: "SSM", months: { "OCTOBER": { fyp: 1365090, pol: 15 } }, team: [] },
-            { code: "0272329", name: "MUHAMMAD IBRAHIM MUGHAL", role: "SSM", months: { "OCTOBER": { fyp: 986242, pol: 14 } }, team: [] },
-            { code: "0272308", name: "ABDUL GHAFOOR LASHARI", role: "SSM", months: { "OCTOBER": { fyp: 657298, pol: 15 } }, team: [] }
+            {
+                code: "0272031",
+                name: "MUKHTIAR AHMED ABRO",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972523",
+                        name: "MISS KALSOOM",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05732991", name: "ISRAR AHMED", months: { "OCTOBER": { fyp: 533093, pol: 5 } } },
+                            { code: "05734705", name: "MUHAMMAD UMAR", months: { "OCTOBER": { fyp: 159656, pol: 3 } } },
+                            { code: "05734931", name: "MUSRAT", months: { "OCTOBER": { fyp: 22888, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972028",
+                        name: "SHAH ZEB ABRO",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05727841", name: "WAQAR AHMED ABRO", months: { "OCTOBER": { fyp: 373051, pol: 3 } } }
+                        ]
+                    },
+                    {
+                        code: "0874470",
+                        name: "MUHAMMAD SHARIF SOLANGI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "03737646", name: "GHULAM AKBAR SOOMRO", months: { "OCTOBER": { fyp: 254287, pol: 1 } } },
+                            { code: "05732848", name: "MUHAMMAD ASLAM", months: { "OCTOBER": { fyp: 52400, pol: 1 } } }
+                        ]
+                    }
+                ]
+            },
+            {
+                code: "0272035",
+                name: "SHER AHMED SAHTO",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972277",
+                        name: "ABDUL BARI CHANDIO",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05731200", name: "GHULAM SARWAR", months: { "OCTOBER": { fyp: 1251824, pol: 11 } } }
+                        ]
+                    },
+                    {
+                        code: "0972029",
+                        name: "MISS SAMINA",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05727540", name: "ASIF ALI NAICH", months: { "OCTOBER": { fyp: 76536, pol: 2 } } },
+                            { code: "05732689", name: "SHOIB AHMED SAHTO", months: { "OCTOBER": { fyp: 36730, pol: 2 } } }
+                        ]
+                    }
+                ]
+            },
+            {
+                code: "0272329",
+                name: "MUHAMMAD IBRAHIM MUGHAL",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972649",
+                        name: "MISS TAYYABA",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05735349", name: "SHAN E HAIDER", months: { "OCTOBER": { fyp: 286350, pol: 1 } } },
+                            { code: "05729685", name: "MUHAMMAD AYOUB MUGHAL", months: { "OCTOBER": { fyp: 254908, pol: 2 } } },
+                            { code: "05734415", name: "SHANKAR LAL", months: { "OCTOBER": { fyp: 39284, pol: 2 } } },
+                            { code: "05733013", name: "SARFARAZ AHMED SOOMRO", months: { "OCTOBER": { fyp: 34316, pol: 1 } } },
+                            { code: "05735392", name: "MISS AYESHA IBRAHIM", months: { "OCTOBER": { fyp: 20896, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972651",
+                        name: "MRS ROOMANA RASOOL",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734413", name: "MISS MADHA", months: { "OCTOBER": { fyp: 208770, pol: 4 } } },
+                            { code: "05734537", name: "YASIR", months: { "OCTOBER": { fyp: 108106, pol: 1 } } },
+                            { code: "05734420", name: "ABDUL WAHID", months: { "OCTOBER": { fyp: 33612, pol: 2 } } }
+                        ]
+                    }
+                ]
+            },
+            {
+                code: "0272308",
+                name: "ABDUL GHAFOOR LASHARI",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972519",
+                        name: "DR RAJA MUHAMMAD SADIQUE",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05732987", name: "MUHAMMAD SAJID LASHARI", months: { "OCTOBER": { fyp: 268474, pol: 7 } } },
+                            { code: "05735095", name: "HIDAYATULLAH", months: { "OCTOBER": { fyp: 63247, pol: 3 } } },
+                            { code: "05732591", name: "SHAFQAT HUSSAIN LASHARI", months: { "OCTOBER": { fyp: 14851, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972520",
+                        name: "HARESH KUMAR",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05732985", name: "MRS NISHATA KUMARI", months: { "OCTOBER": { fyp: 198742, pol: 3 } } },
+                            { code: "05734230", name: "MRS SANDIYA KUMARI", months: { "OCTOBER": { fyp: 111984, pol: 1 } } }
+                        ]
+                    }
+                ]
+            }
         ];
 
-        const STORAGE_KEY = 'area7203_master_v25';
+        const STORAGE_KEY = 'area7203_master_v26';
         let portalData = JSON.parse(localStorage.getItem(STORAGE_KEY));
         if (!portalData) {
             portalData = defaultMasterDatabase;
@@ -685,7 +1008,7 @@
             const targetView = document.getElementById('view-' + tabId);
             if (targetView) targetView.classList.remove('hidden');
 
-            ['areaHierarchy', 'ssmHierarchy', 'smHierarchy', 'addUser', 'srPersonal'].forEach(t => {
+            ['areaHierarchy', 'ssmHierarchy', 'smHierarchy', 'addUser', 'backupSystem', 'srPersonal'].forEach(t => {
                 const btn = document.getElementById('btn-tab-' + t);
                 if (!btn) return;
                 if (t === tabId) {
@@ -709,6 +1032,75 @@
             else if (activeTab === 'smHierarchy') renderSmTeamsHierarchy(selectedMonth);
             else if (activeTab === 'srPersonal') renderSrPersonalView(selectedMonth);
             else if (activeTab === 'addUser') populateRegSsmOptions();
+            else if (activeTab === 'backupSystem') updateLastBackupLabel();
+        }
+
+        function updateLastBackupLabel() {
+            const lastTime = localStorage.getItem('area7203_last_backup');
+            const el = document.getElementById('lastBackupStatus');
+            if (el) {
+                el.innerHTML = lastTime 
+                    ? `<i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i>Last Backup: <b>${lastTime}</b>`
+                    : `<i class="fa-solid fa-clock mr-1"></i>Last Backup: Abhi tak nahi liya gaya`;
+            }
+        }
+
+        function downloadPortalBackup() {
+            const backupPayload = {
+                portal: "State Life Area 7203 Executive Portal",
+                version: "v26",
+                exportedAt: new Date().toLocaleString('en-PK'),
+                data: portalData
+            };
+            const dataStr = JSON.stringify(backupPayload, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const now = new Date();
+            const dateStamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}-${String(now.getMinutes()).padStart(2,'0')}`;
+            const fileName = `Area_7203_Backup_${dateStamp}.json`;
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            const timestampStr = now.toLocaleString('en-PK');
+            localStorage.setItem('area7203_last_backup', timestampStr);
+            updateLastBackupLabel();
+            alert(`✅ Backup save ho gaya hai!\nFile Name: ${fileName}`);
+        }
+
+        function handleRestoreBackupFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    const restoredArray = Array.isArray(parsed) ? parsed : parsed.data;
+
+                    if (!Array.isArray(restoredArray) || restoredArray.length === 0) {
+                        alert("❌ Ghalat file! Is file mein Area 7203 ka sahi data mojood nahi hai.");
+                        return;
+                    }
+
+                    if (confirm("⚠️ Kya aap waqai is backup file se portal ka data restore karna chahte hain? Maujooda data is file ke data se tabdeel ho jayega.")) {
+                        portalData = restoredArray;
+                        saveToStorage();
+                        renderActiveView();
+                        alert("✅ Backup kamyabi ke sath restore ho gaya hai!");
+                    }
+                } catch (err) {
+                    alert("❌ File read karne mein masla aaya. Meharbani karke sahi .json backup file select karein.");
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
         }
 
         function renderAreaDirectLists(month) {
@@ -749,10 +1141,10 @@
 
                 return { 
                     ...ssm, 
-                    monthFyp: ssmSelf.fyp, 
-                    monthPol: ssmSelf.pol, 
-                    ytdFyp: ssmYtdSelf.fyp, 
-                    ytdPol: ssmYtdSelf.pol,
+                    monthFyp: unitMonthFyp, 
+                    monthPol: unitMonthPol, 
+                    ytdFyp: unitYtdFyp, 
+                    ytdPol: unitYtdPol,
                     unitMonthFyp, unitMonthPol, unitYtdFyp, unitYtdPol
                 };
             });

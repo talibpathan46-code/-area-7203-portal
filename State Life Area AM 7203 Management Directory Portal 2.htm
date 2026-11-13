@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <title>State Life Area AM 7203 Management Directory Portal</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f9; color: #333; display: flex; height: 100vh; overflow: hidden; }
+        
+        #authScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f2c59; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .auth-card { background: white; padding: 35px; border-radius: 10px; width: 350px; text-align: center; box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
+        .auth-card h2 { color: #0f2c59; margin-top: 0; font-size: 20px; }
+        .auth-card input { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; text-align: center; letter-spacing: 2px; }
+
+        .sidebar { width: 260px; background: #0f2c59; color: white; display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-header { padding: 20px; font-size: 18px; font-weight: bold; background: #091c3d; border-bottom: 1px solid #1f4075; }
+        .menu-item { padding: 15px 20px; color: white; text-decoration: none; display: block; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; cursor: pointer; }
+        .menu-item:hover, .menu-item.active { background: #1f4075; }
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        header { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        h1 { margin: 0; font-size: 20px; color: #0f2c59; }
+        .container { padding: 25px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        
+        .table-responsive { max-height: 520px; overflow-y: auto; overflow-x: auto; border: 1px solid #ccc; border-radius: 4px; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; background: white; }
+        th, td { padding: 8px 10px; text-align: left; border: 1px solid #ddd; white-space: nowrap; }
+        th { background-color: #0f2c59; color: white; position: sticky; top: 0; z-index: 10; font-weight: bold; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        
+        .btn { background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; font-size: 13px; }
+        .btn-print { background: #17a2b8; }
+        .btn-reset { background: #ffc107; color: #000; font-weight: bold; }
+        .btn-edit { background: #ffc107; color: #000; padding: 4px 8px; font-size: 11px; border-radius: 3px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-delete { background: #dc3545; color: white; padding: 4px 8px; font-size: 11px; border-radius: 3px; border: none; cursor: pointer; margin-left: 3px; font-weight: bold; }
+        .btn-ssm-print { background: #17a2b8; color: white; padding: 4px 10px; font-size: 11px; border-radius: 3px; border: none; cursor: pointer; font-weight: bold; margin-left: 5px; }
+
+        #editModal, #smEditModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; }
+        .modal-card { background: white; padding: 25px; border-radius: 8px; width: 450px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .modal-card h3 { margin-top: 0; color: #0f2c59; border-bottom: 2px solid #0f2c59; padding-bottom: 8px; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 12px; }
+        .form-group input, .form-group select { width: 100%; padding: 7px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 13px; }
+
+        .summary-box { background: #e9ecef; padding: 12px 15px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        .search-box { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
+
+        .am-highlight-card { background: linear-gradient(135deg, #0f2c59, #1f4075); color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 25px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        .am-highlight-card h2 { margin: 0 0 10px 0; font-size: 22px; }
+        .am-stats-container { display: flex; justify-content: center; gap: 30px; margin-top: 15px; }
+        .am-stat-box { background: rgba(255,255,255,0.15); padding: 10px 25px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); }
+        .am-stat-box span { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #ddd; }
+        .am-stat-box strong { font-size: 20px; color: #28a745; }
+
+        .ssm-accordion-box { background: white; border: 1px solid #dcdcdc; border-radius: 6px; margin-bottom: 12px; overflow: hidden; }
+        .ssm-accordion-header { background: #28a745; color: white; padding: 15px 20px; font-size: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .ssm-header-left { cursor: pointer; flex: 1; }
+        .ssm-accordion-body { padding: 15px; display: none; background: #f8f9fa; border-top: 1px solid #ddd; }
+
+        .sm-accordion-box { background: white; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; }
+        .sm-accordion-header { background: #e2eefd; color: #0f2c59; padding: 12px 15px; font-size: 14px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .sm-header-left { cursor: pointer; flex: 1; }
+        .sm-accordion-body { padding: 10px 15px; display: none; }
+
+        .sr-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 5px; }
+        .sr-table th { background: #0f2c59; color: white; padding: 6px 10px; text-align: left; }
+        .sr-table td { padding: 6px 10px; border-bottom: 1px solid #eee; }
+
+        /* PRINT STYLING - HIDES EVERYTHING EXCEPT PRINT AREA */
+        #singlePrintArea { display: none; }
+
+        @media print {
+            body * { visibility: hidden !important; }
+            #singlePrintArea, #singlePrintArea * { visibility: visible !important; }
+            #singlePrintArea { display: block !important; position: absolute; left: 0; top: 0; width: 100%; color: black !important; font-family: Arial, sans-serif; padding: 20px; }
+            .no-print { display: none !important; }
+            table { width: 100% !important; border-collapse: collapse !important; font-size: 11pt !important; margin-top: 15px !important; }
+            th, td { border: 1px solid #000 !important; padding: 8px 10px !important; text-align: left !important; }
+            th { background-color: #0f2c59 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="authScreen" style="display: none;">
+    <div class="auth-card">
+        <h2>🔒 STATE LIFE AREA 7203</h2>
+        <p style="font-size:13px; color:#555;">Enter Master Password to Access Portal</p>
+        <input type="password" id="masterPasswordInput" placeholder="Enter Password" onkeypress="handlePasswordKey(event)">
+        <button class="btn" style="width:100%; padding:10px; font-size:15px;" onclick="verifyMasterPassword()">Unlock Portal</button>
+    </div>
+</div>
+
+<!-- DEDICATED PRINT CONTAINER -->
+<div id="singlePrintArea">
+            <div style="text-align:center; border-bottom:2px solid #0f2c59; padding-bottom:10px; margin-bottom:20px;">
+                <h2 style="margin:0; color:#0f2c59;">STATE LIFE INSURANCE CORPORATION OF PAKISTAN</h2>
+                <h3 style="margin:5px 0 0 0; color:#333;">AREA MANAGER 7203 - LARKANA ZONE</h3>
+                <h4 style="margin:5px 0 0 0; color:#28a745;">SENIOR SALES MANAGER (SSM) BUSINESS REPORT</h4>
+            </div>
+            <div style="background:#f8f9fa; border:1px solid #ddd; padding:15px; margin-bottom:20px; font-size:14px;">
+                <strong>SSM Code &amp; Name:</strong> SSM (0272033) - MUHAMMAD AKRAM AWAN<br>
+                <strong>Total FYP Business (2026):</strong> Rs. 12,054,390<br>
+                <strong>Total Policies (POL):</strong> 89 POL<br>
+                <strong>Total Active Sales Managers:</strong> 4 SMs
+            </div>
+        
+                <div style="margin-top:20px;">
+                    <div style="background:#e2eefd; color:#0f2c59; padding:8px 12px; font-weight:bold; font-size:13px; border:1px solid #ccc;">
+                        👔 SM (874559): TUFAIL AHMED ABRO — FYP: Rs. 456,161 | POL: 4
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; margin-top:5px; font-size:12px;">
+                        <thead>
+                            <tr style="background:#0f2c59; color:white;">
+                                <th style="padding:6px; border:1px solid #333;">SR Code</th>
+                                <th style="padding:6px; border:1px solid #333;">Worker Name</th>
+                                <th style="padding:6px; border:1px solid #333; text-align:right;">FYP (Rs.)</th>
+                                <th style="padding:6px; border:1px solid #333; text-align:center;">POL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5735238</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>M Tarique</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 212,800</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">1</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5732783</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Maniza Abro</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 128,661</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">2</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5734753</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Mehak</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 114,700</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">1</td>
+                    </tr></tbody></table></div>
+                <div style="margin-top:20px;">
+                    <div style="background:#e2eefd; color:#0f2c59; padding:8px 12px; font-weight:bold; font-size:13px; border:1px solid #ccc;">
+                        👔 SM (972025): MUHAMMAD ASGHAR AWAN — FYP: Rs. 523,126 | POL: 10
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; margin-top:5px; font-size:12px;">
+                        <thead>
+                            <tr style="background:#0f2c59; color:white;">
+                                <th style="padding:6px; border:1px solid #333;">SR Code</th>
+                                <th style="padding:6px; border:1px solid #333;">Worker Name</th>
+                                <th style="padding:6px; border:1px solid #333; text-align:right;">FYP (Rs.)</th>
+                                <th style="padding:6px; border:1px solid #333; text-align:center;">POL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5729561</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Shoaib Ali Awan</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 255,660</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">3</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5735036</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Ghulam Abbas</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 140,928</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">4</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5735220</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Asadullah</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 126,538</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">3</td>
+                    </tr></tbody></table></div>
+                <div style="margin-top:20px;">
+                    <div style="background:#e2eefd; color:#0f2c59; padding:8px 12px; font-weight:bold; font-size:13px; border:1px solid #ccc;">
+                        👔 SM (972561): JAISH TULSI — FYP: Rs. 3,773,712 | POL: 21
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; margin-top:5px; font-size:12px;">
+                        <thead>
+                            <tr style="background:#0f2c59; color:white;">
+                                <th style="padding:6px; border:1px solid #333;">SR Code</th>
+                                <th style="padding:6px; border:1px solid #333;">Worker Name</th>
+                                <th style="padding:6px; border:1px solid #333; text-align:right;">FYP (Rs.)</th>
+                                <th style="padding:6px; border:1px solid #333; text-align:center;">POL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5733184</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Shankar Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 1,423,525</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">3</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5734349</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Sameet Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 1,100,022</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">8</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5733185</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Jaish Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 579,168</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">6</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5735143</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Mrs Reema</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 567,400</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">1</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5733637</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Kantesh Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 77,620</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">2</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5734414</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Sahil Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 25,977</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">1</td>
+                    </tr></tbody></table></div>
+                <div style="margin-top:20px;">
+                    <div style="background:#e2eefd; color:#0f2c59; padding:8px 12px; font-weight:bold; font-size:13px; border:1px solid #ccc;">
+                        👔 SM (972630): AMEET KUMAR — FYP: Rs. 8,906,610 | POL: 60
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; margin-top:5px; font-size:12px;">
+                        <thead>
+                            <tr style="background:#0f2c59; color:white;">
+                                <th style="padding:6px; border:1px solid #333;">SR Code</th>
+                                <th style="padding:6px; border:1px solid #333;">Worker Name</th>
+                                <th style="padding:6px; border:1px solid #333; text-align:right;">FYP (Rs.)</th>
+                                <th style="padding:6px; border:1px solid #333; text-align:center;">POL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5734323</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Deepak Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 3,070,901</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">13</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5734711</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Nanik Ram</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 1,496,181</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">11</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5734322</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Rahul Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 1,204,240</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">6</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5731250</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>MAHEEN RAJPUT</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 1,170,598</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">3</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5735085</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Shiv Om</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 600,393</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">9</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5734350</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Vicky Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 305,806</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">4</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5735014</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Ravinder Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 271,647</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">3</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5734710</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Vivek Khurana</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 266,743</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">4</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5735011</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Dinesh Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 216,720</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">1</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5734930</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Rohan Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 150,931</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">3</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5733845</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Ameet Kumar</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 99,999</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">1</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">5735037</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>Piriya Kumari</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. 52,451</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">2</td>
+                    </tr></tbody></table></div></div>
+
+<!-- Edit Worker Modal -->
+<div id="editModal" style="display: none;">
+    <div class="modal-card">
+        <h3>✏️ Edit SR System Record</h3>
+        <input type="hidden" id="editIndex" value="54">
+        <div class="form-group"><label>Worker Name:</label><input type="text" id="modalName" value="ASIF ALI NAICH"></div>
+        <div class="form-group"><label>SR Code:</label><input type="text" id="modalSrCode" value="5727540"></div>
+        <div class="form-group"><label>Parent SM Code:</label><input type="text" id="modalSmCode" value="972029"></div>
+        <div class="form-group">
+            <label>Parent SSM Code:</label>
+            <select id="modalSsmCode">
+                <option value="0272033">0272033 - MUHAMMAD AKRAM AWAN</option>
+                <option value="0293119">0293119 - MIR HAZAR MAIRI</option>
+                <option value="0272255">0272255 - NAVEED ADIL RAJPUT</option>
+                <option value="0272031">0272031 - MUKHTIAR AHMED ABRO</option>
+                <option value="0272328">0272328 - SAFIULLAH KHAN PATHAN</option>
+                <option value="0272035" selected="selected">0272035 - SHER AHMED SAHTO</option>
+                <option value="0272329">0272329 - M IBRAHIM MUGHAL</option>
+                <option value="0272308">0272308 - ABDUL GHAFOOR LASHARI</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Total FYP (Rs.):</label><input type="number" id="modalFyp" value="76536"></div>
+        <div class="form-group"><label>Total Policies (POL):</label><input type="number" id="modalPol" value="2"></div>
+        <div style="text-align: right; margin-top: 15px;">
+            <button class="btn" style="background:#6c757d; margin-right: 5px;" onclick="closeEditModal()">Cancel</button>
+            <button class="btn" onclick="saveEditedWorker()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit SM Modal -->
+<div id="smEditModal" style="display: none;">
+    <div class="modal-card">
+        <h3>✏️ Edit Sales Manager (SM) Unit</h3>
+        <input type="hidden" id="editSmCodeVal" value="972028">
+        <div class="form-group"><label>SM Code:</label><input type="text" id="modalSmEditCode" disabled="disabled" style="background:#eee;" value="972028"></div>
+        <div class="form-group"><label>SM Name:</label><input type="text" id="modalSmEditName" value="MR SHAHZEB ABRO"></div>
+        <div class="form-group">
+            <label>Assign to Correct Parent SSM:</label>
+            <select id="modalSmEditSsm">
+                <option value="0272033">0272033 - MUHAMMAD AKRAM AWAN</option>
+                <option value="0293119">0293119 - MIR HAZAR MAIRI</option>
+                <option value="0272255">0272255 - NAVEED ADIL RAJPUT</option>
+                <option value="0272031" selected="selected">0272031 - MUKHTIAR AHMED ABRO</option>
+                <option value="0272328">0272328 - SAFIULLAH KHAN PATHAN</option>
+                <option value="0272035">0272035 - SHER AHMED SAHTO</option>
+                <option value="0272329">0272329 - M IBRAHIM MUGHAL</option>
+                <option value="0272308">0272308 - ABDUL GHAFOOR LASHARI</option>
+            </select>
+        </div>
+        <div style="text-align: right; margin-top: 15px;">
+            <button class="btn" style="background:#6c757d; margin-right: 5px;" onclick="closeSmEditModal()">Cancel</button>
+            <button class="btn" onclick="saveEditedSm()">Save SM Details</button>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar">
+    <div class="sidebar-header">STATE LIFE AM 7203</div>
+    <a href="#" class="menu-item" id="menu-directory" onclick="switchTab('directory', event)">📁 Update Channel Directory</a>
+    <a href="#" class="menu-item active" id="menu-hierarchy" onclick="switchTab('hierarchy', event)">🌳 Area Hierarchy Tree</a>
+    <a href="#" class="menu-item" id="menu-business" onclick="switchTab('business', event)">💼 Month-wise Business Entry</a>
+    <a href="#" class="menu-item" id="menu-registration" onclick="switchTab('registration', event)">👤 Staff Registration &amp; SMs</a>
+    <a href="#" class="menu-item" id="menu-matrix" onclick="switchTab('matrix', event)">📊 Excel Summary Matrix</a>
+</div>
+
+<div class="main-content">
+    <header>
+        <h1 id="pageTitle">Area Hierarchy Tree</h1>
+        <div>
+            <button class="btn btn-print" style="background:#0f2c59;" onclick="printFullMasterSheet()">📄 Print Master Sheet</button>
+            <button class="btn btn-reset" onclick="forceResetMasterData()">🔄 Restore Official Figures</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Tab 1: Directory -->
+        <div id="tab-directory" class="tab-content" style="display: none;">
+            <div class="card">
+                <input type="text" id="searchFilter" class="search-box" placeholder="🔍 Search by SSM Code, SM Code, SR Code, or Name..." onkeyup="filterTable()" value="5727540">
+                <div class="summary-box" id="summaryBar">Total Cumulative FYP: Rs. 23,922,035 | Total POL: 246</div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th><th>AM Code</th><th>SSM Code</th><th>SM Code</th><th>SR Code</th>
+                                <th>Field Worker Name</th><th>Total FYP 2026 (Rs.)</th><th>Total POL</th><th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="directoryTable"><tr>
+                <td><strong>#1</strong></td>
+                <td>07203</td>
+                <td>0272035</td>
+                <td><strong>972029</strong></td>
+                <td><strong>5727540</strong></td>
+                <td><strong>ASIF ALI NAICH</strong></td>
+                <td style="color:#0f2c59; font-weight:bold;">Rs. 76,536</td>
+                <td style="font-weight:bold;">2</td>
+                <td>
+                    <button class="btn-edit" onclick="openEditModal(54)">✏️ Edit</button>
+                    <button class="btn-delete" onclick="deleteWorker(54)">🗑️ Delete</button>
+                </td>
+            </tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Hierarchy Tree -->
+        <div id="tab-hierarchy" class="tab-content" style="display: block;">
+            <div class="am-highlight-card">
+                <h2>🏢 SHAFI MUHAMMAD MAIRI AREA MANAGER 7203</h2>
+                <div>State Life Insurance Corporation of Pakistan - Larkana Zone</div>
+                <div class="am-stats-container">
+                    <div class="am-stat-box">
+                        <span>Total Area FYP Business (2026)</span>
+                        <strong id="amTotalFypVal">Rs. 23,922,035</strong>
+                    </div>
+                    <div class="am-stat-box">
+                        <span>Total Area Policies (POL)</span>
+                        <strong id="amTotalPolVal" style="color:#ffffff;">246 POL</strong>
+                    </div>
+                </div>
+            </div>
+            <div style="font-size: 15px; font-weight: bold; margin-bottom: 12px; color: #0f2c59;">
+                📂 Click on any SSM Box to view SMs and SR Teams:
+            </div>
+            <div id="hierarchyAccordionContainer"><div class="ssm-accordion-box">
+                <div class="ssm-accordion-header">
+                    <div class="ssm-header-left" onclick="toggleAccordion('ssm-body-0')">
+                        👔 SSM (0272033): MUHAMMAD AKRAM AWAN [4 SMs] — FYP: Rs. 12,054,390 | POL: 89 🔽
+                    </div>
+                    <div class="no-print">
+                        <button class="btn-ssm-print" style="background:#0f2c59;" onclick="printSsmUnit('0272033')">🖨️ Print SSM Sheet</button>
+                    </div>
+                </div>
+                <div class="ssm-accordion-body" id="ssm-body-0">
+                    
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272033-874559')">
+                                    👔 SM (874559): TUFAIL AHMED ABRO [3 Workers] — FYP: Rs. 456,161 | POL: 4 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('874559')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('874559')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272033-874559">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5735238</td>
+                            <td><strong>M Tarique</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 212,800</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(30)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(30)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5732783</td>
+                            <td><strong>Maniza Abro</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 128,661</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(43)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(43)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734753</td>
+                            <td><strong>Mehak</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 114,700</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(45)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(45)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272033-972025')">
+                                    👔 SM (972025): MUHAMMAD ASGHAR AWAN [3 Workers] — FYP: Rs. 523,126 | POL: 10 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972025')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972025')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272033-972025">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5729561</td>
+                            <td><strong>Shoaib Ali Awan</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 255,660</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(24)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(24)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5735036</td>
+                            <td><strong>Ghulam Abbas</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 140,928</td>
+                            <td style="text-align:center;">4</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(40)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(40)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5735220</td>
+                            <td><strong>Asadullah</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 126,538</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(44)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(44)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272033-972561')">
+                                    👔 SM (972561): JAISH TULSI [6 Workers] — FYP: Rs. 3,773,712 | POL: 21 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972561')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972561')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272033-972561">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5733184</td>
+                            <td><strong>Shankar Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 1,423,525</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(2)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(2)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734349</td>
+                            <td><strong>Sameet Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 1,100,022</td>
+                            <td style="text-align:center;">8</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(5)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(5)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5733185</td>
+                            <td><strong>Jaish Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 579,168</td>
+                            <td style="text-align:center;">6</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(10)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(10)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5735143</td>
+                            <td><strong>Mrs Reema</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 567,400</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(11)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(11)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5733637</td>
+                            <td><strong>Kantesh Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 77,620</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(53)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(53)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734414</td>
+                            <td><strong>Sahil Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 25,977</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(70)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(70)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272033-972630')">
+                                    👔 SM (972630): AMEET KUMAR [12 Workers] — FYP: Rs. 8,906,610 | POL: 60 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972630')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972630')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272033-972630">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5734323</td>
+                            <td><strong>Deepak Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 3,070,901</td>
+                            <td style="text-align:center;">13</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(0)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(0)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734711</td>
+                            <td><strong>Nanik Ram</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 1,496,181</td>
+                            <td style="text-align:center;">11</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(1)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(1)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734322</td>
+                            <td><strong>Rahul Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 1,204,240</td>
+                            <td style="text-align:center;">6</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(3)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(3)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5731250</td>
+                            <td><strong>MAHEEN RAJPUT</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 1,170,598</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(4)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(4)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5735085</td>
+                            <td><strong>Shiv Om</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 600,393</td>
+                            <td style="text-align:center;">9</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(9)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(9)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734350</td>
+                            <td><strong>Vicky Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 305,806</td>
+                            <td style="text-align:center;">4</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(19)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(19)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5735014</td>
+                            <td><strong>Ravinder Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 271,647</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(21)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(21)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734710</td>
+                            <td><strong>Vivek Khurana</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 266,743</td>
+                            <td style="text-align:center;">4</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(22)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(22)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5735011</td>
+                            <td><strong>Dinesh Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 216,720</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(29)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(29)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734930</td>
+                            <td><strong>Rohan Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 150,931</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(37)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(37)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5733845</td>
+                            <td><strong>Ameet Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 99,999</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(49)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(49)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5735037</td>
+                            <td><strong>Piriya Kumari</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 52,451</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(62)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(62)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                </div>
+            </div><div class="ssm-accordion-box">
+                <div class="ssm-accordion-header">
+                    <div class="ssm-header-left" onclick="toggleAccordion('ssm-body-1')">
+                        👔 SSM (0293119): MIR HAZAR MAIRI [8 SMs] — FYP: Rs. 5,290,200 | POL: 78 🔽
+                    </div>
+                    <div class="no-print">
+                        <button class="btn-ssm-print" style="background:#0f2c59;" onclick="printSsmUnit('0293119')">🖨️ Print SSM Sheet</button>
+                    </div>
+                </div>
+                <div class="ssm-accordion-body" id="ssm-body-1">
+                    
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0293119-874406')">
+                                    👔 SM (874406): NIAZ ALI KHOSO [2 Workers] — FYP: Rs. 608,838 | POL: 13 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('874406')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('874406')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0293119-874406">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>3737269</td>
+                            <td><strong>Asif Ali Khoso</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 411,889</td>
+                            <td style="text-align:center;">5</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(16)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(16)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5732748</td>
+                            <td><strong>Muhammad Hassan</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 196,949</td>
+                            <td style="text-align:center;">8</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(33)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(33)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0293119-874436')">
+                                    👔 SM (874436): NAWAB KHAN MAIRI [4 Workers] — FYP: Rs. 641,132 | POL: 12 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('874436')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('874436')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0293119-874436">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5731182</td>
+                            <td><strong>Sameena Mairi</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 243,814</td>
+                            <td style="text-align:center;">6</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(27)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(27)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5727991</td>
+                            <td><strong>Abdul Ghafar Shah</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 191,200</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(34)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(34)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5728543</td>
+                            <td><strong>Muhammad Usman</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 153,911</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(36)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(36)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5728379</td>
+                            <td><strong>Sikandar Ali Mairi</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 52,207</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(64)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(64)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0293119-972143')">
+                                    👔 SM (972143): KAMAL UDDIN MAIRI [4 Workers] — FYP: Rs. 928,121 | POL: 13 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972143')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972143')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0293119-972143">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5734712</td>
+                            <td><strong>Sikeeladho</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 701,486</td>
+                            <td style="text-align:center;">8</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(8)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(8)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5732281</td>
+                            <td><strong>Shahmeer Khoso</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 140,220</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(41)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(41)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5732358</td>
+                            <td><strong>Ghulam Yaseen Khoso</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 56,180</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(60)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(60)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>3736225</td>
+                            <td><strong>Liaquat Ali Mairi</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 30,235</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(69)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(69)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0293119-972174')">
+                                    👔 SM (972174): DEEPAK KUMAR [4 Workers] — FYP: Rs. 819,614 | POL: 13 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972174')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972174')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0293119-972174">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5729875</td>
+                            <td><strong>Prince</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 455,420</td>
+                            <td style="text-align:center;">8</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(14)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(14)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5729874</td>
+                            <td><strong>Payal Kumari</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 219,500</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(28)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(28)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5732847</td>
+                            <td><strong>Amjad Ali Lashari</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 88,424</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(52)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(52)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734287</td>
+                            <td><strong>Sateesh Kumar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 56,270</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(59)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(59)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0293119-972189')">
+                                    👔 SM (972189): M AKRAM KHOSO [1 Workers] — FYP: Rs. 70,216 | POL: 1 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972189')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972189')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0293119-972189">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5729993</td>
+                            <td><strong>Muhammad Ali Khoso</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 70,216</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(55)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(55)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0293119-972378')">
+                                    👔 SM (972378): NASEERUDDI MAIRI [2 Workers] — FYP: Rs. 308,805 | POL: 6 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972378')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972378')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0293119-972378">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5726503</td>
+                            <td><strong>Abdul Hakeem Mairi</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 158,591</td>
+                            <td style="text-align:center;">5</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(35)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(35)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5732857</td>
+                            <td><strong>Ghulam Musatfa</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 150,214</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(38)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(38)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0293119-972569')">
+                                    👔 SM (972569): S SHAFQAT ALI SHAH [1 Workers] — FYP: Rs. 527,043 | POL: 3 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972569')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972569')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0293119-972569">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5734722</td>
+                            <td><strong>Syed Ali Naqi Shah</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 527,043</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(13)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(13)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0293119-972579')">
+                                    👔 SM (972579): M YAQOOB MAIRI [4 Workers] — FYP: Rs. 1,359,431 | POL: 19 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972579')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972579')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0293119-972579">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5734906</td>
+                            <td><strong>Rashid Ali</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 821,603</td>
+                            <td style="text-align:center;">7</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(7)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(7)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734027</td>
+                            <td><strong>Abu Bakar Mairi</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 416,295</td>
+                            <td style="text-align:center;">8</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(15)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(15)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734739</td>
+                            <td><strong>M Illyas</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 107,119</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(48)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(48)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5735239</td>
+                            <td><strong>Sohrab Buledi</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 14,414</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(74)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(74)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                </div>
+            </div><div class="ssm-accordion-box">
+                <div class="ssm-accordion-header">
+                    <div class="ssm-header-left" onclick="toggleAccordion('ssm-body-2')">
+                        👔 SSM (0272255): NAVEED ADIL RAJPUT [3 SMs] — FYP: Rs. 1,832,022 | POL: 15 🔽
+                    </div>
+                    <div class="no-print">
+                        <button class="btn-ssm-print" style="background:#0f2c59;" onclick="printSsmUnit('0272255')">🖨️ Print SSM Sheet</button>
+                    </div>
+                </div>
+                <div class="ssm-accordion-body" id="ssm-body-2">
+                    
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272255-972306')">
+                                    👔 SM (972306): MR MUHAMMAD ALI SHAH [1 Workers] — FYP: Rs. 257,252 | POL: 3 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972306')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972306')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272255-972306">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5731246</td>
+                            <td><strong>Syed Ali Ahmed Shah</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 257,252</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(23)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(23)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272255-972307')">
+                                    👔 SM (972307): MRS MEHREEN NAVEED [3 Workers] — FYP: Rs. 341,859 | POL: 7 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972307')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972307')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272255-972307">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5735033</td>
+                            <td><strong>Muhammad Asghar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 150,044</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(39)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(39)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5735026</td>
+                            <td><strong>Abdullah Khan</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 135,081</td>
+                            <td style="text-align:center;">4</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(42)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(42)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5735120</td>
+                            <td><strong>M Hussain</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 56,734</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(58)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(58)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272255-972522')">
+                                    👔 SM (972522): MR NAVREED SARWAR [1 Workers] — FYP: Rs. 62,313 | POL: 1 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972522')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972522')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272255-972522">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5735105</td>
+                            <td><strong>Shoaib Ahmed</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 62,313</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(57)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(57)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                </div>
+            </div><div class="ssm-accordion-box">
+                <div class="ssm-accordion-header">
+                    <div class="ssm-header-left" onclick="toggleAccordion('ssm-body-3')">
+                        👔 SSM (0272031): MUKHTIAR AHMED ABRO [3 SMs] — FYP: Rs. 1,330,353 | POL: 13 🔽
+                    </div>
+                    <div class="no-print">
+                        <button class="btn-ssm-print" style="background:#0f2c59;" onclick="printSsmUnit('0272031')">🖨️ Print SSM Sheet</button>
+                    </div>
+                </div>
+                <div class="ssm-accordion-body" id="ssm-body-3">
+                    
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272031-874470')">
+                                    👔 SM (874470): MR MUHAMMAD SHARIF SULANGI [2 Workers] — FYP: Rs. 306,687 | POL: 2 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('874470')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('874470')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272031-874470">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>3737646</td>
+                            <td><strong>Ghulam Akbar Soomro</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 254,287</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(26)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(26)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5732848</td>
+                            <td><strong>Muhammad Aslam</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 52,400</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(63)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(63)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272031-972028')">
+                                    👔 SM (972028): MR SHAHZEB ABRO [1 Workers] — FYP: Rs. 373,051 | POL: 1 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972028')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972028')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272031-972028">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5727841</td>
+                            <td><strong>Waqar Ahmed Abro</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 373,051</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(17)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(17)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272031-972523')">
+                                    👔 SM (972523): MISS KALSOOM [3 Workers] — FYP: Rs. 650,615 | POL: 8 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972523')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972523')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272031-972523">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5732991</td>
+                            <td><strong>Israr Ahmed</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 533,093</td>
+                            <td style="text-align:center;">5</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(12)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(12)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734705</td>
+                            <td><strong>Muhammad Umar</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 94,634</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(50)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(50)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734931</td>
+                            <td><strong>Mrs Musrat Lal Bux</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 22,888</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(71)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(71)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                </div>
+            </div><div class="ssm-accordion-box">
+                <div class="ssm-accordion-header">
+                    <div class="ssm-header-left" onclick="toggleAccordion('ssm-body-4')">
+                        👔 SSM (0272328): SAFIULLAH KHAN PATHAN [1 SMs] — FYP: Rs. 1,191,347 | POL: 17 🔽
+                    </div>
+                    <div class="no-print">
+                        <button class="btn-ssm-print" style="background:#0f2c59;" onclick="printSsmUnit('0272328')">🖨️ Print SSM Sheet</button>
+                    </div>
+                </div>
+                <div class="ssm-accordion-body" id="ssm-body-4">
+                    
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272328-972648')">
+                                    👔 SM (972648): MRS FATIMA KHAN [4 Workers] — FYP: Rs. 756,726 | POL: 14 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972648')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972648')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272328-972648">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5735032</td>
+                            <td><strong>Javed Ahmed</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 322,888</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(18)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(18)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734934</td>
+                            <td><strong>Ghulam Mohiuddin</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 291,769</td>
+                            <td style="text-align:center;">8</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(20)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(20)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5731424</td>
+                            <td><strong>Zafar Ali Soomro</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 89,169</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(51)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(51)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734851</td>
+                            <td><strong>Khadim Hussain</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 52,900</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(61)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(61)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                </div>
+            </div><div class="ssm-accordion-box">
+                <div class="ssm-accordion-header">
+                    <div class="ssm-header-left" onclick="toggleAccordion('ssm-body-5')">
+                        👔 SSM (0272035): SHER AHMED SAHTO [2 SMs] — FYP: Rs. 1,107,886 | POL: 13 🔽
+                    </div>
+                    <div class="no-print">
+                        <button class="btn-ssm-print" style="background:#0f2c59;" onclick="printSsmUnit('0272035')">🖨️ Print SSM Sheet</button>
+                    </div>
+                </div>
+                <div class="ssm-accordion-body" id="ssm-body-5" style="display: block;">
+                    
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272035-972029')">
+                                    👔 SM (972029): SAMINA SAHTO [2 Workers] — FYP: Rs. 97,082 | POL: 3 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972029')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972029')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272035-972029" style="display: block;">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5727540</td>
+                            <td><strong>ASIF ALI NAICH</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 76,536</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(54)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(54)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5732689</td>
+                            <td><strong>SHOIB AHMED</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 20,546</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(72)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(72)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272035-972277')">
+                                    👔 SM (972277): MR ABDUL BARI CHANDIO [1 Workers] — FYP: Rs. 1,010,804 | POL: 10 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972277')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972277')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272035-972277" style="display: block;">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5731200</td>
+                            <td><strong>Ghulam Sarwar Chandio</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 1,010,804</td>
+                            <td style="text-align:center;">10</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(6)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(6)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                </div>
+            </div><div class="ssm-accordion-box">
+                <div class="ssm-accordion-header">
+                    <div class="ssm-header-left" onclick="toggleAccordion('ssm-body-6')">
+                        👔 SSM (0272329): M IBRAHIM MUGHAL [2 SMs] — FYP: Rs. 678,996 | POL: 11 🔽
+                    </div>
+                    <div class="no-print">
+                        <button class="btn-ssm-print" style="background:#0f2c59;" onclick="printSsmUnit('0272329')">🖨️ Print SSM Sheet</button>
+                    </div>
+                </div>
+                <div class="ssm-accordion-body" id="ssm-body-6" style="display: block;">
+                    
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272329-972649')">
+                                    👔 SM (972649): MISS TAYYABA MUGHAL [2 Workers] — FYP: Rs. 289,224 | POL: 3 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972649')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972649')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272329-972649" style="display: block;">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5729685</td>
+                            <td><strong>M Ayoub Mughal</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 254,908</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(25)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(25)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5733013</td>
+                            <td><strong>Sarfraz Ahmed Soomro</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 34,316</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(67)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(67)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272329-972651')">
+                                    👔 SM (972651): ROMANA RASOOL [4 Workers] — FYP: Rs. 389,772 | POL: 9 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972651')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972651')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272329-972651" style="display: block;">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5734413</td>
+                            <td><strong>Madha</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 208,770</td>
+                            <td style="text-align:center;">4</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(31)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(31)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734537</td>
+                            <td><strong>Yasir Ali</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 108,106</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(47)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(47)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734415</td>
+                            <td><strong>Shankar Lal</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 39,284</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(66)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(66)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734420</td>
+                            <td><strong>Abdul Wahid</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 33,612</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(68)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(68)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                </div>
+            </div><div class="ssm-accordion-box">
+                <div class="ssm-accordion-header">
+                    <div class="ssm-header-left" onclick="toggleAccordion('ssm-body-7')">
+                        👔 SSM (0272308): ABDUL GHAFOOR LASHARI [2 SMs] — FYP: Rs. 436,841 | POL: 10 🔽
+                    </div>
+                    <div class="no-print">
+                        <button class="btn-ssm-print" style="background:#0f2c59;" onclick="printSsmUnit('0272308')">🖨️ Print SSM Sheet</button>
+                    </div>
+                </div>
+                <div class="ssm-accordion-body" id="ssm-body-7" style="display: block;">
+                    
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272308-972519')">
+                                    👔 SM (972519): DR RAJA MUHAMMAD SADIQUE [3 Workers] — FYP: Rs. 126,115 | POL: 6 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972519')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972519')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272308-972519" style="display: block;">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5735095</td>
+                            <td><strong>Hidayatullah</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 63,247</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(56)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(56)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5732987</td>
+                            <td><strong>M Sajid Lashari</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 48,017</td>
+                            <td style="text-align:center;">2</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(65)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(65)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5732591</td>
+                            <td><strong>Shafqat Hussain Lashari</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 14,851</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(73)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(73)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-0272308-972520')">
+                                    👔 SM (972520): MR HARESH KUMAR [2 Workers] — FYP: Rs. 310,726 | POL: 4 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('972520')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('972520')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-0272308-972520" style="display: block;">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><tr>
+                            <td>5732985</td>
+                            <td><strong>Nishata Kumari</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 198,742</td>
+                            <td style="text-align:center;">3</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(32)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(32)">🗑️ Delete</button>
+                            </td>
+                        </tr><tr>
+                            <td>5734230</td>
+                            <td><strong>Mrs Sandhia Kumari</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. 111,984</td>
+                            <td style="text-align:center;">1</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(46)">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(46)">🗑️ Delete</button>
+                            </td>
+                        </tr></tbody></table></div></div>
+                </div>
+            </div></div>
+        </div>
+
+        <!-- Tab 3: Business -->
+        <div id="tab-business" class="tab-content" style="display:none;">
+            <div class="card">
+                <h2>Month-wise Business Entry</h2>
+                <div class="form-group"><label>Select Month:</label><select><option selected="selected">January 2026</option><option>February 2026</option></select></div>
+                <div class="form-group"><label>Worker Code (SM / SR):</label><input type="text" placeholder="Enter Code"></div>
+                <div class="form-group"><label>FYP Amount (Rs.):</label><input type="number" placeholder="Enter FYP"></div>
+                <div class="form-group"><label>Policies (POL):</label><input type="number" placeholder="Enter POL"></div>
+                <button class="btn" onclick="alert('Entry Saved!')">Save Business Entry</button>
+            </div>
+        </div>
+
+        <!-- Tab 4: Staff Registration -->
+        <div id="tab-registration" class="tab-content" style="display:none;">
+            <div class="card">
+                <h2>Register / Update Sales Manager (SM) or SR</h2>
+                <div class="form-group">
+                    <label>Worker Role Type:</label>
+                    <select id="regRole" onchange="toggleFormFields()">
+                        <option value="SR" selected="selected">SR (Sales Representative)</option>
+                        <option value="SM">SM (Sales Manager)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Select Target Parent SSM:</label>
+                    <select id="regSsmCode">
+                        <option value="0272033" selected="selected">0272033 - MUHAMMAD AKRAM AWAN</option>
+                        <option value="0293119">0293119 - MIR HAZAR MAIRI</option>
+                        <option value="0272255">0272255 - NAVEED ADIL RAJPUT</option>
+                        <option value="0272031">0272031 - MUKHTIAR AHMED ABRO</option>
+                        <option value="0272328">0272328 - SAFIULLAH KHAN PATHAN</option>
+                        <option value="0272035">0272035 - SHER AHMED SAHTO</option>
+                        <option value="0272329">0272329 - M IBRAHIM MUGHAL</option>
+                        <option value="0272308">0272308 - ABDUL GHAFOOR LASHARI</option>
+                    </select>
+                </div>
+                <div class="form-group" id="parentSmGroup"><label>Target SM Code:</label><input type="text" id="regParentSmCode" placeholder="Enter Parent SM Code"></div>
+                <div class="form-group"><label>Worker Code:</label><input type="text" id="regCode" placeholder="Enter Code"></div>
+                <div class="form-group"><label>Full Name:</label><input type="text" id="regName" placeholder="Full Name"></div>
+                <button class="btn" onclick="registerNewWorkerAction()">Register Worker Now</button>
+            </div>
+        </div>
+
+        <!-- Tab 5: Matrix -->
+        <div id="tab-matrix" class="tab-content" style="display:none;">
+            <div class="card">
+                <h2>📊 Export Matrix</h2>
+                <button class="btn" onclick="alert('CSV Exported!')">Download Directory CSV</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const MASTER_PASSWORD = "7203";
+    const STORAGE_KEY = "state_life_data_v1018_exact_marked_figures";
+
+    function cleanCode(code) {
+        if(!code) return "";
+        return String(code).trim().replace(/^0+/, '');
+    }
+
+    function verifyMasterPassword() {
+        let val = document.getElementById('masterPasswordInput').value.trim();
+        if(val === MASTER_PASSWORD) {
+            document.getElementById('authScreen').style.display = 'none';
+            filterTable();
+        } else {
+            alert("❌ Incorrect Password!");
+        }
+    }
+
+    function handlePasswordKey(e) { if(e.key === 'Enter') verifyMasterPassword(); }
+
+    function toggleFormFields() {
+        let role = document.getElementById('regRole').value;
+        document.getElementById('parentSmGroup').style.display = (role === 'SR') ? 'block' : 'none';
+    }
+
+    let smToSsmMap = {
+        "972630": "0272033", "972561": "0272033", "972025": "0272033", "874559": "0272033",
+        "972579": "0293119", "972143": "0293119", "972174": "0293119", "874436": "0293119", "874406": "0293119", "972569": "0293119", "972378": "0293119", "972520": "0293119", "972519": "0293119", "972112": "0293119",
+        "972307": "0272255", "972522": "0272255", "972306": "0272255", "972277": "0272255",
+        "972028": "0272031", "874470": "0272031", "972648": "0272031", "972029": "0272031", "972523": "0272031",
+        "972189": "0272328",
+        "874577": "0272035", "972029": "0272035",
+        "972651": "0272329", "972649": "0272329",
+        "972308": "0272308"
+    };
+
+    const ssmMasterDirectory = {
+        "0272033": { name: "MUHAMMAD AKRAM AWAN", officialFyp: 12054390, officialPol: 89 },
+        "0293119": { name: "MIR HAZAR MAIRI", officialFyp: 5290200, officialPol: 78 },
+        "0272255": { name: "NAVEED ADIL RAJPUT", officialFyp: 1832022, officialPol: 15 },
+        "0272031": { name: "MUKHTIAR AHMED ABRO", officialFyp: 1330353, officialPol: 13 },
+        "0272328": { name: "SAFIULLAH KHAN PATHAN", officialFyp: 1191347, officialPol: 17 },
+        "0272035": { name: "SHER AHMED SAHTO", officialFyp: 1107886, officialPol: 13 },
+        "0272329": { name: "M IBRAHIM MUGHAL", officialFyp: 678996, officialPol: 11 },
+        "0272308": { name: "ABDUL GHAFOOR LASHARI", officialFyp: 436841, officialPol: 10 }
+    };
+
+    let smNamesMap = {
+        "972630": "AMEET KUMAR", "972561": "JAISH TULSI", "972025": "MUHAMMAD ASGHAR AWAN", "874559": "TUFAIL AHMED ABRO",
+        "972579": "M YAQOOB MAIRI", "972143": "KAMAL UDDIN MAIRI", "972174": "DEEPAK KUMAR", "874436": "NAWAB KHAN MAIRI",
+        "874406": "NIAZ ALI KHOSO", "972569": "S SHAFQAT ALI SHAH", "972378": "NASEERUDDI MAIRI", "972307": "MRS MEHREEN NAVEED",
+        "972522": "MR NAVREED SARWAR", "972306": "MR MUHAMMAD ALI SHAH", "972028": "MR SHAHZEB ABRO", "874470": "MR MUHAMMAD SHARIF SULANGI",
+        "972648": "MRS FATIMA KHAN", "972189": "M AKRAM KHOSO", "972112": "ALI SHER GOLO", "874577": "M QASM SOLANGI",
+        "972651": "ROMANA RASOOL", "972649": "MISS TAYYABA MUGHAL", "972523": "MISS KALSOOM", "972277": "MR ABDUL BARI CHANDIO",
+        "972029": "SAMINA SAHTO", "972520": "MR HARESH KUMAR", "972519": "DR RAJA MUHAMMAD SADIQUE", "972367": "MUHAMMAD HUSSAIN"
+    };
+
+    const masterOfficialWorkers = [
+        { name: "Deepak Kumar", code: "5734323", sm: "972630", fyp: 3070901, pol: 13 },
+        { name: "Nanik Ram", code: "5734711", sm: "972630", fyp: 1496181, pol: 11 },
+        { name: "Shankar Kumar", code: "5733184", sm: "972561", fyp: 1423525, pol: 3 },
+        { name: "Rahul Kumar", code: "5734322", sm: "972630", fyp: 1204240, pol: 6 },
+        { name: "Maheen Rajput", code: "5731250", sm: "972630", fyp: 1170598, pol: 3 },
+        { name: "Sameet Kumar", code: "5734349", sm: "972561", fyp: 1100022, pol: 8 },
+        { name: "Ghulam Sarwar Chandio", code: "5731200", sm: "972277", fyp: 1010804, pol: 10 },
+        { name: "Rashid Ali", code: "5734906", sm: "972579", fyp: 821603, pol: 7 },
+        { name: "Sikeeladho", code: "5734712", sm: "972143", fyp: 701486, pol: 8 },
+        { name: "Shiv Om", code: "5735085", sm: "972630", fyp: 600393, pol: 9 },
+        { name: "Jaish Kumar", code: "5733185", sm: "972561", fyp: 579168, pol: 6 },
+        { name: "Mrs Reema", code: "5735143", sm: "972561", fyp: 567400, pol: 1 },
+        { name: "Israr Ahmed", code: "5732991", sm: "972523", ssm: "0272031", fyp: 533093, pol: 5 },
+        { name: "Syed Ali Naqi Shah", code: "5734722", sm: "972569", fyp: 527043, pol: 3 },
+        { name: "Prince", code: "5729875", sm: "972174", fyp: 455420, pol: 8 },
+        { name: "Abu Bakar Mairi", code: "5734027", sm: "972579", fyp: 416295, pol: 8 },
+        { name: "Asif Ali Khoso", code: "3737269", sm: "874406", fyp: 411889, pol: 5 },
+        { name: "Waqar Ahmed Abro", code: "5727841", sm: "972028", fyp: 373051, pol: 1 },
+        { name: "Javed Ahmed", code: "5735032", sm: "972648", fyp: 322888, pol: 3 },
+        { name: "Vicky Kumar", code: "5734350", sm: "972630", fyp: 305806, pol: 4 },
+        { name: "Ghulam Mohiuddin", code: "5734934", sm: "972648", fyp: 291769, pol: 8 },
+        { name: "Ravinder Kumar", code: "5735014", sm: "972630", fyp: 271647, pol: 3 },
+        { name: "Vivek Khurana", code: "5734710", sm: "972630", fyp: 266743, pol: 4 },
+        { name: "Syed Ali Ahmed Shah", code: "5731246", sm: "972306", fyp: 257252, pol: 3 },
+        { name: "Shoaib Ali Awan", code: "5729561", sm: "972025", fyp: 255660, pol: 3 },
+        { name: "M Ayoub Mughal", code: "5729685", sm: "972649", fyp: 254908, pol: 2 },
+        { name: "Ghulam Akbar Soomro", code: "3737646", sm: "874470", fyp: 254287, pol: 1 },
+        { name: "Sameena Mairi", code: "5731182", sm: "874436", fyp: 243814, pol: 6 },
+        { name: "Payal Kumari", code: "5729874", sm: "972174", fyp: 219500, pol: 1 },
+        { name: "Dinesh Kumar", code: "5735011", sm: "972630", fyp: 216720, pol: 1 },
+        { name: "M Tarique", code: "5735238", sm: "874559", fyp: 212800, pol: 1 },
+        { name: "Madha", code: "5734413", sm: "972651", fyp: 208770, pol: 4 },
+        { name: "Nishata Kumari", code: "5732985", sm: "972520", fyp: 198742, pol: 3 },
+        { name: "Muhammad Hassan", code: "5732748", sm: "874406", fyp: 196949, pol: 8 },
+        { name: "Abdul Ghafar Shah", code: "5727991", sm: "874436", fyp: 191200, pol: 2 },
+        { name: "Abdul Hakeem Mairi", code: "5726503", sm: "972378", fyp: 158591, pol: 5 },
+        { name: "Muhammad Usman", code: "5728543", sm: "874436", fyp: 153911, pol: 3 },
+        { name: "Rohan Kumar", code: "5734930", sm: "972630", fyp: 150931, pol: 3 },
+        { name: "Ghulam Musatfa", code: "5732857", sm: "972378", fyp: 150214, pol: 1 },
+        { name: "Muhammad Asghar", code: "5735033", sm: "972307", fyp: 150044, pol: 2 },
+        { name: "Ghulam Abbas", code: "5735036", sm: "972025", fyp: 140928, pol: 4 },
+        { name: "Shahmeer Khoso", code: "5732281", sm: "972143", fyp: 140220, pol: 3 },
+        { name: "Abdullah Khan", code: "5735026", sm: "972307", fyp: 135081, pol: 4 },
+        { name: "Maniza Abro", code: "5732783", sm: "874559", fyp: 128661, pol: 2 },
+        { name: "Asadullah", code: "5735220", sm: "972025", fyp: 126538, pol: 3 },
+        { name: "Mehak", code: "5734753", sm: "874559", fyp: 114700, pol: 1 },
+        { name: "Mrs Sandhia Kumari", code: "5734230", sm: "972520", fyp: 111984, pol: 1 },
+        { name: "Yasir Ali", code: "5734537", sm: "972651", fyp: 108106, pol: 1 },
+        { name: "M Illyas", code: "5734739", sm: "972579", fyp: 107119, pol: 3 },
+        { name: "Samina Sahto", code: "972029", sm: "972029", ssm: "0272035", fyp: 97082, pol: 3 },
+        { name: "Ameet Kumar", code: "5733845", sm: "972630", fyp: 99999, pol: 1 },
+        { name: "Muhammad Umar", code: "5734705", sm: "972523", fyp: 94634, pol: 2 },
+        { name: "Zafar Ali Soomro", code: "5731424", sm: "972648", fyp: 89169, pol: 2 },
+        { name: "Amjad Ali Lashari", code: "5732847", sm: "972174", fyp: 88424, pol: 3 },
+        { name: "Kantesh Kumar", code: "5733637", sm: "972561", fyp: 77620, pol: 2 },
+        { name: "Asif Ali Naich", code: "5727540", sm: "972028", fyp: 76536, pol: 2 },
+        { name: "Muhammad Ali Khoso", code: "5729993", sm: "972189", fyp: 70216, pol: 1 },
+        { name: "Hidayatullah", code: "5735095", sm: "972519", fyp: 63247, pol: 3 },
+        { name: "Shoaib Ahmed", code: "5735105", sm: "972522", fyp: 62313, pol: 1 },
+        { name: "M Hussain", code: "5735120", sm: "972307", ssm: "0272255", fyp: 56734, pol: 1 },
+        { name: "Sateesh Kumar", code: "5734287", sm: "972174", fyp: 56270, pol: 1 },
+        { name: "Ghulam Yaseen Khoso", code: "5732358", sm: "972143", fyp: 56180, pol: 1 },
+        { name: "Khadim Hussain", code: "5734851", sm: "972648", fyp: 52900, pol: 1 },
+        { name: "Piriya Kumari", code: "5735037", sm: "972630", fyp: 52451, pol: 2 },
+        { name: "Muhammad Aslam", code: "5732848", sm: "874470", fyp: 52400, pol: 1 },
+        { name: "Sikandar Ali Mairi", code: "5728379", sm: "874436", fyp: 52207, pol: 1 },
+        { name: "M Sajid Lashari", code: "5732987", sm: "972519", fyp: 48017, pol: 2 },
+        { name: "Shankar Lal", code: "5734415", sm: "972651", fyp: 39284, pol: 2 },
+        { name: "Sarfraz Ahmed Soomro", code: "5733013", sm: "972649", fyp: 34316, pol: 1 },
+        { name: "Abdul Wahid", code: "5734420", sm: "972651", fyp: 33612, pol: 2 },
+        { name: "Liaquat Ali Mairi", code: "3736225", sm: "972143", fyp: 30235, pol: 1 },
+        { name: "Sahil Kumar", code: "5734414", sm: "972561", fyp: 25977, pol: 1 },
+        { name: "Mrs Musrat Lal Bux", code: "5734931", sm: "972523", fyp: 22888, pol: 1 },
+        { name: "Shoib Ahmed", code: "5732689", sm: "972028", fyp: 20546, pol: 1 },
+        { name: "Shafqat Hussain Lashari", code: "5732591", sm: "972519", fyp: 14851, pol: 1 },
+        { name: "Sohrab Buledi", code: "5735239", sm: "972579", fyp: 14414, pol: 1 }
+    ];
+
+    function openEditModal(index) {
+        let saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let worker = saved[index];
+        if(!worker) return;
+
+        document.getElementById('editIndex').value = index;
+        document.getElementById('modalName').value = worker.name;
+        document.getElementById('modalSrCode').value = worker.sr;
+        document.getElementById('modalSmCode').value = worker.sm;
+        document.getElementById('modalSsmCode').value = worker.ssm;
+        document.getElementById('modalFyp').value = worker.fyp;
+        document.getElementById('modalPol').value = worker.pol;
+
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
+
+    function saveEditedWorker() {
+        let index = document.getElementById('editIndex').value;
+        let saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let worker = saved[index];
+        if(!worker) return;
+
+        worker.name = document.getElementById('modalName').value.trim().toUpperCase();
+        worker.sr = document.getElementById('modalSrCode').value.trim();
+        worker.sm = document.getElementById('modalSmCode').value.trim();
+        worker.ssm = document.getElementById('modalSsmCode').value;
+        worker.fyp = parseFloat(document.getElementById('modalFyp').value) || 0;
+        worker.pol = parseInt(document.getElementById('modalPol').value) || 0;
+
+        saved[index] = worker;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+        
+        closeEditModal();
+        alert("✅ Record updated successfully!");
+        filterTable();
+    }
+
+    function openSmEditModal(smCode) {
+        document.getElementById('editSmCodeVal').value = smCode;
+        document.getElementById('modalSmEditCode').value = smCode;
+        document.getElementById('modalSmEditName').value = smNamesMap[smCode] || "Sales Manager";
+        document.getElementById('modalSmEditSsm').value = smToSsmMap[smCode] || "0272033";
+
+        document.getElementById('smEditModal').style.display = 'flex';
+    }
+
+    function closeSmEditModal() { document.getElementById('smEditModal').style.display = 'none'; }
+
+    function saveEditedSm() {
+        let smCode = document.getElementById('editSmCodeVal').value;
+        let newName = document.getElementById('modalSmEditName').value.trim().toUpperCase();
+        let newSsm = document.getElementById('modalSmEditSsm').value;
+
+        smNamesMap[smCode] = newName;
+        smToSsmMap[smCode] = newSsm;
+
+        let saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        
+        saved.forEach(w => {
+            if(cleanCode(w.sm) === cleanCode(smCode)) {
+                w.ssm = newSsm;
+            }
+        });
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+        closeSmEditModal();
+        alert(`✅ SM (${smCode}) Details Updated Successfully!`);
+        filterTable();
+    }
+
+    function deleteWorker(index) {
+        let saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let worker = saved[index];
+        if(!worker) return;
+
+        if(confirm(`Kya aap ${worker.name} (${worker.sr}) ko Delete karna chahte hain?`)) {
+            saved.splice(index, 1);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+            alert("🗑️ Worker Deleted Successfully!");
+            filterTable();
+        }
+    }
+
+    /* SPECIFIC SSM PRINT FUNCTION */
+    function printSsmUnit(ssmKey) {
+        let saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let ssmInfo = ssmMasterDirectory[ssmKey];
+        let team = saved.filter(w => cleanCode(w.ssm) === cleanCode(ssmKey));
+
+        let smGroups = {};
+        team.forEach(w => {
+            let sc = cleanCode(w.sm);
+            if(!smGroups[sc]) smGroups[sc] = [];
+            smGroups[sc].push(w);
+        });
+
+        let printHtml = `
+            <div style="text-align:center; border-bottom:2px solid #0f2c59; padding-bottom:10px; margin-bottom:20px;">
+                <h2 style="margin:0; color:#0f2c59;">STATE LIFE INSURANCE CORPORATION OF PAKISTAN</h2>
+                <h3 style="margin:5px 0 0 0; color:#333;">AREA MANAGER 7203 - LARKANA ZONE</h3>
+                <h4 style="margin:5px 0 0 0; color:#28a745;">SENIOR SALES MANAGER (SSM) BUSINESS REPORT</h4>
+            </div>
+            <div style="background:#f8f9fa; border:1px solid #ddd; padding:15px; margin-bottom:20px; font-size:14px;">
+                <strong>SSM Code & Name:</strong> SSM (${ssmKey}) - ${ssmInfo.name}<br>
+                <strong>Total FYP Business (2026):</strong> Rs. ${ssmInfo.officialFyp.toLocaleString()}<br>
+                <strong>Total Policies (POL):</strong> ${ssmInfo.officialPol} POL<br>
+                <strong>Total Active Sales Managers:</strong> ${Object.keys(smGroups).length} SMs
+            </div>
+        `;
+
+        Object.keys(smGroups).forEach(smCode => {
+            let smTeam = smGroups[smCode];
+            let smName = smNamesMap[smCode] || "Sales Manager";
+            let smFyp = smTeam.reduce((s, x) => s + (x.fyp || 0), 0);
+            let smPol = smTeam.reduce((s, x) => s + (x.pol || 0), 0);
+
+            printHtml += `
+                <div style="margin-top:20px;">
+                    <div style="background:#e2eefd; color:#0f2c59; padding:8px 12px; font-weight:bold; font-size:13px; border:1px solid #ccc;">
+                        👔 SM (${smCode}): ${smName} — FYP: Rs. ${smFyp.toLocaleString()} | POL: ${smPol}
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; margin-top:5px; font-size:12px;">
+                        <thead>
+                            <tr style="background:#0f2c59; color:white;">
+                                <th style="padding:6px; border:1px solid #333;">SR Code</th>
+                                <th style="padding:6px; border:1px solid #333;">Worker Name</th>
+                                <th style="padding:6px; border:1px solid #333; text-align:right;">FYP (Rs.)</th>
+                                <th style="padding:6px; border:1px solid #333; text-align:center;">POL</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            smTeam.forEach(w => {
+                printHtml += `
+                    <tr>
+                        <td style="padding:6px; border:1px solid #ccc;">${w.sr}</td>
+                        <td style="padding:6px; border:1px solid #ccc;"><strong>${w.name}</strong></td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. ${w.fyp.toLocaleString()}</td>
+                        <td style="padding:6px; border:1px solid #ccc; text-align:center;">${w.pol}</td>
+                    </tr>`;
+            });
+            printHtml += `</tbody></table></div>`;
+        });
+
+        document.getElementById('singlePrintArea').innerHTML = printHtml;
+        window.print();
+    }
+
+    /* SPECIFIC SM PRINT FUNCTION */
+    function printSmUnit(smCode) {
+        let saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let team = saved.filter(w => cleanCode(w.sm) === cleanCode(smCode));
+        let smName = smNamesMap[smCode] || "Sales Manager";
+        let parentSsm = smToSsmMap[smCode] || "0272033";
+        let ssmName = ssmMasterDirectory[parentSsm] ? ssmMasterDirectory[parentSsm].name : "";
+
+        let smFyp = team.reduce((s, x) => s + (x.fyp || 0), 0);
+        let smPol = team.reduce((s, x) => s + (x.pol || 0), 0);
+
+        let printHtml = `
+            <div style="text-align:center; border-bottom:2px solid #0f2c59; padding-bottom:10px; margin-bottom:20px;">
+                <h2 style="margin:0; color:#0f2c59;">STATE LIFE INSURANCE CORPORATION OF PAKISTAN</h2>
+                <h3 style="margin:5px 0 0 0; color:#333;">AREA MANAGER 7203 - LARKANA ZONE</h3>
+                <h4 style="margin:5px 0 0 0; color:#17a2b8;">SALES MANAGER (SM) TEAM BUSINESS SHEET</h4>
+            </div>
+            <div style="background:#f8f9fa; border:1px solid #ddd; padding:15px; margin-bottom:20px; font-size:14px;">
+                <strong>Sales Manager Name:</strong> ${smName} (Code: ${smCode})<br>
+                <strong>Parent SSM Unit:</strong> SSM (${parentSsm}) - ${ssmName}<br>
+                <strong>SM Unit Total FYP:</strong> Rs. ${smFyp.toLocaleString()}<br>
+                <strong>SM Unit Total POL:</strong> ${smPol} POL<br>
+                <strong>Total Direct Field Workers:</strong> ${team.length}
+            </div>
+            <table style="width:100%; border-collapse:collapse; margin-top:10px; font-size:12px;">
+                <thead>
+                    <tr style="background:#0f2c59; color:white;">
+                        <th style="padding:8px; border:1px solid #333;">SR Code</th>
+                        <th style="padding:8px; border:1px solid #333;">Worker Name</th>
+                        <th style="padding:8px; border:1px solid #333; text-align:right;">FYP Business (Rs.)</th>
+                        <th style="padding:8px; border:1px solid #333; text-align:center;">POL</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+        team.forEach(w => {
+            printHtml += `
+                <tr>
+                    <td style="padding:8px; border:1px solid #ccc;">${w.sr}</td>
+                    <td style="padding:8px; border:1px solid #ccc;"><strong>${w.name}</strong></td>
+                    <td style="padding:8px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. ${w.fyp.toLocaleString()}</td>
+                    <td style="padding:8px; border:1px solid #ccc; text-align:center;">${w.pol}</td>
+                </tr>`;
+        });
+        printHtml += `</tbody></table>`;
+
+        document.getElementById('singlePrintArea').innerHTML = printHtml;
+        window.print();
+    }
+
+    function printFullMasterSheet() {
+        let saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let grandFyp = saved.reduce((sum, w) => sum + (w.fyp || 0), 0);
+        let grandPol = saved.reduce((sum, w) => sum + (w.pol || 0), 0);
+
+        let printHtml = `
+            <div style="text-align:center; border-bottom:2px solid #0f2c59; padding-bottom:10px; margin-bottom:20px;">
+                <h2 style="margin:0; color:#0f2c59;">STATE LIFE INSURANCE CORPORATION OF PAKISTAN</h2>
+                <h3 style="margin:5px 0 0 0; color:#333;">AREA MANAGER 7203 - LARKANA ZONE</h3>
+                <h4 style="margin:5px 0 0 0; color:#0f2c59;">MASTER CHANNEL DIRECTORY SHEET 2026</h4>
+            </div>
+            <div style="margin-bottom:15px; font-weight:bold; font-size:13px;">
+                Total Area FYP: Rs. 23,922,035 | Total Policies: 246 POL | Total Staff: ${saved.length} Workers
+            </div>
+            <table style="width:100%; border-collapse:collapse; font-size:11px;">
+                <thead>
+                    <tr style="background:#0f2c59; color:white;">
+                        <th style="padding:6px; border:1px solid #333;">#</th>
+                        <th style="padding:6px; border:1px solid #333;">SSM Code</th>
+                        <th style="padding:6px; border:1px solid #333;">SM Code</th>
+                        <th style="padding:6px; border:1px solid #333;">SR Code</th>
+                        <th style="padding:6px; border:1px solid #333;">Worker Name</th>
+                        <th style="padding:6px; border:1px solid #333; text-align:right;">FYP (Rs.)</th>
+                        <th style="padding:6px; border:1px solid #333; text-align:center;">POL</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+        saved.forEach((w, idx) => {
+            printHtml += `
+                <tr>
+                    <td style="padding:5px; border:1px solid #ccc;">${idx + 1}</td>
+                    <td style="padding:5px; border:1px solid #ccc;">${w.ssm}</td>
+                    <td style="padding:5px; border:1px solid #ccc;">${w.sm}</td>
+                    <td style="padding:5px; border:1px solid #ccc;">${w.sr}</td>
+                    <td style="padding:5px; border:1px solid #ccc;"><strong>${w.name}</strong></td>
+                    <td style="padding:5px; border:1px solid #ccc; text-align:right; font-weight:bold;">Rs. ${w.fyp.toLocaleString()}</td>
+                    <td style="padding:5px; border:1px solid #ccc; text-align:center;">${w.pol}</td>
+                </tr>`;
+        });
+        printHtml += `</tbody></table>`;
+
+        document.getElementById('singlePrintArea').innerHTML = printHtml;
+        window.print();
+    }
+
+    function registerNewWorkerAction() {
+        let role = document.getElementById('regRole').value;
+        let ssmCode = document.getElementById('regSsmCode').value;
+        let parentSmCode = document.getElementById('regParentSmCode').value.trim();
+        let code = document.getElementById('regCode').value.trim();
+        let name = document.getElementById('regName').value.trim();
+
+        if(!code || !name) { alert("❌ Please enter Worker Code and Name!"); return; }
+
+        let saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+        if(role === 'SM') {
+            smToSsmMap[code] = ssmCode;
+            smNamesMap[code] = name.toUpperCase();
+            alert(`✅ SM (${code}): ${name.toUpperCase()} registered under SSM (${ssmCode})!`);
+        } else {
+            if(!parentSmCode) { alert("❌ Please enter Parent SM Code for this SR!"); return; }
+            saved.push({ am: "07203", ssm: ssmCode, sm: parentSmCode, sr: code, name: name.toUpperCase(), fyp: 0, pol: 0 });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+            alert(`✅ SR (${code}): ${name.toUpperCase()} registered under SM (${parentSmCode}) and SSM (${ssmCode})!`);
+        }
+
+        document.getElementById('regCode').value = '';
+        document.getElementById('regName').value = '';
+        document.getElementById('regParentSmCode').value = '';
+        filterTable();
+    }
+
+    function forceResetMasterData() {
+        let mappedWorkers = masterOfficialWorkers.map(w => {
+            let parentSsm = w.ssm || smToSsmMap[w.sm] || "0272033";
+            return { am: "07203", ssm: parentSsm, sm: w.sm, sr: w.code, name: w.name, fyp: w.fyp, pol: w.pol };
+        });
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(mappedWorkers));
+        renderAll(mappedWorkers);
+        alert("🔄 Master Records Restored Successfully!");
+    }
+
+    function loadInitialData() {
+        let saved = localStorage.getItem(STORAGE_KEY);
+        if(!saved) forceResetMasterData();
+        else renderAll(JSON.parse(saved));
+    }
+
+    function renderAll(data) {
+        const tbody = document.getElementById('directoryTable');
+        tbody.innerHTML = '';
+
+        let query = document.getElementById('searchFilter').value.toLowerCase().trim();
+        let filtered = data.filter(w => 
+            w.ssm.toLowerCase().includes(query) ||
+            w.sm.toLowerCase().includes(query) ||
+            w.sr.toLowerCase().includes(query) ||
+            w.name.toLowerCase().includes(query)
+        );
+
+        filtered.forEach((w, idx) => {
+            let realIndex = data.indexOf(w);
+
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>#${idx + 1}</strong></td>
+                <td>07203</td>
+                <td>${w.ssm}</td>
+                <td><strong>${w.sm}</strong></td>
+                <td><strong>${w.sr}</strong></td>
+                <td><strong>${w.name}</strong></td>
+                <td style="color:#0f2c59; font-weight:bold;">Rs. ${w.fyp.toLocaleString()}</td>
+                <td style="font-weight:bold;">${w.pol}</td>
+                <td>
+                    <button class="btn-edit" onclick="openEditModal(${realIndex})">✏️ Edit</button>
+                    <button class="btn-delete" onclick="deleteWorker(${realIndex})">🗑️ Delete</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        renderHierarchy(data);
+    }
+
+    function renderHierarchy(data) {
+        const container = document.getElementById('hierarchyAccordionContainer');
+        container.innerHTML = '';
+
+        let ssmKeys = Object.keys(ssmMasterDirectory);
+
+        ssmKeys.forEach((ssmKey, idx) => {
+            let ssm = ssmMasterDirectory[ssmKey];
+            let ssmWorkers = data.filter(w => cleanCode(w.ssm) === cleanCode(ssmKey));
+
+            let ssmTotalFyp = ssm.officialFyp;
+            let ssmTotalPol = ssm.officialPol;
+
+            let smGroups = {};
+            ssmWorkers.forEach(w => {
+                let sc = cleanCode(w.sm);
+                if(!smGroups[sc]) smGroups[sc] = [];
+                smGroups[sc].push(w);
+            });
+
+            let smHtml = '';
+            let smKeys = Object.keys(smGroups);
+
+            if(smKeys.length === 0) {
+                smHtml = `<div style="padding: 10px; color: #888;">No registered SR team members under this SSM unit.</div>`;
+            } else {
+                smKeys.forEach(smCode => {
+                    let team = smGroups[smCode];
+                    let smName = smNamesMap[smCode] || "Sales Manager";
+                    let smFyp = team.reduce((s, x) => s + (x.fyp || 0), 0);
+                    let smPol = team.reduce((s, x) => s + (x.pol || 0), 0);
+
+                    smHtml += `
+                        <div class="sm-accordion-box">
+                            <div class="sm-accordion-header">
+                                <div class="sm-header-left" onclick="toggleAccordion('sm-body-${ssmKey}-${smCode}')">
+                                    👔 SM (${smCode}): ${smName} [${team.length} Workers] — FYP: Rs. ${smFyp.toLocaleString()} | POL: ${smPol} 🔽
+                                </div>
+                                <div class="no-print">
+                                    <button class="btn-ssm-print" onclick="printSmUnit('${smCode}')">🖨️ Print SM Sheet</button>
+                                    <button class="btn-edit" onclick="openSmEditModal('${smCode}')">✏️ Edit SM</button>
+                                </div>
+                            </div>
+                            <div class="sm-accordion-body" id="sm-body-${ssmKey}-${smCode}">
+                                <table class="sr-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Worker Name</th>
+                                            <th style="text-align:right;">FYP (Rs.)</th>
+                                            <th style="text-align:center;">POL</th>
+                                            <th style="text-align:center;" class="no-print">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+                    team.forEach(w => {
+                        let realIndex = data.indexOf(w);
+                        smHtml += `<tr>
+                            <td>${w.sr}</td>
+                            <td><strong>${w.name}</strong></td>
+                            <td style="text-align:right; color:#0f2c59; font-weight:bold;">Rs. ${w.fyp.toLocaleString()}</td>
+                            <td style="text-align:center;">${w.pol}</td>
+                            <td style="text-align:center;" class="no-print">
+                                <button class="btn-edit" onclick="openEditModal(${realIndex})">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteWorker(${realIndex})">🗑️ Delete</button>
+                            </td>
+                        </tr>`;
+                    });
+                    smHtml += `</tbody></table></div></div>`;
+                });
+            }
+
+            const ssmBox = document.createElement('div');
+            ssmBox.className = 'ssm-accordion-box';
+            ssmBox.innerHTML = `
+                <div class="ssm-accordion-header">
+                    <div class="ssm-header-left" onclick="toggleAccordion('ssm-body-${idx}')">
+                        👔 SSM (${ssmKey}): ${ssm.name} [${smKeys.length} SMs] — FYP: Rs. ${ssmTotalFyp.toLocaleString()} | POL: ${ssmTotalPol} 🔽
+                    </div>
+                    <div class="no-print">
+                        <button class="btn-ssm-print" style="background:#0f2c59;" onclick="printSsmUnit('${ssmKey}')">🖨️ Print SSM Sheet</button>
+                    </div>
+                </div>
+                <div class="ssm-accordion-body" id="ssm-body-${idx}">
+                    ${smHtml}
+                </div>
+            `;
+            container.appendChild(ssmBox);
+        });
+    }
+
+    function toggleAccordion(elementId) {
+        const el = document.getElementById(elementId);
+        if(el) el.style.display = (el.style.display === "block") ? "none" : "block";
+    }
+
+    function switchTab(tabId, event) {
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + tabId).style.display = 'block';
+        if(event) event.target.classList.add('active');
+
+        const titleMap = {
+            'directory': 'Update Channel Directory',
+            'hierarchy': 'Area Hierarchy Tree',
+            'business': 'Month-wise Business Entry',
+            'registration': 'Staff Registration & SMs',
+            'matrix': 'Excel Summary Matrix'
+        };
+        if(titleMap[tabId]) document.getElementById('pageTitle').innerText = titleMap[tabId];
+
+        let saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        if(tabId === 'directory') renderAll(saved);
+        if(tabId === 'hierarchy') renderHierarchy(saved);
+    }
+
+    function filterTable() {
+        let saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        renderAll(saved);
+    }
+
+    loadInitialData();
+</script>
+
+
+</body></html>

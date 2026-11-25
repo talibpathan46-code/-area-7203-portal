@@ -1362,19 +1362,15 @@ cache: 'no-store' });
             } catch (err) {
                 // Offline or file not yet published: keep localStorage / 
 
-defaultMasterDatabase
-            }
-        }
-
         let activeTab = 'areaHierarchy';
 
         const ADMIN_USER = "talib7203";
         const ADMIN_PASS = "statelife123";
         const FIELD_DEFAULT_PASS = "12345";
 
-        let currentUserSession = JSON.parse(sessionStorage.getItem('sl_portal_session')) || 
+        let currentUserSession = JSON.parse(sessionStorage.getItem('sl_portal_session')) || null;
 
-null;
+
 
         function checkLoginStatus() {
             if (currentUserSession) {

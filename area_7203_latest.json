@@ -1,0 +1,2511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>State Life Area 7203 Executive Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-
+
+awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?
+
+family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slblue: { 50: '#e6f0ff', 100: '#cce0ff', 500: '#0066cc', 600: 
+
+'#004080', 700: '#003366', 800: '#00264d', 900: '#001a33', 950: '#000d1a' },
+                        slgold: '#d4af37'
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; 
+
+margin: 0; padding: 0; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #004080; border-radius: 3px; }
+        
+        @media print {
+            body * { visibility: hidden !important; }
+            #printContainer, #printContainer * { visibility: visible !important; }
+            #printContainer {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 15px !important;
+                background: white !important;
+            }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- SECURITY LOGIN LOCK SCREEN -->
+    <div id="loginOverlay" class="fixed inset-0 bg-slblue-950 z-[100] flex items-center 
+
+justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 border-t-4 
+
+border-slgold space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-slgold to-yellow-
+
+600 flex items-center justify-center font-black text-slate-950 text-2xl shadow-lg mx-auto">
+                    SL
+                </div>
+                <h2 class="text-lg font-extrabold text-slblue-950 tracking-tight">STATE 
+
+LIFE INSURANCE</h2>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Area 
+
+7203 Portal | Executive &amp; Field Login</p>
+            </div>
+
+            <form onsubmit="verifyPortalLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-
+
+1">User ID / Worker Code</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center 
+
+text-slate-400"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" id="loginUser" required placeholder="Admin ID ya 
+
+Apna Worker Code" class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 
+
+rounded-lg text-sm font-bold text-slate-800 outline-none focus:border-slblue-700">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-
+
+1">Password</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center 
+
+text-slate-400"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" id="loginPass" required placeholder="Enter 
+
+Password" class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg 
+
+text-sm font-bold text-slate-800 outline-none focus:border-slblue-700">
+                    </div>
+                </div>
+                <p id="loginError" class="text-xs font-bold text-red-600 text-center 
+
+hidden">❌ Ghalat User ID ya Password! Dobara koshish karein.</p>
+                <button type="submit" class="w-full bg-slblue-800 hover:bg-slblue-900 
+
+text-white font-bold py-3 rounded-lg shadow-md text-xs uppercase tracking-wider transition 
+
+flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Login to Portal</span>
+                </button>
+            </form>
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-center 
+
+space-y-1">
+                <p class="text-[11px] text-slate-600 font-semibold">SSM / SM / SR Apna 
+
+Business Dekhne Ke Liye:</p>
+                <p class="text-[10px] text-slate-500">ID mein apna <b>Worker Code</b> aur 
+
+Password mein <b>12345</b> likhein.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <header class="bg-slblue-900 text-white shadow-md border-b border-slblue-950 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-
+
+between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slgold to-yellow-
+
+600 flex items-center justify-center font-extrabold text-slate-950 text-lg shadow">
+                    SL
+                </div>
+                <div>
+                    <h1 class="font-bold text-sm sm:text-base leading-tight">STATE LIFE 
+
+INSURANCE</h1>
+                    <p class="text-[10px] sm:text-xs text-blue-200" 
+
+id="headerSubtitle">Area 7203 Management Portal | Ustad Talib Hussain Edition</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <span id="loggedInBadge" class="hidden sm:inline-block bg-slblue-800 border 
+
+border-slblue-700 text-slgold text-[11px] font-bold px-3 py-1.5 rounded-lg">ADMIN 
+
+MODE</span>
+                <button onclick="hardResetDatabase()" class="bg-amber-700 hover:bg-amber-
+
+800 text-white text-[11px] font-bold px-2.5 py-2 rounded-lg shadow transition flex items-
+
+center space-x-1" title="Fresh Reset">
+                    <i class="fa-solid fa-rotate-right"></i><span class="hidden 
+
+sm:inline">Reset Data</span>
+                </button>
+                <button onclick="logoutPortal()" class="bg-red-600 hover:bg-red-700 text-
+
+white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center space-x-1" 
+
+title="Logout">
+                    <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Bar -->
+    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-30 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-
+
+between overflow-x-auto">
+            <div class="flex space-x-1 py-2" id="navTabsContainer">
+                <button onclick="switchMainTab('areaHierarchy')" id="btn-tab-areaHierarchy" 
+
+class="admin-only px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-
+
+center space-x-2 bg-slblue-700 text-white shadow whitespace-nowrap">
+                    <i class="fa-solid fa-sitemap"></i><span>01. Area Hierarchy</span>
+                </button>
+                <button onclick="switchMainTab('ssmHierarchy')" id="btn-tab-ssmHierarchy" 
+
+class="px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center 
+
+space-x-2 text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-user-tie"></i><span>02. SSM Units</span>
+                </button>
+                <button onclick="switchMainTab('smHierarchy')" id="btn-tab-smHierarchy" 
+
+class="px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center 
+
+space-x-2 text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-users-gear"></i><span>03. SM Teams</span>
+                </button>
+                <button onclick="switchMainTab('srPersonal')" id="btn-tab-srPersonal" 
+
+class="hidden px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center 
+
+space-x-2 text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-user"></i><span>My Personal Report</span>
+                </button>
+                <button onclick="switchMainTab('addUser')" id="btn-tab-addUser" 
+
+class="admin-only px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-
+
+center space-x-2 text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-user-plus"></i><span>04. Add Member</span>
+                </button>
+                <button onclick="switchMainTab('backupSystem')" id="btn-tab-backupSystem" 
+
+class="admin-only px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-
+
+center space-x-2 text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-database"></i><span>05. Save Backup</span>
+                </button>
+            </div>
+
+            <!-- Month Filter -->
+            <div class="flex items-center space-x-2 py-2 pl-4">
+                <label class="text-xs font-bold text-slate-600 uppercase hidden 
+
+md:inline">Month:</label>
+                <select id="selectedMonthFilter" onchange="renderActiveView()" class="px-3 
+
+py-1.5 bg-slate-100 border border-slate-300 rounded-lg text-xs font-bold text-slblue-700 
+
+outline-none focus:border-slblue-600">
+                    <option value="JANUARY">JANUARY</option>
+                    <option value="FEBRUARY">FEBRUARY</option>
+                    <option value="MARCH">MARCH</option>
+                    <option value="APRIL">APRIL</option>
+                    <option value="MAY">MAY</option>
+                    <option value="JUNE">JUNE</option>
+                    <option value="JULY">JULY</option>
+                    <option value="AUGUST">AUGUST</option>
+                    <option value="SEPTEMBER">SEPTEMBER</option>
+                    <option value="OCTOBER" selected>OCTOBER</option>
+                    <option value="NOVEMBER">NOVEMBER</option>
+                    <option value="DECEMBER">DECEMBER</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 space-y-6">
+
+        <!-- STATS OVERVIEW CARDS (ADMIN ONLY) -->
+        <div id="adminStatsOverview" class="admin-only grid grid-cols-1 sm:grid-cols-2 
+
+lg:grid-cols-4 gap-4 no-print">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-slate-500">Selected 
+
+Month Business</p>
+                        <h3 id="statMonthFyp" class="text-xl font-extrabold text-slblue-700 
+
+mt-1">Rs. 0</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-slblue-50 text-slblue-700 flex 
+
+items-center justify-center font-bold">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2" id="statMonthPol">0 Policies</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-slate-500">Year To 
+
+Date (YTD) Total</p>
+                        <h3 id="statYtdFyp" class="text-xl font-extrabold text-emerald-700 
+
+mt-1">Rs. 0</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-700 flex 
+
+items-center justify-center font-bold">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2" id="statYtdPol">0 YTD 
+
+Policies</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold uppercase text-slate-500">Total 
+
+Active Cadres</p>
+                        <h3 id="statCadreCounts" class="text-xl font-extrabold text-
+
+purple-700 mt-1">0 SSMs | 0 SMs</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-700 flex 
+
+items-center justify-center font-bold">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2" id="statSrCount">0 Sales 
+
+Representatives (SRs)</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex 
+
+items-center justify-center">
+                <button onclick="triggerAreaPrintView()" class="w-full bg-gradient-to-r 
+
+from-slblue-700 to-slblue-900 hover:from-slblue-800 hover:to-slblue-950 text-white font-
+
+bold py-3 px-4 rounded-lg shadow transition flex items-center justify-center space-x-2 
+
+text-xs uppercase tracking-wider">
+                    <i class="fa-solid fa-print text-sm"></i>
+                    <span>Print Area Full Report</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- PRINTABLE CONTAINER WRAPPER -->
+        <div id="printContainer" class="bg-white rounded-xl shadow-sm border border-slate-
+
+200 p-6 space-y-6">
+
+            <!-- Dynamic Print Header -->
+            <div class="hidden print-header border-b-2 border-slate-900 pb-3">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-xl font-black text-slblue-950">STATE LIFE INSURANCE 
+
+CORPORATION OF PAKISTAN</h1>
+                        <h2 class="text-sm font-bold text-slate-700">AREA MANAGER PORTAL - 
+
+AREA CODE 7203 (LARKANA ZONE)</h2>
+                        <p class="text-xs text-slate-500 mt-0.5" 
+
+id="printReportTitle">Official Cadre Business Performance Report</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="bg-slblue-900 text-white text-xs font-bold px-3 py-1 
+
+rounded">AREA 7203</span>
+                        <p class="text-[11px] font-semibold text-slate-600 mt-1" 
+
+id="printReportMonth">Month: OCTOBER 2026</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 01: AREA HIERARCHY & PRINT VIEW (ADMIN ONLY) -->
+            <div id="view-areaHierarchy" class="portal-view space-y-6">
+                <div class="flex justify-between items-center border-b pb-3 no-print">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">01. Area 7203 Full 
+
+Direct Cadre Report</h2>
+                        <p class="text-xs text-slate-500">Is view mein SSMs, SMs aur SRs 
+
+apnay business ke hisab se alag alag sorted show honge.</p>
+                    </div>
+                    <button onclick="window.print()" class="bg-emerald-600 hover:bg-
+
+emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow flex items-center 
+
+space-x-1.5">
+                        <i class="fa-solid fa-print"></i><span>Print Area Report</span>
+                    </button>
+                </div>
+
+                <!-- 1. SSM Direct Table -->
+                <div class="space-y-3">
+                    <div class="bg-slblue-900 text-white px-4 py-2.5 rounded-lg flex 
+
+items-center justify-between shadow-sm">
+                        <span class="font-extrabold text-xs uppercase tracking-wider"><i 
+
+class="fa-solid fa-award mr-2 text-slgold"></i>1. Senior Sales Managers (SSMs) List</span>
+                        <span class="text-xs bg-slblue-800 px-2.5 py-0.5 rounded font-mono 
+
+text-slgold" id="ssmCountBadge">0 SSMs</span>
+                    </div>
+                    <div class="overflow-x-auto border rounded-xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b font-bold">
+                                    <th class="p-3 border-r w-12 text-center">#</th>
+                                    <th class="p-3 border-r w-28">CODE</th>
+                                    <th class="p-3 border-r">SSM NAME</th>
+                                    <th class="p-3 border-r text-right">SELECTED MONTH 
+
+FYP</th>
+                                    <th class="p-3 border-r text-center">POLICIES</th>
+                                    <th class="p-3 border-r text-right">YTD TOTAL FYP</th>
+                                    <th class="p-3 border-r text-center">YTD POLICIES</th>
+                                    <th class="p-3 text-center no-print w-32">ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody id="areaSsmTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. SM Direct Table -->
+                <div class="space-y-3 pt-4">
+                    <div class="bg-purple-900 text-white px-4 py-2.5 rounded-lg flex 
+
+items-center justify-between shadow-sm">
+                        <span class="font-extrabold text-xs uppercase tracking-wider"><i 
+
+class="fa-solid fa-users-gear mr-2 text-purple-300"></i>2. Sales Managers (SMs) List</span>
+                        <span class="text-xs bg-purple-800 px-2.5 py-0.5 rounded font-mono 
+
+text-purple-200" id="smCountBadge">0 SMs</span>
+                    </div>
+                    <div class="overflow-x-auto border rounded-xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b font-bold">
+                                    <th class="p-3 border-r w-12 text-center">#</th>
+                                    <th class="p-3 border-r w-28">CODE</th>
+                                    <th class="p-3 border-r">SM NAME</th>
+                                    <th class="p-3 border-r">REPORTING SSM</th>
+                                    <th class="p-3 border-r text-right">MONTH FYP</th>
+                                    <th class="p-3 border-r text-center">POLICIES</th>
+                                    <th class="p-3 border-r text-right">YTD FYP</th>
+                                    <th class="p-3 border-r text-center">YTD POL</th>
+                                    <th class="p-3 text-center no-print w-32">ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody id="areaSmTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. SR Direct Table -->
+                <div class="space-y-3 pt-4">
+                    <div class="bg-slate-800 text-white px-4 py-2.5 rounded-lg flex items-
+
+center justify-between shadow-sm">
+                        <span class="font-extrabold text-xs uppercase tracking-wider"><i 
+
+class="fa-solid fa-user-group mr-2 text-emerald-400"></i>3. Sales Representatives (SRs) 
+
+List</span>
+                        <span class="text-xs bg-slate-700 px-2.5 py-0.5 rounded font-mono 
+
+text-emerald-300" id="srCountBadge">0 SRs</span>
+                    </div>
+                    <div class="overflow-x-auto border rounded-xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b font-bold">
+                                    <th class="p-3 border-r w-12 text-center">#</th>
+                                    <th class="p-3 border-r w-28">CODE</th>
+                                    <th class="p-3 border-r">SR NAME</th>
+                                    <th class="p-3 border-r">REPORTING SM</th>
+                                    <th class="p-3 border-r text-right">MONTH FYP</th>
+                                    <th class="p-3 border-r text-center">POLICIES</th>
+                                    <th class="p-3 border-r text-right">YTD FYP</th>
+                                    <th class="p-3 border-r text-center">YTD POL</th>
+                                    <th class="p-3 text-center no-print w-32">ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody id="areaSrTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 02: SSM HIERARCHY UNITS & SINGLE PRINT VIEW -->
+            <div id="view-ssmHierarchy" class="portal-view space-y-6 hidden">
+                <div class="flex justify-between items-center border-b pb-3 no-print">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900" id="ssmViewTitle">02. 
+
+SSM Units Hierarchy &amp; Individual Print View</h2>
+                        <p class="text-xs text-slate-500" id="ssmViewDesc">SSM unit ke 
+
+andar ke SMs/SRs ki tafseel aur print report.</p>
+                    </div>
+                </div>
+                <div id="ssmCardsContainer" class="space-y-4"></div>
+            </div>
+
+            <!-- TAB 03: SM HIERARCHY TEAMS & SINGLE PRINT VIEW -->
+            <div id="view-smHierarchy" class="portal-view space-y-6 hidden">
+                <div class="flex justify-between items-center border-b pb-3 no-print">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900" id="smViewTitle">03. 
+
+SM Teams Hierarchy &amp; SRs Management</h2>
+                        <p class="text-xs text-slate-500" id="smViewDesc">SM aur unke 
+
+zair-e-nugrani SRs ki individual report aur details.</p>
+                    </div>
+                </div>
+                <div id="smCardsContainer" class="space-y-4"></div>
+            </div>
+
+            <!-- TAB 04: INDIVIDUAL SR PERSONAL VIEW (READ-ONLY) -->
+            <div id="view-srPersonal" class="portal-view space-y-6 hidden">
+                <div class="flex justify-between items-center border-b pb-3 no-print">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Personal Business 
+
+Performance Report (Read-Only)</h2>
+                        <p class="text-xs text-slate-500">Aapka apna mahana aur salana 
+
+(YTD) business record.</p>
+                    </div>
+                    <button onclick="window.print()" class="bg-slblue-700 hover:bg-slblue-
+
+800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow flex items-center space-x-
+
+1.5">
+                        <i class="fa-solid fa-print"></i><span>Print My Report</span>
+                    </button>
+                </div>
+                <div id="srPersonalCardContainer"></div>
+            </div>
+
+            <!-- TAB 05: ADD USER / TEAM (ADMIN ONLY) -->
+            <div id="view-addUser" class="portal-view space-y-6 hidden no-print">
+                <div class="max-w-2xl mx-auto bg-slate-50 border border-slate-200 p-6 
+
+rounded-xl shadow-sm space-y-4">
+                    <div class="border-b pb-3">
+                        <h3 class="text-base font-bold text-slate-900 uppercase">Register 
+
+New Worker / Team Member</h3>
+                        <p class="text-xs text-slate-500">Naya SSM, SM ya SR system mein 
+
+shamil karein.</p>
+                    </div>
+                    <form onsubmit="handleNewUserRegistration(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 
+
+mb-1">Select Role</label>
+                            <select id="regRole" onchange="toggleRegHierarchyFields()" 
+
+class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-bold 
+
+outline-none">
+                                <option value="SSM">Senior Sales Manager (SSM)</option>
+                                <option value="SM">Sales Manager (SM)</option>
+                                <option value="SR" selected>Sales Representative (SR)
+
+</option>
+                            </select>
+                        </div>
+                        <div id="regSsmContainer">
+                            <label class="block text-xs font-bold uppercase text-slate-600 
+
+mb-1">Select Parent SSM Unit</label>
+                            <select id="regSsmSelect" onchange="updateRegSmOptions()" 
+
+class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs outline-
+
+none"></select>
+                        </div>
+                        <div id="regSmContainer">
+                            <label class="block text-xs font-bold uppercase text-slate-600 
+
+mb-1">Select Reporting SM</label>
+                            <select id="regSmSelect" class="w-full px-3 py-2 bg-white 
+
+border border-slate-300 rounded-lg text-xs outline-none"></select>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-
+
+slate-600 mb-1">Worker Code</label>
+                                <input type="text" id="regCode" placeholder="e.g. 05735090" 
+
+required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-
+
+mono outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-
+
+slate-600 mb-1">Worker Full Name</label>
+                                <input type="text" id="regName" placeholder="Worker Full 
+
+Name" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs 
+
+uppercase outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase text-
+
+slate-600 mb-1">Month FYP (Rs.) [Auto adds to YTD]</label>
+                                <input type="number" id="regFyp" value="0" class="w-full 
+
+px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs outline-none font-bold text-
+
+slblue-700">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase text-
+
+slate-600 mb-1">Month Policies (POL) [Auto adds to YTD]</label>
+                                <input type="number" id="regPol" value="0" class="w-full 
+
+px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs outline-none font-bold text-
+
+slblue-700">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-slblue-700 hover:bg-slblue-
+
+800 text-white font-bold py-3 rounded-lg shadow text-xs uppercase transition">Add Member 
+
+Now</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- TAB 06: BACKUP & RESTORE SYSTEM (ADMIN ONLY) -->
+            <div id="view-backupSystem" class="portal-view space-y-6 hidden no-print">
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <div class="border-b pb-3">
+                        <h2 class="text-lg font-bold text-slate-900"><i class="fa-solid 
+
+fa-shield-halved text-slblue-700 mr-2"></i>05. Data Backup &amp; Restore System</h2>
+                        <p class="text-xs text-slate-500">Apne tamam entries aur updates ko 
+
+computer mein mehfooz (Save) karein ya purana backup wapas load karein.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Save Backup Card -->
+                        <div class="bg-emerald-50/60 border border-emerald-200 p-6 
+
+rounded-xl shadow-sm flex flex-col justify-between space-y-4">
+                            <div class="space-y-2">
+                                <div class="w-12 h-12 rounded-xl bg-emerald-600 text-white 
+
+flex items-center justify-center text-xl shadow">
+                                    <i class="fa-solid fa-download"></i>
+                                </div>
+                                <h3 class="text-base font-extrabold text-emerald-950 
+
+uppercase">1. Save Backup File</h3>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Portal ka tamam maujooda data (SSMs, SMs, SRs aur tamam 
+
+mahino ke figures) ek JSON file ki shakal mein aapke computer ke <b>Downloads</b> folder 
+
+mein save ho jayega.
+                                </p>
+                            </div>
+                            <div class="space-y-2 pt-2">
+                                <p id="lastBackupStatus" class="text-[11px] font-semibold 
+
+text-emerald-800 bg-white/80 px-3 py-1.5 rounded border border-emerald-200">
+                                    <i class="fa-solid fa-clock mr-1"></i>Last Backup: Abhi 
+
+tak nahi liya gaya
+                                </p>
+                                <button onclick="downloadPortalBackup()" class="w-full bg-
+
+emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg shadow 
+
+transition flex items-center justify-center space-x-2 text-xs uppercase tracking-wider">
+                                    <i class="fa-solid fa-floppy-disk text-sm"></i>
+                                    <span>Save Backup Now</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Restore Backup Card -->
+                        <div class="bg-slblue-50/60 border border-slblue-200 p-6 rounded-xl 
+
+shadow-sm flex flex-col justify-between space-y-4">
+                            <div class="space-y-2">
+                                <div class="w-12 h-12 rounded-xl bg-slblue-700 text-white 
+
+flex items-center justify-center text-xl shadow">
+                                    <i class="fa-solid fa-upload"></i>
+                                </div>
+                                <h3 class="text-base font-extrabold text-slblue-950 
+
+uppercase">2. Restore From Backup</h3>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Agar browser history clear ho jaye ya aap kisi doosre 
+
+computer par portal kholein, toh apni save ki hui <b>.json</b> backup file select karke 
+
+sara data wapas le aayein.
+                                </p>
+                            </div>
+                            <div class="space-y-2 pt-2">
+                                <input type="file" id="restoreFileInput" accept=".json" 
+
+onchange="handleRestoreBackupFile(event)" class="hidden">
+                                <button onclick="document.getElementById
+
+('restoreFileInput').click()" class="w-full bg-slblue-700 hover:bg-slblue-800 text-white 
+
+font-bold py-3 px-4 rounded-lg shadow transition flex items-center justify-center space-x-2 
+
+text-xs uppercase tracking-wider">
+                                    <i class="fa-solid fa-folder-open text-sm"></i>
+                                    <span>Upload &amp; Restore File</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FULL EDIT FORM MODAL (ADMIN ONLY) -->
+    <div id="editModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex 
+
+items-center justify-center p-4 hidden no-print">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border 
+
+border-slate-200">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="font-extrabold text-slate-900 text-sm uppercase" 
+
+id="editModalTitle">Edit Cadre Record</h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-
+
+600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleSaveEditModal(event)" class="space-y-4">
+                <input type="hidden" id="editTargetRole">
+                <input type="hidden" id="editOldCode">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-
+
+1">Worker Code</label>
+                        <input type="text" id="editWorkerCode" required class="w-full px-3 
+
+py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-
+
+1">Worker Name</label>
+                        <input type="text" id="editWorkerName" required class="w-full px-3 
+
+py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs uppercase font-bold">
+                    </div>
+                </div>
+
+                <div class="p-4 bg-slblue-50/70 rounded-xl border border-slblue-200 space-
+
+y-3">
+                    <h4 class="text-xs font-extrabold text-slblue-900 uppercase">Update 
+
+Business (<span id="editMonthLabel">OCTOBER</span>)</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-
+
+1">Month FYP (Rs.)</label>
+                            <input type="number" id="editMonthFyp" required class="w-full 
+
+px-3 py-2 bg-white border rounded text-xs font-bold text-slblue-700" value="0">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-
+
+1">Month Policies (POL)</label>
+                            <input type="number" id="editMonthPol" required class="w-full 
+
+px-3 py-2 bg-white border rounded text-xs font-bold text-slblue-700" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-3 border-t">
+                    <button type="button" onclick="handleDeleteRecord()" class="px-3 py-2 
+
+text-xs font-bold bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 
+
+transition">
+                        <i class="fa-solid fa-trash mr-1"></i> Delete Record
+                    </button>
+                    <div class="space-x-2">
+                        <button type="button" onclick="closeEditModal()" class="px-4 py-2 
+
+text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                        <button type="submit" class="px-5 py-2 text-xs font-bold bg-
+
+slblue-700 text-white rounded-lg shadow hover:bg-slblue-800">Update Record</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT CORE LOGIC -->
+    <script>
+        const defaultMasterDatabase = [
+            {
+                code: "0272033",
+                name: "MUHAMMAD AKRAM AWAN",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972630",
+                        name: "AMEET KUMAR",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734323", name: "DEEPAK KUMAR", months: { "OCTOBER": 
+
+{ fyp: 3290201, pol: 14 } } },
+                            { code: "05734711", name: "NANIK RAM", months: { "OCTOBER": { 
+
+fyp: 1396864, pol: 12 } } },
+                            { code: "05734322", name: "RAHUL KUMAR", months: { "OCTOBER": { 
+
+fyp: 1279781, pol: 7 } } },
+                            { code: "05735085", name: "SHIV OM", months: { "OCTOBER": { 
+
+fyp: 600393, pol: 9 } } },
+                            { code: "05734350", name: "VICKY KUMAR", months: { "OCTOBER": { 
+
+fyp: 305806, pol: 4 } } },
+                            { code: "05735014", name: "RAVINDER KUMAR", months: { 
+
+"OCTOBER": { fyp: 271647, pol: 3 } } },
+                            { code: "05734710", name: "VIVEK KHURANA", months: { "OCTOBER": 
+
+{ fyp: 266743, pol: 4 } } },
+                            { code: "05735011", name: "DINESH KUMAR", months: { "OCTOBER": 
+
+{ fyp: 216720, pol: 1 } } },
+                            { code: "05734930", name: "ROHAN KUMAR", months: { "OCTOBER": { 
+
+fyp: 369291, pol: 4 } } },
+                            { code: "05735037", name: "PRIYA KUMARI", months: { "OCTOBER": 
+
+{ fyp: 52451, pol: 2 } } }
+                        ]
+                    },
+                    {
+                        code: "0972025",
+                        name: "GHULAM ASGHAR AWAN",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05735220", name: "ASADULLAH BURIRO", months: { 
+
+"OCTOBER": { fyp: 322824, pol: 6 } } },
+                            { code: "05729561", name: "SHOIB ALI AWAN", months: { 
+
+"OCTOBER": { fyp: 255660, pol: 3 } } },
+                            { code: "05735036", name: "GHULAM ABBAS KHOSO", months: { 
+
+"OCTOBER": { fyp: 196835, pol: 6 } } },
+                            { code: "05733845", name: "AMEET KUMAR 1", months: { "OCTOBER": 
+
+{ fyp: 99999, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0874559",
+                        name: "TUFAIL AHMED ABRO",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05735238", name: "MUHAMMAD TARIQUE", months: { 
+
+"OCTOBER": { fyp: 228802, pol: 2 } } },
+                            { code: "05732783", name: "MRS MANIZA ABRO", months: { 
+
+"OCTOBER": { fyp: 128661, pol: 2 } } },
+                            { code: "05734753", name: "MEHAK ABRO", months: { "OCTOBER": { 
+
+fyp: 114700, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972561",
+                        name: "JAISH TULSI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734349", name: "SAMEET KUMAR", months: { "OCTOBER": 
+
+{ fyp: 1243565, pol: 10 } } },
+                            { code: "05733185", name: "JAISH KUMAR", months: { "OCTOBER": { 
+
+fyp: 579168, pol: 6 } } },
+                            { code: "05735143", name: "MRS REEMA", months: { "OCTOBER": { 
+
+fyp: 567400, pol: 1 } } },
+                            { code: "05735329", name: "MUHAMMAD MOOSA", months: { 
+
+"OCTOBER": { fyp: 198452, pol: 1 } } },
+                            { code: "05733637", name: "KANTESH KUMAR", months: { "OCTOBER": 
+
+{ fyp: 77620, pol: 2 } } },
+                            { code: "05734414", name: "SAHIL KUMAR", months: { "OCTOBER": { 
+
+fyp: 25977, pol: 1 } } },
+                            { code: "05733184", name: "SHANKAR KUMAR", months: { "OCTOBER": 
+
+{ fyp: 1423525, pol: 3 } } }
+                        ]
+                    }
+                ]
+            },
+            {
+                code: "0293119",
+                name: "MIR HAZAR MAIRI",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0874436",
+                        name: "NAWAB KHAN MAIRI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05731182", name: "MISS SAMEENA MAIRI", months: { 
+
+"OCTOBER": { fyp: 243814, pol: 6 } } },
+                            { code: "05727991", name: "ABDUL GHAFFAR SHAH", months: { 
+
+"OCTOBER": { fyp: 191200, pol: 2 } } },
+                            { code: "05728543", name: "MUHAMMAD USMAN", months: { 
+
+"OCTOBER": { fyp: 153911, pol: 3 } } },
+                            { code: "05728379", name: "SIKANDAR ALI MAIRI", months: { 
+
+"OCTOBER": { fyp: 78302, pol: 2 } } },
+                            { code: "03736225", name: "LIAQUAT ALI MAIRI", months: { 
+
+"OCTOBER": { fyp: 30235, pol: 1 } } },
+                            { code: "05730801", name: "GHULAM HUSSAIN JAKHRANI", months: { 
+
+"OCTOBER": { fyp: 20742, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972579",
+                        name: "MUHAMMAD YAQOOB MAIRI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734906", name: "RASHID ALI MAIRI", months: { 
+
+"OCTOBER": { fyp: 821603, pol: 5 } } },
+                            { code: "05734027", name: "ABU BAKAR MAIRI", months: { 
+
+"OCTOBER": { fyp: 416295, pol: 8 } } },
+                            { code: "05735239", name: "SOHRAB BULEDI", months: { "OCTOBER": 
+
+{ fyp: 152999, pol: 4 } } },
+                            { code: "05734739", name: "MUHAMMAD ILLAYAS", months: { 
+
+"OCTOBER": { fyp: 107119, pol: 3 } } },
+                            { code: "05733535", name: "KHAIR MUHAMMAD", months: { 
+
+"OCTOBER": { fyp: 100475, pol: 2 } } }
+                        ]
+                    },
+                    {
+                        code: "0972174",
+                        name: "DEEPAK KUMAR",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05729875", name: "PRINCE", months: { "OCTOBER": { fyp: 
+
+660163, pol: 13 } } },
+                            { code: "05729874", name: "MRS PAYAL KUMARI", months: { 
+
+"OCTOBER": { fyp: 219500, pol: 1 } } },
+                            { code: "05732847", name: "AMJAD ALI LASHARI", months: { 
+
+"OCTOBER": { fyp: 88424, pol: 3 } } },
+                            { code: "05734287", name: "SATESH KUMAR", months: { "OCTOBER": 
+
+{ fyp: 56270, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972378",
+                        name: "NASEERUDDIN MAIRI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05726503", name: "ABDUL HAKEEM MAIRI", months: { 
+
+"OCTOBER": { fyp: 158591, pol: 5 } } },
+                            { code: "05732857", name: "GHULAM MUSTAFA", months: { 
+
+"OCTOBER": { fyp: 150214, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972143",
+                        name: "KAMALUDDIN MAIRI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734712", name: "SIKEELADHO", months: { "OCTOBER": { 
+
+fyp: 897357, pol: 10 } } },
+                            { code: "05732281", name: "SHAHMIR KHOSO", months: { "OCTOBER": 
+
+{ fyp: 140220, pol: 3 } } },
+                            { code: "05732358", name: "GHULAM YASIN KHOSO", months: { 
+
+"OCTOBER": { fyp: 56180, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972569",
+                        name: "SYED SHAFQAT ALI SHAH SHERAZI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734722", name: "SYED ALI NAQI SHAH", months: { 
+
+"OCTOBER": { fyp: 593281, pol: 4 } } }
+                        ]
+                    },
+                    {
+                        code: "0972189",
+                        name: "MUHAMMAD AKRAM KHOSO",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05729993", name: "MUHAMMAD ALI", months: { "OCTOBER": 
+
+{ fyp: 70216, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0874406",
+                        name: "NIAZ ALI KHOSO",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "03737269", name: "ASIF ALI KHOSO", months: { 
+
+"OCTOBER": { fyp: 428376, pol: 6 } } },
+                            { code: "05732748", name: "MUHAMMAD HASSAN KHOSO", months: { 
+
+"OCTOBER": { fyp: 229374, pol: 9 } } }
+                        ]
+                    }
+                ]
+            },
+            {
+                code: "0272255",
+                name: "NAVEED ADIL RAJPUT",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972307",
+                        name: "MRS MEHREEN NAVEED",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05731250", name: "MISS MAHEEN", months: { "OCTOBER": { 
+
+fyp: 2231005, pol: 6 } } },
+                            { code: "05735033", name: "MUHAMMAD ASGHAR", months: { 
+
+"OCTOBER": { fyp: 150044, pol: 2 } } },
+                            { code: "05735026", name: "ABDULLAH KHAN", months: { "OCTOBER": 
+
+{ fyp: 135081, pol: 4 } } },
+                            { code: "05735120", name: "MUHAMMAD HUSSAIN", months: { 
+
+"OCTOBER": { fyp: 56734, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972522",
+                        name: "NAVEED SARWAR LASHARI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05735237", name: "OSAMA", months: { "OCTOBER": { fyp: 
+
+221691, pol: 2 } } },
+                            { code: "05735105", name: "SHOIB AHMED", months: { "OCTOBER": { 
+
+fyp: 62313, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972306",
+                        name: "SYED MUHAMMAD ALI SHAH",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05731246", name: "SYED ALI AHMED SHAH", months: { 
+
+"OCTOBER": { fyp: 257252, pol: 3 } } }
+                        ]
+                    }
+                ]
+            },
+            {
+                code: "0272328",
+                name: "SAFIULLAH KHAN PATHAN",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972648",
+                        name: "MRS FATIMA KHAN",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734411", name: "SANAULLAH KHAN PATHAN", months: { 
+
+"OCTOBER": { fyp: 434621, pol: 3 } } },
+                            { code: "05735032", name: "JAVED AHMED", months: { "OCTOBER": { 
+
+fyp: 426497, pol: 4 } } },
+                            { code: "05734934", name: "GHULAM MOHIUDDIN", months: { 
+
+"OCTOBER": { fyp: 397447, pol: 11 } } },
+                            { code: "05731424", name: "ZAFAR ALI", months: { "OCTOBER": { 
+
+fyp: 89169, pol: 2 } } },
+                            { code: "05734851", name: "KHADIM HUSSAIN", months: { 
+
+"OCTOBER": { fyp: 52900, pol: 1 } } }
+                        ]
+                    }
+                ]
+            },
+            {
+                code: "0272031",
+                name: "MUKHTIAR AHMED ABRO",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972523",
+                        name: "MISS KALSOOM",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05732991", name: "ISRAR AHMED", months: { "OCTOBER": { 
+
+fyp: 533093, pol: 5 } } },
+                            { code: "05734705", name: "MUHAMMAD UMAR", months: { "OCTOBER": 
+
+{ fyp: 159656, pol: 3 } } },
+                            { code: "05734931", name: "MUSRAT", months: { "OCTOBER": { fyp: 
+
+22888, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972028",
+                        name: "SHAH ZEB ABRO",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05727841", name: "WAQAR AHMED ABRO", months: { 
+
+"OCTOBER": { fyp: 373051, pol: 3 } } }
+                        ]
+                    },
+                    {
+                        code: "0874470",
+                        name: "MUHAMMAD SHARIF SOLANGI",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "03737646", name: "GHULAM AKBAR SOOMRO", months: { 
+
+"OCTOBER": { fyp: 254287, pol: 1 } } },
+                            { code: "05732848", name: "MUHAMMAD ASLAM", months: { 
+
+"OCTOBER": { fyp: 52400, pol: 1 } } }
+                        ]
+                    }
+                ]
+            },
+            {
+                code: "0272035",
+                name: "SHER AHMED SAHTO",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972277",
+                        name: "ABDUL BARI CHANDIO",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05731200", name: "GHULAM SARWAR", months: { "OCTOBER": 
+
+{ fyp: 1251824, pol: 11 } } }
+                        ]
+                    },
+                    {
+                        code: "0972029",
+                        name: "MISS SAMINA",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05727540", name: "ASIF ALI NAICH", months: { 
+
+"OCTOBER": { fyp: 76536, pol: 2 } } },
+                            { code: "05732689", name: "SHOIB AHMED SAHTO", months: { 
+
+"OCTOBER": { fyp: 36730, pol: 2 } } }
+                        ]
+                    }
+                ]
+            },
+            {
+                code: "0272329",
+                name: "MUHAMMAD IBRAHIM MUGHAL",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972649",
+                        name: "MISS TAYYABA",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05735349", name: "SHAN E HAIDER", months: { "OCTOBER": 
+
+{ fyp: 286350, pol: 1 } } },
+                            { code: "05729685", name: "MUHAMMAD AYOUB MUGHAL", months: { 
+
+"OCTOBER": { fyp: 254908, pol: 2 } } },
+                            { code: "05734415", name: "SHANKAR LAL", months: { "OCTOBER": { 
+
+fyp: 39284, pol: 2 } } },
+                            { code: "05733013", name: "SARFARAZ AHMED SOOMRO", months: { 
+
+"OCTOBER": { fyp: 34316, pol: 1 } } },
+                            { code: "05735392", name: "MISS AYESHA IBRAHIM", months: { 
+
+"OCTOBER": { fyp: 20896, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972651",
+                        name: "MRS ROOMANA RASOOL",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05734413", name: "MISS MADHA", months: { "OCTOBER": { 
+
+fyp: 208770, pol: 4 } } },
+                            { code: "05734537", name: "YASIR", months: { "OCTOBER": { fyp: 
+
+108106, pol: 1 } } },
+                            { code: "05734420", name: "ABDUL WAHID", months: { "OCTOBER": { 
+
+fyp: 33612, pol: 2 } } }
+                        ]
+                    }
+                ]
+            },
+            {
+                code: "0272308",
+                name: "ABDUL GHAFOOR LASHARI",
+                role: "SSM",
+                months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                team: [
+                    {
+                        code: "0972519",
+                        name: "DR RAJA MUHAMMAD SADIQUE",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05732987", name: "MUHAMMAD SAJID LASHARI", months: { 
+
+"OCTOBER": { fyp: 268474, pol: 7 } } },
+                            { code: "05735095", name: "HIDAYATULLAH", months: { "OCTOBER": 
+
+{ fyp: 63247, pol: 3 } } },
+                            { code: "05732591", name: "SHAFQAT HUSSAIN LASHARI", months: { 
+
+"OCTOBER": { fyp: 14851, pol: 1 } } }
+                        ]
+                    },
+                    {
+                        code: "0972520",
+                        name: "HARESH KUMAR",
+                        role: "SM",
+                        months: { "OCTOBER": { fyp: 0, pol: 0 } },
+                        srs: [
+                            { code: "05732985", name: "MRS NISHATA KUMARI", months: { 
+
+"OCTOBER": { fyp: 198742, pol: 3 } } },
+                            { code: "05734230", name: "MRS SANDIYA KUMARI", months: { 
+
+"OCTOBER": { fyp: 111984, pol: 1 } } }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        const STORAGE_KEY = 'area7203_master_v26';
+        const CENTRAL_JSON_FILE = './area_7203_latest.json';
+
+        let portalData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!Array.isArray(portalData) || portalData.length === 0) {
+            portalData = defaultMasterDatabase;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(portalData));
+        }
+
+        async function syncLatestDataFromGitHub() {
+            try {
+                const response = await fetch(`${CENTRAL_JSON_FILE}?t=${Date.now()}`, { 
+
+cache: 'no-store' });
+                if (!response.ok) return;
+                const parsed = await response.json();
+                const latestArray = Array.isArray(parsed) ? parsed : parsed.data;
+                if (Array.isArray(latestArray) && latestArray.length > 0) {
+                    portalData = latestArray;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(portalData));
+                    renderActiveView();
+                }
+            } catch (err) {
+                // Offline or file not yet published: keep localStorage / 
+
+defaultMasterDatabase
+            }
+        }
+
+        let activeTab = 'areaHierarchy';
+
+        const ADMIN_USER = "talib7203";
+        const ADMIN_PASS = "statelife123";
+        const FIELD_DEFAULT_PASS = "12345";
+
+        let currentUserSession = JSON.parse(sessionStorage.getItem('sl_portal_session')) || 
+
+null;
+
+        function checkLoginStatus() {
+            if (currentUserSession) {
+                document.getElementById('loginOverlay').classList.add('hidden');
+                applyRolePermissions();
+            }
+        }
+
+        function verifyPortalLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUser').value.trim();
+            const p = document.getElementById('loginPass').value.trim();
+
+            if (u === ADMIN_USER && p === ADMIN_PASS) {
+                currentUserSession = { role: 'ADMIN', code: '7203', name: 'USTAD TALIB 
+
+HUSSAIN' };
+                sessionStorage.setItem('sl_portal_session', JSON.stringify
+
+(currentUserSession));
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('loginError').classList.add('hidden');
+                applyRolePermissions();
+                return;
+            }
+
+            if (p === FIELD_DEFAULT_PASS) {
+                let foundUser = null;
+
+                portalData.forEach(ssm => {
+                    if (ssm.code === u) {
+                        foundUser = { role: 'SSM', code: ssm.code, name: ssm.name };
+                    }
+                    ssm.team.forEach(sm => {
+                        if (sm.code === u) {
+                            foundUser = { role: 'SM', code: sm.code, name: sm.name, 
+
+parentSsmCode: ssm.code, parentSsmName: ssm.name };
+                        }
+                        sm.srs.forEach(sr => {
+                            if (sr.code === u) {
+                                foundUser = { role: 'SR', code: sr.code, name: sr.name, 
+
+parentSmName: sm.name, parentSsmName: ssm.name };
+                            }
+                        });
+                    });
+                });
+
+                if (foundUser) {
+                    currentUserSession = foundUser;
+                    sessionStorage.setItem('sl_portal_session', JSON.stringify
+
+(currentUserSession));
+                    document.getElementById('loginOverlay').classList.add('hidden');
+                    document.getElementById('loginError').classList.add('hidden');
+                    applyRolePermissions();
+                    return;
+                }
+            }
+
+            document.getElementById('loginError').classList.remove('hidden');
+        }
+
+        function applyRolePermissions() {
+            if (!currentUserSession) return;
+            const role = currentUserSession.role;
+            const badge = document.getElementById('loggedInBadge');
+
+            if (role === 'ADMIN') {
+                badge.innerText = "ADMIN: FULL ACCESS";
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove
+
+('hidden'));
+                document.getElementById('btn-tab-ssmHierarchy').classList.remove('hidden');
+                document.getElementById('btn-tab-smHierarchy').classList.remove('hidden');
+                document.getElementById('btn-tab-srPersonal').classList.add('hidden');
+                switchMainTab('areaHierarchy');
+            } else {
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.add
+
+('hidden'));
+                badge.innerText = `${role} READ-ONLY: ${currentUserSession.name}`;
+
+                if (role === 'SSM') {
+                    document.getElementById('btn-tab-ssmHierarchy').classList.remove
+
+('hidden');
+                    document.getElementById('btn-tab-smHierarchy').classList.add('hidden');
+                    document.getElementById('btn-tab-srPersonal').classList.add('hidden');
+                    switchMainTab('ssmHierarchy');
+                } else if (role === 'SM') {
+                    document.getElementById('btn-tab-ssmHierarchy').classList.add
+
+('hidden');
+                    document.getElementById('btn-tab-smHierarchy').classList.remove
+
+('hidden');
+                    document.getElementById('btn-tab-srPersonal').classList.add('hidden');
+                    switchMainTab('smHierarchy');
+                } else if (role === 'SR') {
+                    document.getElementById('btn-tab-ssmHierarchy').classList.add
+
+('hidden');
+                    document.getElementById('btn-tab-smHierarchy').classList.add('hidden');
+                    document.getElementById('btn-tab-srPersonal').classList.remove
+
+('hidden');
+                    switchMainTab('srPersonal');
+                }
+            }
+        }
+
+        function logoutPortal() {
+            sessionStorage.removeItem('sl_portal_session');
+            currentUserSession = null;
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('loginPass').value = '';
+            document.getElementById('loginUser').value = '';
+        }
+
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(portalData));
+        }
+
+        function hardResetDatabase() {
+            if (confirm("⚠️ Kya aap sara data default clean state par reset karna chahte 
+
+hain?")) {
+                localStorage.removeItem(STORAGE_KEY);
+                portalData = defaultMasterDatabase;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(portalData));
+                alert("✅ Data reset ho gaya hai!");
+                location.reload();
+            }
+        }
+
+        function formatCurrency(num) {
+            return 'Rs. ' + Number(num || 0).toLocaleString('en-PK');
+        }
+
+        function getRecordMonthStats(obj, month) {
+            if (!obj.months) obj.months = {};
+            if (!obj.months[month]) obj.months[month] = { fyp: 0, pol: 0 };
+            return obj.months[month];
+        }
+
+        function getRecordYtdStats(obj) {
+            let totalFyp = 0;
+            let totalPol = 0;
+            if (obj.months) {
+                Object.values(obj.months).forEach(m => {
+                    totalFyp += Number(m.fyp || 0);
+                    totalPol += Number(m.pol || 0);
+                });
+            }
+            return { fyp: totalFyp, pol: totalPol };
+        }
+
+        function switchMainTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll('.portal-view').forEach(el => el.classList.add
+
+('hidden'));
+            const targetView = document.getElementById('view-' + tabId);
+            if (targetView) targetView.classList.remove('hidden');
+
+            ['areaHierarchy', 'ssmHierarchy', 'smHierarchy', 'addUser', 'backupSystem', 
+
+'srPersonal'].forEach(t => {
+                const btn = document.getElementById('btn-tab-' + t);
+                if (!btn) return;
+                if (t === tabId) {
+                    btn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                    btn.classList.add('bg-slblue-700', 'text-white', 'shadow');
+                } else {
+                    btn.classList.remove('bg-slblue-700', 'text-white', 'shadow');
+                    btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+                }
+            });
+
+            renderActiveView();
+        }
+
+        function renderActiveView() {
+            const selectedMonth = document.getElementById('selectedMonthFilter').value;
+            document.getElementById('printReportMonth').innerText = `Month: 
+
+${selectedMonth} 2026`;
+
+            if (activeTab === 'areaHierarchy') renderAreaDirectLists(selectedMonth);
+            else if (activeTab === 'ssmHierarchy') renderSsmUnitsHierarchy(selectedMonth);
+            else if (activeTab === 'smHierarchy') renderSmTeamsHierarchy(selectedMonth);
+            else if (activeTab === 'srPersonal') renderSrPersonalView(selectedMonth);
+            else if (activeTab === 'addUser') populateRegSsmOptions();
+            else if (activeTab === 'backupSystem') updateLastBackupLabel();
+        }
+
+        function updateLastBackupLabel() {
+            const lastTime = localStorage.getItem('area7203_last_backup');
+            const el = document.getElementById('lastBackupStatus');
+            if (el) {
+                el.innerHTML = lastTime 
+                    ? `<i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i>Last 
+
+Backup: <b>${lastTime}</b>`
+                    : `<i class="fa-solid fa-clock mr-1"></i>Last Backup: Abhi tak nahi 
+
+liya gaya`;
+            }
+        }
+
+        function downloadPortalBackup() {
+            const backupPayload = {
+                portal: "State Life Area 7203 Executive Portal",
+                version: "v26",
+                exportedAt: new Date().toLocaleString('en-PK'),
+                data: portalData
+            };
+            const dataStr = JSON.stringify(backupPayload, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const now = new Date();
+            const dateStamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart
+
+(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart
+
+(2,'0')}-${String(now.getMinutes()).padStart(2,'0')}`;
+            const fileName = `Area_7203_Backup_${dateStamp}.json`;
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            const timestampStr = now.toLocaleString('en-PK');
+            localStorage.setItem('area7203_last_backup', timestampStr);
+            updateLastBackupLabel();
+            alert(`✅ Backup save ho gaya hai!\nFile Name: ${fileName}`);
+        }
+
+        function handleRestoreBackupFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    const restoredArray = Array.isArray(parsed) ? parsed : parsed.data;
+
+                    if (!Array.isArray(restoredArray) || restoredArray.length === 0) {
+                        alert("❌ Ghalat file! Is file mein Area 7203 ka sahi data mojood 
+
+nahi hai.");
+                        return;
+                    }
+
+                    if (confirm("⚠️ Kya aap waqai is backup file se portal ka data restore 
+
+karna chahte hain? Maujooda data is file ke data se tabdeel ho jayega.")) {
+                        portalData = restoredArray;
+                        saveToStorage();
+                        renderActiveView();
+                        alert("✅ Backup kamyabi ke sath restore ho gaya hai!");
+                    }
+                } catch (err) {
+                    alert("❌ File read karne mein masla aaya. Meharbani karke sahi .json 
+
+backup file select karein.");
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function renderAreaDirectLists(month) {
+            let totalAreaMonthFyp = 0, totalAreaMonthPol = 0;
+            let totalAreaYtdFyp = 0, totalAreaYtdPol = 0;
+            let totalSmCount = 0;
+            let totalSrCount = 0;
+
+            let ssmList = portalData.map(ssm => {
+                let ssmSelf = getRecordMonthStats(ssm, month);
+                let ssmYtdSelf = getRecordYtdStats(ssm);
+                
+                let unitMonthFyp = ssmSelf.fyp;
+                let unitMonthPol = ssmSelf.pol;
+                let unitYtdFyp = ssmYtdSelf.fyp;
+                let unitYtdPol = ssmYtdSelf.pol;
+                
+                ssm.team.forEach(sm => {
+                    totalSmCount++;
+                    let smM = getRecordMonthStats(sm, month);
+                    let smY = getRecordYtdStats(sm);
+                    unitMonthFyp += smM.fyp; unitMonthPol += smM.pol;
+                    unitYtdFyp += smY.fyp; unitYtdPol += smY.pol;
+                    
+                    sm.srs.forEach(sr => {
+                        totalSrCount++;
+                        let srM = getRecordMonthStats(sr, month);
+                        let srY = getRecordYtdStats(sr);
+                        unitMonthFyp += srM.fyp; unitMonthPol += srM.pol;
+                        unitYtdFyp += srY.fyp; unitYtdPol += srY.pol;
+                    });
+                });
+
+                totalAreaMonthFyp += unitMonthFyp; 
+                totalAreaMonthPol += unitMonthPol;
+                totalAreaYtdFyp += unitYtdFyp; 
+                totalAreaYtdPol += unitYtdPol;
+
+                return { 
+                    ...ssm, 
+                    monthFyp: unitMonthFyp, 
+                    monthPol: unitMonthPol, 
+                    ytdFyp: unitYtdFyp, 
+                    ytdPol: unitYtdPol,
+                    unitMonthFyp, unitMonthPol, unitYtdFyp, unitYtdPol
+                };
+            });
+            ssmList.sort((a, b) => b.unitMonthFyp - a.unitMonthFyp);
+
+            let allSmList = [];
+            portalData.forEach(ssm => {
+                ssm.team.forEach(sm => {
+                    let smM = getRecordMonthStats(sm, month);
+                    let smY = getRecordYtdStats(sm);
+                    let smTeamMonthFyp = smM.fyp, smTeamMonthPol = smM.pol;
+                    let smTeamYtdFyp = smY.fyp, smTeamYtdPol = smY.pol;
+
+                    sm.srs.forEach(sr => {
+                        let srM = getRecordMonthStats(sr, month);
+                        let srY = getRecordYtdStats(sr);
+                        smTeamMonthFyp += srM.fyp; smTeamMonthPol += srM.pol;
+                        smTeamYtdFyp += srY.fyp; smTeamYtdPol += srY.pol;
+                    });
+                    allSmList.push({ 
+                        ...sm, 
+                        parentSsmName: ssm.name, 
+                        monthFyp: smTeamMonthFyp, 
+                        monthPol: smTeamMonthPol, 
+                        ytdFyp: smTeamYtdFyp, 
+                        ytdPol: smTeamYtdPol 
+                    });
+                });
+            });
+            allSmList.sort((a, b) => b.monthFyp - a.monthFyp);
+
+            let allSrList = [];
+            portalData.forEach(ssm => {
+                ssm.team.forEach(sm => {
+                    sm.srs.forEach(sr => {
+                        let srM = getRecordMonthStats(sr, month);
+                        let srY = getRecordYtdStats(sr);
+                        allSrList.push({
+                            ...sr,
+                            parentSmName: sm.name,
+                            monthFyp: srM.fyp,
+                            monthPol: srM.pol,
+                            ytdFyp: srY.fyp,
+                            ytdPol: srY.pol
+                        });
+                    });
+                });
+            });
+            allSrList.sort((a, b) => b.monthFyp - a.monthFyp);
+
+            document.getElementById('areaSsmTableBody').innerHTML = ssmList.map((s, i) => `
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-3 border-r text-center font-bold">${i + 1}</td>
+                    <td class="p-3 border-r font-mono font-bold">${s.code}</td>
+                    <td class="p-3 border-r font-extrabold text-slate-800">${s.name}</td>
+                    <td class="p-3 border-r text-right font-bold text-slblue-700">
+
+${formatCurrency(s.monthFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${s.monthPol} POL</td>
+                    <td class="p-3 border-r text-right font-bold text-emerald-700">
+
+${formatCurrency(s.ytdFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${s.ytdPol} POL</td>
+                    <td class="p-3 text-center no-print space-x-1">
+                        <button onclick="openEditModal('SSM', '${s.code}')" class="bg-
+
+slate-100 hover:bg-slate-200 border px-2 py-1 rounded text-[11px] font-bold"><i class="fa-
+
+solid fa-pen"></i> Edit</button>
+                        <button onclick="directDeleteRecord('SSM', '${s.code}')" 
+
+class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 py-1 rounded 
+
+text-[11px] font-bold"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('areaSmTableBody').innerHTML = allSmList.map((sm, i) => 
+
+`
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-3 border-r text-center font-bold">${i + 1}</td>
+                    <td class="p-3 border-r font-mono font-bold">${sm.code}</td>
+                    <td class="p-3 border-r font-bold">${sm.name}</td>
+                    <td class="p-3 border-r text-slate-500 text-[11px] font-semibold">
+
+${sm.parentSsmName}</td>
+                    <td class="p-3 border-r text-right font-bold text-slblue-700">
+
+${formatCurrency(sm.monthFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${sm.monthPol} POL</td>
+                    <td class="p-3 border-r text-right font-bold text-emerald-700">
+
+${formatCurrency(sm.ytdFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${sm.ytdPol} POL</td>
+                    <td class="p-3 text-center no-print space-x-1">
+                        <button onclick="openEditModal('SM', '${sm.code}')" class="bg-
+
+slate-100 hover:bg-slate-200 border px-2 py-1 rounded text-[11px] font-bold"><i class="fa-
+
+solid fa-pen"></i> Edit</button>
+                        <button onclick="directDeleteRecord('SM', '${sm.code}')" 
+
+class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 py-1 rounded 
+
+text-[11px] font-bold"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('areaSrTableBody').innerHTML = allSrList.map((sr, i) => 
+
+`
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-3 border-r text-center font-bold">${i + 1}</td>
+                    <td class="p-3 border-r font-mono font-bold">${sr.code}</td>
+                    <td class="p-3 border-r font-bold">${sr.name}</td>
+                    <td class="p-3 border-r text-slate-500 text-[11px] font-semibold">
+
+${sr.parentSmName}</td>
+                    <td class="p-3 border-r text-right font-bold text-slblue-700">
+
+${formatCurrency(sr.monthFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${sr.monthPol} POL</td>
+                    <td class="p-3 border-r text-right font-bold text-emerald-700">
+
+${formatCurrency(sr.ytdFyp)}</td>
+                    <td class="p-3 border-r text-center font-bold">${sr.ytdPol} POL</td>
+                    <td class="p-3 text-center no-print space-x-1">
+                        <button onclick="openEditModal('SR', '${sr.code}')" class="bg-
+
+slate-100 hover:bg-slate-200 border px-2 py-1 rounded text-[11px] font-bold"><i class="fa-
+
+solid fa-pen"></i> Edit</button>
+                        <button onclick="directDeleteRecord('SR', '${sr.code}')" 
+
+class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 py-1 rounded 
+
+text-[11px] font-bold"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('statMonthFyp').innerText = formatCurrency
+
+(totalAreaMonthFyp);
+            document.getElementById('statMonthPol').innerText = `${totalAreaMonthPol} 
+
+Policies`;
+            document.getElementById('statYtdFyp').innerText = formatCurrency
+
+(totalAreaYtdFyp);
+            document.getElementById('statYtdPol').innerText = `${totalAreaYtdPol} YTD 
+
+Policies`;
+            document.getElementById('statCadreCounts').innerText = `${portalData.length} 
+
+SSMs | ${totalSmCount} SMs`;
+            document.getElementById('statSrCount').innerText = `${totalSrCount} Sales 
+
+Representatives (SRs)`;
+
+            document.getElementById('ssmCountBadge').innerText = `${portalData.length} 
+
+SSMs`;
+            document.getElementById('smCountBadge').innerText = `${totalSmCount} SMs`;
+            document.getElementById('srCountBadge').innerText = `${totalSrCount} SRs`;
+        }
+
+        function renderSsmUnitsHierarchy(month) {
+            const isAdmin = currentUserSession && currentUserSession.role === 'ADMIN';
+            const targetList = isAdmin 
+                ? portalData 
+                : portalData.filter(s => s.code === currentUserSession.code);
+
+            const container = document.getElementById('ssmCardsContainer');
+            container.innerHTML = targetList.map((ssm, idx) => {
+                let ssmSelf = getRecordMonthStats(ssm, month);
+                let ssmYtdSelf = getRecordYtdStats(ssm);
+                let ssmMonthFyp = ssmSelf.fyp, ssmMonthPol = ssmSelf.pol;
+                let ssmYtdFyp = ssmYtdSelf.fyp, ssmYtdPol = ssmYtdSelf.pol;
+                
+                let smRows = ssm.team.map((sm, smIdx) => {
+                    let smM = getRecordMonthStats(sm, month);
+                    let smY = getRecordYtdStats(sm);
+                    let mFyp = smM.fyp, mPol = smM.pol;
+                    let yFyp = smY.fyp, yPol = smY.pol;
+                    
+                    let srRows = sm.srs.map(sr => {
+                        let srM = getRecordMonthStats(sr, month);
+                        let srY = getRecordYtdStats(sr);
+                        mFyp += srM.fyp; mPol += srM.pol;
+                        yFyp += srY.fyp; yPol += srY.pol;
+
+                        const actionCell = isAdmin 
+                            ? `<td class="p-2.5 text-center no-print space-x-1">
+                                <button onclick="openEditModal('SR', '${sr.code}')" 
+
+class="text-xs bg-slate-100 px-2 py-0.5 border rounded"><i class="fa-solid fa-
+
+pen"></i></button>
+                                <button onclick="directDeleteRecord('SR', '${sr.code}')" 
+
+class="text-xs bg-red-50 text-red-600 px-2 py-0.5 border border-red-200 rounded"><i 
+
+class="fa-solid fa-trash"></i></button>
+                               </td>` 
+                            : '';
+
+                        return `
+                            <tr class="border-b bg-white">
+                                <td class="p-2.5 border-r font-mono text-center font-bold 
+
+text-slate-500">-</td>
+                                <td class="p-2.5 border-r font-mono font-bold text-slate-
+
+700">${sr.code}</td>
+                                <td class="p-2.5 border-r font-semibold">+- ${sr.name}</td>
+                                <td class="p-2.5 border-r text-right font-bold text-
+
+slblue-700">${formatCurrency(srM.fyp)}</td>
+                                <td class="p-2.5 border-r text-center font-bold">${srM.pol} 
+
+POL</td>
+                                <td class="p-2.5 border-r text-right font-bold text-
+
+emerald-700">${formatCurrency(srY.fyp)}</td>
+                                <td class="p-2.5 border-r text-center font-bold text-
+
+emerald-800">${srY.pol} POL</td>
+                                ${actionCell}
+                            </tr>`;
+                    }).join('');
+
+                    ssmMonthFyp += mFyp; ssmMonthPol += mPol;
+                    ssmYtdFyp += yFyp; ssmYtdPol += yPol;
+
+                    const smActionCell = isAdmin 
+                        ? `<td class="p-2.5 text-center no-print space-x-1">
+                            <button onclick="openEditModal('SM', '${sm.code}')" class="bg-
+
+white border px-2 py-1 rounded text-xs font-bold"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="directDeleteRecord('SM', '${sm.code}')" 
+
+class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-xs font-bold"><i 
+
+class="fa-solid fa-trash"></i></button>
+                           </td>` 
+                        : '';
+
+                    return `
+                        <tr class="border-b bg-purple-50/40">
+                            <td class="p-2.5 border-r font-bold text-center">${smIdx + 1}
+
+</td>
+                            <td class="p-2.5 border-r font-mono font-bold">${sm.code}</td>
+                            <td class="p-2.5 border-r font-extrabold text-slate-900">
+
+${sm.name}</td>
+                            <td class="p-2.5 border-r text-right font-bold text-slblue-
+
+700">${formatCurrency(mFyp)}</td>
+                            <td class="p-2.5 border-r text-center font-bold">${mPol} 
+
+POL</td>
+                            <td class="p-2.5 border-r text-right font-bold text-emerald-
+
+700">${formatCurrency(yFyp)}</td>
+                            <td class="p-2.5 border-r text-center font-bold text-emerald-
+
+800">${yPol} POL</td>
+                            ${smActionCell}
+                        </tr>
+                        ${srRows}`;
+                }).join('');
+
+                const actionHeader = isAdmin ? `<th class="p-2.5 text-center no-print w-
+
+28">ACTION</th>` : '';
+                const emptyColspan = isAdmin ? 8 : 7;
+
+                return `
+                    <div class="border rounded-xl bg-white shadow-sm overflow-hidden" 
+
+id="ssm-unit-card-${ssm.code}">
+                        <div class="p-4 bg-slate-50 border-b flex flex-wrap gap-3 items-
+
+center justify-between">
+                            <div>
+                                <span class="bg-slblue-100 text-slblue-800 text-[10px] 
+
+font-extrabold px-2 py-0.5 rounded">SSM UNIT REPORT</span>
+                                <h3 class="text-base font-extrabold text-slate-900 mt-1">
+
+${ssm.name} (${ssm.code})</h3>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <p class="text-[11px] text-slate-500 font-bold 
+
+uppercase">Unit Month FYP</p>
+                                    <p class="text-sm font-black text-slblue-700">
+
+${formatCurrency(ssmMonthFyp)} (${ssmMonthPol} POL)</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[11px] text-slate-500 font-bold 
+
+uppercase">Unit YTD Total</p>
+                                    <p class="text-sm font-black text-emerald-700">
+
+${formatCurrency(ssmYtdFyp)} (${ssmYtdPol} POL)</p>
+                                </div>
+                                <button onclick="printSingleSsmUnit('${ssm.code}')" 
+
+class="bg-slblue-700 hover:bg-slblue-800 text-white px-3 py-1.5 rounded text-xs font-bold 
+
+no-print flex items-center space-x-1">
+                                    <i class="fa-solid fa-print"></i><span>Print 
+
+Unit</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4 overflow-x-auto">
+                            <table class="w-full text-left text-xs border rounded">
+                                <thead>
+                                    <tr class="bg-slate-100 border-b text-slate-700 font-
+
+bold">
+                                        <th class="p-2.5 border-r w-10 text-center">#</th>
+                                        <th class="p-2.5 border-r w-24">CODE</th>
+                                        <th class="p-2.5 border-r">NAME &amp; TEAM SRs</th>
+                                        <th class="p-2.5 border-r text-right">MONTH 
+
+FYP</th>
+                                        <th class="p-2.5 border-r text-
+
+center">POLICIES</th>
+                                        <th class="p-2.5 border-r text-right">YTD TOTAL 
+
+FYP</th>
+                                        <th class="p-2.5 border-r text-center">YTD POL</th>
+                                        ${actionHeader}
+                                    </tr>
+                                </thead>
+                                <tbody>${smRows || `<tr><td colspan="${emptyColspan}" 
+
+class="p-3 text-center text-slate-400">No SMs registered.</td></tr>`}</tbody>
+                            </table>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        function renderSmTeamsHierarchy(month) {
+            const isAdmin = currentUserSession && currentUserSession.role === 'ADMIN';
+            const container = document.getElementById('smCardsContainer');
+            let smCardsHtml = '';
+
+            portalData.forEach(ssm => {
+                ssm.team.forEach(sm => {
+                    if (!isAdmin && sm.code !== currentUserSession.code) return;
+
+                    let smM = getRecordMonthStats(sm, month);
+                    let smY = getRecordYtdStats(sm);
+                    let mFyp = smM.fyp, mPol = smM.pol;
+                    let yFyp = smY.fyp, yPol = smY.pol;
+
+                    let srRows = sm.srs.map((sr, i) => {
+                        let srM = getRecordMonthStats(sr, month);
+                        let srY = getRecordYtdStats(sr);
+                        mFyp += srM.fyp; mPol += srM.pol;
+                        yFyp += srY.fyp; yPol += srY.pol;
+
+                        const srActionCell = isAdmin 
+                            ? `<td class="p-2.5 text-center no-print space-x-1">
+                                <button onclick="openEditModal('SR', '${sr.code}')" 
+
+class="bg-slate-100 border px-2 py-0.5 rounded text-xs font-bold"><i class="fa-solid fa-
+
+pen"></i></button>
+                                <button onclick="directDeleteRecord('SR', '${sr.code}')" 
+
+class="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded text-xs font-
+
+bold"><i class="fa-solid fa-trash"></i></button>
+                               </td>` 
+                            : '';
+
+                        return `
+                            <tr class="border-b">
+                                <td class="p-2.5 border-r text-center">${i + 1}</td>
+                                <td class="p-2.5 border-r font-mono font-bold">${sr.code}
+
+</td>
+                                <td class="p-2.5 border-r font-bold">${sr.name}</td>
+                                <td class="p-2.5 border-r text-right font-bold text-
+
+slblue-700">${formatCurrency(srM.fyp)}</td>
+                                <td class="p-2.5 border-r text-center font-bold">${srM.pol} 
+
+POL</td>
+                                <td class="p-2.5 border-r text-right font-bold text-
+
+emerald-700">${formatCurrency(srY.fyp)}</td>
+                                <td class="p-2.5 border-r text-center font-bold text-
+
+emerald-800">${srY.pol} POL</td>
+                                ${srActionCell}
+                            </tr>`;
+                    }).join('');
+
+                    const actionHeader = isAdmin ? `<th class="p-2.5 text-center no-print 
+
+w-28">ACTION</th>` : '';
+                    const emptyColspan = isAdmin ? 8 : 7;
+
+                    smCardsHtml += `
+                        <div class="border rounded-xl bg-white p-4 shadow-sm space-y-3" 
+
+id="sm-card-${sm.code}">
+                            <div class="flex flex-wrap gap-3 justify-between items-center 
+
+border-b pb-2">
+                                <div>
+                                    <span class="text-[10px] font-bold bg-purple-100 text-
+
+purple-800 px-2 py-0.5 rounded">REPORTING SSM: ${ssm.name}</span>
+                                    <h4 class="text-sm font-extrabold text-slate-900 mt-
+
+1">${sm.name} (${sm.code})</h4>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <div class="text-right">
+                                        <p class="text-[10px] text-slate-500 font-bold 
+
+uppercase">MONTH TEAM FYP</p>
+                                        <p class="text-xs font-black text-slblue-700">
+
+${formatCurrency(mFyp)} (${mPol} POL)</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-[10px] text-slate-500 font-bold 
+
+uppercase">YTD TEAM TOTAL</p>
+                                        <p class="text-xs font-black text-emerald-700">
+
+${formatCurrency(yFyp)} (${yPol} POL)</p>
+                                    </div>
+                                    <button onclick="printSingleSmTeam('${sm.code}')" 
+
+class="bg-purple-700 text-white px-3 py-1 rounded text-xs font-bold no-print"><i 
+
+class="fa-solid fa-print"></i> Print SM</button>
+                                </div>
+                            </div>
+                            <table class="w-full text-left text-xs border rounded">
+                                <thead>
+                                    <tr class="bg-slate-100 border-b text-slate-700 font-
+
+bold">
+                                        <th class="p-2.5 border-r w-10 text-center">#</th>
+                                        <th class="p-2.5 border-r w-24">SR CODE</th>
+                                        <th class="p-2.5 border-r">SR NAME</th>
+                                        <th class="p-2.5 border-r text-right">MONTH 
+
+FYP</th>
+                                        <th class="p-2.5 border-r text-center">POL</th>
+                                        <th class="p-2.5 border-r text-right">YTD FYP</th>
+                                        <th class="p-2.5 border-r text-center">YTD POL</th>
+                                        ${actionHeader}
+                                    </tr>
+                                </thead>
+                                <tbody>${srRows || `<tr><td colspan="${emptyColspan}" 
+
+class="p-3 text-center text-slate-400">No SRs registered under this SM.</td></tr>`}</tbody>
+                            </table>
+                        </div>`;
+                });
+            });
+
+            container.innerHTML = smCardsHtml;
+        }
+
+        function renderSrPersonalView(month) {
+            if (!currentUserSession || currentUserSession.role !== 'SR') return;
+            let srObj = null;
+
+            portalData.forEach(ssm => {
+                ssm.team.forEach(sm => {
+                    const found = sm.srs.find(r => r.code === currentUserSession.code);
+                    if (found) srObj = found;
+                });
+            });
+
+            const container = document.getElementById('srPersonalCardContainer');
+            if (!srObj) {
+                container.innerHTML = `<p class="text-sm text-red-600 font-bold">Record not 
+
+found.</p>`;
+                return;
+            }
+
+            const mStats = getRecordMonthStats(srObj, month);
+            const yStats = getRecordYtdStats(srObj);
+
+            container.innerHTML = `
+                <div class="border rounded-xl bg-slate-50 p-6 space-y-6">
+                    <div class="flex flex-wrap justify-between items-center border-b pb-4">
+                        <div>
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-
+
+extrabold px-2.5 py-1 rounded">SALES REPRESENTATIVE (SR)</span>
+                            <h3 class="text-xl font-black text-slate-900 mt-2">
+
+${srObj.name}</h3>
+                            <p class="text-xs font-mono font-bold text-slate-600">Code: 
+
+${srObj.code} | SM: ${currentUserSession.parentSmName} | SSM: 
+
+${currentUserSession.parentSsmName}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 
+
+shadow-sm">
+                            <p class="text-xs font-bold uppercase text-slate-500">${month} 
+
+BUSINESS (FYP)</p>
+                            <p class="text-2xl font-black text-slblue-700 mt-1">
+
+${formatCurrency(mStats.fyp)}</p>
+                            <p class="text-xs font-bold text-slate-600 mt-1">Policies: 
+
+${mStats.pol} POL</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 
+
+shadow-sm">
+                            <p class="text-xs font-bold uppercase text-slate-500">YEAR TO 
+
+DATE (YTD) TOTAL</p>
+                            <p class="text-2xl font-black text-emerald-700 mt-1">
+
+${formatCurrency(yStats.fyp)}</p>
+                            <p class="text-xs font-bold text-slate-600 mt-1">YTD Policies: 
+
+${yStats.pol} POL</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function triggerAreaPrintView() {
+            switchMainTab('areaHierarchy');
+            document.getElementById('printReportTitle').innerText = "Official Full Area 
+
+Cadre Business Performance Report";
+            setTimeout(() => { window.print(); }, 300);
+        }
+
+        function printSingleSsmUnit(ssmCode) {
+            switchMainTab('ssmHierarchy');
+            document.querySelectorAll('[id^="ssm-unit-card-"]').forEach(el => {
+                if (el.id !== `ssm-unit-card-${ssmCode}`) el.classList.add('no-print');
+            });
+            setTimeout(() => {
+                window.print();
+                document.querySelectorAll('[id^="ssm-unit-card-"]').forEach(el => 
+
+el.classList.remove('no-print'));
+            }, 300);
+        }
+
+        function printSingleSmTeam(smCode) {
+            switchMainTab('smHierarchy');
+            document.querySelectorAll('[id^="sm-card-"]').forEach(el => {
+                if (el.id !== `sm-card-${smCode}`) el.classList.add('no-print');
+            });
+            setTimeout(() => {
+                window.print();
+                document.querySelectorAll('[id^="sm-card-"]').forEach(el => 
+
+el.classList.remove('no-print'));
+            }, 300);
+        }
+
+        function toggleRegHierarchyFields() {
+            const role = document.getElementById('regRole').value;
+            const ssmCont = document.getElementById('regSsmContainer');
+            const smCont = document.getElementById('regSmContainer');
+            if (role === 'SSM') { ssmCont.classList.add('hidden'); smCont.classList.add
+
+('hidden'); }
+            else if (role === 'SM') { ssmCont.classList.remove('hidden'); 
+
+smCont.classList.add('hidden'); }
+            else { ssmCont.classList.remove('hidden'); ssmCont.classList.remove('hidden'); 
+
+populateRegSsmOptions(); }
+        }
+
+        function populateRegSsmOptions() {
+            const select = document.getElementById('regSsmSelect');
+            select.innerHTML = portalData.map(s => `<option value="${s.code}">${s.name} 
+
+(${s.code})</option>`).join('');
+            updateRegSmOptions();
+        }
+
+        function updateRegSmOptions() {
+            const ssmCode = document.getElementById('regSsmSelect').value;
+            const select = document.getElementById('regSmSelect');
+            const ssm = portalData.find(s => s.code === ssmCode);
+            const smList = ssm ? ssm.team : [];
+            
+            if (smList.length === 0) {
+                select.innerHTML = `<option value="">⚠️ No SMs in this SSM Unit (Please 
+
+register SM first)</option>`;
+            } else {
+                select.innerHTML = smList.map(m => `<option value="${m.code}">${m.name} 
+
+(${m.code})</option>`).join('');
+            }
+        }
+
+        function handleNewUserRegistration(e) {
+            e.preventDefault();
+            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
+
+            const role = document.getElementById('regRole').value;
+            const code = document.getElementById('regCode').value.trim();
+            const name = document.getElementById('regName').value.trim().toUpperCase();
+            const month = document.getElementById('selectedMonthFilter').value;
+            const fyp = Number(document.getElementById('regFyp').value) || 0;
+            const pol = Number(document.getElementById('regPol').value) || 0;
+
+            let exists = false;
+            portalData.forEach(ssm => {
+                if (ssm.code === code || ssm.name === name) exists = true;
+                ssm.team.forEach(sm => {
+                    if (sm.code === code || sm.name === name) exists = true;
+                    sm.srs.forEach(sr => {
+                        if (sr.code === code || sr.name === name) exists = true;
+                    });
+                });
+            });
+
+            if (exists) {
+                alert("⚠️ WARNING: Yeh Worker Code ya Name pehle se system mein mojood 
+
+hai!");
+                return;
+            }
+
+            if (role === 'SSM') {
+                portalData.push({ code, name, role: 'SSM', months: { [month]: { fyp, pol } 
+
+}, team: [] });
+            } else if (role === 'SM') {
+                const ssmCode = document.getElementById('regSsmSelect').value;
+                const ssm = portalData.find(s => s.code === ssmCode);
+                if (ssm) {
+                    ssm.team.push({ code, name, role: 'SM', months: { [month]: { fyp, pol } 
+
+}, srs: [] });
+                }
+            } else if (role === 'SR') {
+                const ssmCode = document.getElementById('regSsmSelect').value;
+                const smCode = document.getElementById('regSmSelect').value;
+                if (!smCode) {
+                    alert("❌ Pehle is SSM Unit mein koi Sales Manager (SM) register 
+
+karein!");
+                    return;
+                }
+                const ssm = portalData.find(s => s.code === ssmCode);
+                if (ssm) {
+                    const sm = ssm.team.find(m => m.code === smCode);
+                    if (sm) {
+                        if (!sm.srs) sm.srs = [];
+                        sm.srs.push({ code, name, months: { [month]: { fyp, pol } } });
+                    }
+                }
+            }
+
+            saveToStorage();
+            renderActiveView();
+            e.target.reset();
+            alert("✅ Kamyabi ke sath register ho gaya!");
+        }
+
+        function openEditModal(role, workerCode) {
+            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
+            const selectedMonth = document.getElementById('selectedMonthFilter').value;
+            document.getElementById('editTargetRole').value = role;
+            document.getElementById('editOldCode').value = workerCode;
+            document.getElementById('editMonthLabel').innerText = selectedMonth;
+            document.getElementById('editModalTitle').innerText = `Edit Business (${role} - 
+
+${workerCode})`;
+
+            let record = null;
+            if (role === 'SSM') {
+                record = portalData.find(s => s.code === workerCode);
+            } else if (role === 'SM') {
+                portalData.forEach(s => { const sm = s.team.find(m => m.code === 
+
+workerCode); if (sm) record = sm; });
+            } else if (role === 'SR') {
+                portalData.forEach(s => s.team.forEach(m => { const sr = m.srs.find(r => 
+
+r.code === workerCode); if (sr) record = sr; }));
+            }
+
+            if (record) {
+                document.getElementById('editWorkerCode').value = record.code;
+                document.getElementById('editWorkerName').value = record.name;
+                const stats = getRecordMonthStats(record, selectedMonth);
+                document.getElementById('editMonthFyp').value = stats.fyp;
+                document.getElementById('editMonthPol').value = stats.pol;
+                document.getElementById('editModal').classList.remove('hidden');
+            }
+        }
+
+        function closeEditModal() { document.getElementById('editModal').classList.add
+
+('hidden'); }
+
+        function handleSaveEditModal(e) {
+            e.preventDefault();
+            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
+
+            const role = document.getElementById('editTargetRole').value;
+            const oldCode = document.getElementById('editOldCode').value;
+            const newCode = document.getElementById('editWorkerCode').value.trim();
+            const newName = document.getElementById('editWorkerName').value.trim
+
+().toUpperCase();
+            const selectedMonth = document.getElementById('selectedMonthFilter').value;
+
+            const addFyp = Number(document.getElementById('editMonthFyp').value) || 0;
+            const addPol = Number(document.getElementById('editMonthPol').value) || 0;
+
+            let record = null;
+            if (role === 'SSM') {
+                record = portalData.find(s => s.code === oldCode);
+            } else if (role === 'SM') {
+                portalData.forEach(s => { const sm = s.team.find(m => m.code === oldCode); 
+
+if (sm) record = sm; });
+            } else if (role === 'SR') {
+                portalData.forEach(s => s.team.forEach(m => { const sr = m.srs.find(r => 
+
+r.code === oldCode); if (sr) record = sr; }));
+            }
+
+            if (record) {
+                record.code = newCode;
+                record.name = newName;
+                const stats = getRecordMonthStats(record, selectedMonth);
+                stats.fyp = addFyp; 
+                stats.pol = addPol;
+
+                saveToStorage();
+                renderActiveView();
+                closeEditModal();
+                alert("✅ Record updated successfully!");
+            }
+        }
+
+        function directDeleteRecord(role, code) {
+            if (!currentUserSession || currentUserSession.role !== 'ADMIN') return;
+            if (!confirm(`⚠️ Kya aap waqai is ${role} record (${code}) ko delete karna 
+
+chahte hain?`)) return;
+
+            if (role === 'SSM') {
+                portalData = portalData.filter(s => s.code !== code);
+            } else if (role === 'SM') {
+                portalData.forEach(s => { s.team = s.team.filter(m => m.code !== code); });
+            } else if (role === 'SR') {
+                portalData.forEach(s => s.team.forEach(m => { m.srs = m.srs.filter(r => 
+
+r.code !== code); }));
+            }
+
+            saveToStorage();
+            renderActiveView();
+            alert("🗑️ Record deleted successfully!");
+        }
+
+        function handleDeleteRecord() {
+            const role = document.getElementById('editTargetRole').value;
+            const oldCode = document.getElementById('editOldCode').value;
+            closeEditModal();
+            directDeleteRecord(role, oldCode);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+            renderActiveView();
+            syncLatestDataFromGitHub();
+        });
+    </script>
+</body>
+</html>

@@ -1389,12 +1389,12 @@ null;
             const p = document.getElementById('loginPass').value.trim();
 
             if (u === ADMIN_USER && p === ADMIN_PASS) {
-                currentUserSession = { role: 'ADMIN', code: '7203', name: 'USTAD TALIB 
+                currentUserSession = { role: 'ADMIN', code: '7203', name: 'USTAD TALIB HUSSAIN' };
 
-HUSSAIN' };
-                sessionStorage.setItem('sl_portal_session', JSON.stringify
 
-(currentUserSession));
+                sessionStorage.setItem('sl_portal_session', JSON.stringify (currentUserSession));
+
+
                 document.getElementById('loginOverlay').classList.add('hidden');
                 document.getElementById('loginError').classList.add('hidden');
                 applyRolePermissions();

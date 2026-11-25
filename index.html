@@ -1497,13 +1497,13 @@ parentSmName: sm.name, parentSsmName: ssm.name };
         }
 
         function hardResetDatabase() {
-            if (confirm("⚠️ Kya aap sara data default clean state par reset karna chahte 
+            if (confirm("⚠️ Kya aap sara data default clean state par reset karna chahte hain?")) {
 
-hain?")) {
+
                 localStorage.removeItem(STORAGE_KEY);
                 portalData = defaultMasterDatabase;
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(portalData));
-                alert("✅ Data reset ho gaya hai!");
+                alert("Data reset ho gaya hai!");
                 location.reload();
             }
         }

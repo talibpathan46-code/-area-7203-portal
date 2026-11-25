@@ -1627,24 +1627,19 @@ liya gaya`;
                     const restoredArray = Array.isArray(parsed) ? parsed : parsed.data;
 
                     if (!Array.isArray(restoredArray) || restoredArray.length === 0) {
-                        alert("❌ Ghalat file! Is file mein Area 7203 ka sahi data mojood 
+                        alert("Ghalat file! Is file mein Area 7203 ka sahi data mojood nahin he!");
 
-nahi hai.");
                         return;
                     }
 
-                    if (confirm("⚠️ Kya aap waqai is backup file se portal ka data restore 
-
-karna chahte hain? Maujooda data is file ke data se tabdeel ho jayega.")) {
+                   if (confirm("Kya aap waqai is backup file se portal ka data restore karna chahte hain? Maujooda data is file ke data se tabdeel ho jayega.")) {
                         portalData = restoredArray;
                         saveToStorage();
                         renderActiveView();
-                        alert("✅ Backup kamyabi ke sath restore ho gaya hai!");
-                    }
-                } catch (err) {
-                    alert("❌ File read karne mein masla aaya. Meharbani karke sahi .json 
+                        alert("Backup kamyabi ke sath restore ho gaya hai!");
+            } catch (err) {
+                    alert("File read karne mein masla aaya. Meharbani karke sahi .json file select karein.");
 
-backup file select karein.");
                 }
                 event.target.value = '';
             };

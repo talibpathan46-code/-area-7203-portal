@@ -3247,7 +3247,34 @@ liveUsers,
 
         
 
-function applySnapshotData(data) {
+function parseSnapshotPayload(raw) {
+            if (!raw) return null;
+            if 
+
+(typeof raw === "string") {
+                try { return JSON.parse(raw); } catch (e) { 
+
+return null; }
+            }
+            if (typeof raw === "object") {
+                if 
+
+(raw.data && typeof raw.data === "string") {
+                    try { return JSON.parse
+
+(raw.data); } catch (e) {}
+                }
+                return raw;
+            }
+         
+
+   return null;
+        }
+
+        function applySnapshotData(rawData) {
+            const data 
+
+= parseSnapshotPayload(rawData);
             if (!data || typeof data !== "object") return 
 
 false;
@@ -3263,182 +3290,195 @@ data.business : [];
 
 loadSeedIntoMemory();
             }
-            livePolicies = Array.isArray(data.policies) ? 
+            if (Array.isArray(data.policies)) {
+           
 
-data.policies : [];
-            liveUsers = Array.isArray(data.users) ? data.users : [];
-     
+     livePolicies = data.policies;
+            }
+            if (Array.isArray(data.users)) {
+ 
 
-       return true;
+               liveUsers = data.users;
+            }
+            return true;
         }
 
-        function setCloudIndicator(state, text) {
-            
+        
 
-const dot = document.getElementById('cloudStatusDot');
-            const label = 
+function setCloudIndicator(state, text) {
+            const dot = document.getElementById
 
-document.getElementById('cloudStatusText');
-            label.innerText = text;
-            
+('cloudStatusDot');
+            const label = document.getElementById('cloudStatusText');
+    
 
-dot.className = "w-2.5 h-2.5 rounded-full " + (
-                state === "online" ? "bg-
+        label.innerText = text;
+            dot.className = "w-2.5 h-2.5 rounded-full " + (
+  
 
-emerald-400" :
-                state === "syncing" ? "bg-amber-400 animate-ping" : "bg-sky-
+              state === "online" ? "bg-emerald-400" :
+                state === "syncing" ? 
 
-400"
+"bg-amber-400 animate-ping" : "bg-sky-400"
             );
         }
 
-        // Saves full state via doPost({ key, data })
-        
+        // Saves full 
 
-async function pushStateToCloud(customMessage = "Online Live Sync Active (Google Sheets)") 
+state via doPost({ key, data })
+        async function pushStateToCloud(customMessage = 
 
-{
+"Online Live Sync Active (Google Sheets)") {
             const url = getCloudUrl();
-            if (!url) return { ok: false, reason: 
-
-"no_url" };
-            setCloudIndicator("syncing", "Saving to Google Sheet...");
-           
-
- try {
-                const payload = {
-                    key: CLOUD_SYNC_KEY,
-             
-
-       data: buildMasterSnapshot()
-                };
-                const res = await 
-
-fetch(url, {
-                    method: "POST",
-                    headers: { "Content-
-
-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(payload)
-       
-
-         });
-                const json = await res.json();
-                if (json && 
-
-(json.ok || json.status === "success")) {
-                    setCloudIndicator("online", 
-
-customMessage);
-                    return { ok: true, json };
-                }
-              
-
-  setCloudIndicator("offline", "Cloud Save Warning — Check Apps Script");
-                
-
-return { ok: false, json };
-            } catch (err) {
-                console.error("Cloud 
-
-POST error:", err);
-                setCloudIndicator("offline", "Cloud Save Error — Check 
-
-Web App URL");
-                return { ok: false, error: err.toString() };
-            }
-     
-
-   }
-
-        // Loads full state via doGet(?key=...)
-        async function syncFromCloud
-
-(showAlert = false) {
-            const url = getCloudUrl();
-            if (!url) {
           
 
-      if (liveWorkers.length === 0) loadSeedIntoMemory();
-                setCloudIndicator
+  if (!url) return { ok: false, reason: "no_url" };
+            setCloudIndicator("syncing", 
 
-("offline", "Preview Mode — Web App URL add karein");
-                renderActiveView();
-    
-
-            return;
-            }
-
-            setCloudIndicator("syncing", "Loading Data from 
-
-Google Sheet...");
+"Saving to Google Sheet...");
             try {
-                const endpoint = `${url}?key=
+                const payload = {
+             
 
-${encodeURIComponent(CLOUD_SYNC_KEY)}&_t=${Date.now()}`;
-                const res = await 
-
-fetch(endpoint, { method: "GET" });
-                const json = await res.json();
-
-           
-
-     if (json && json.ok && json.data) {
-                    applySnapshotData(json.data);
-   
-
-                 setCloudIndicator("online", "Online Live Sync Active — Sab Updates Live 
-
-Hain");
-                    renderActiveView();
-                    if (showAlert) alert("✅ 
-
-Tamam taza-tareen records Google Sheet se load ho gaye hain!");
-                } else {
-     
-
-               if (liveWorkers.length === 0) loadSeedIntoMemory();
-                    
-
-setCloudIndicator("online", "Connected — Initial data upload karne ke liye button 
-
-dabayein");
-                    renderActiveView();
-                    if (showAlert) alert
-
-("ℹ️ Google Sheet abhi khali hai. 'Upload Area 7203 Data to Cloud' dabayein.");
-              
-
-  }
-            } catch (err) {
-                console.error("Cloud GET error:", err);
-       
-
-         if (liveWorkers.length === 0) loadSeedIntoMemory();
+       key: CLOUD_SYNC_KEY,
+                    data: buildMasterSnapshot()
                 
 
-setCloudIndicator("offline", "Cloud Fetch Error — Web App Access ('Anyone') check karein");
+};
+                const res = await fetch(url, {
+                    method: "POST",
+         
+
+           headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    
+
+body: JSON.stringify(payload)
+                });
+                const json = await 
+
+res.json();
+                if (json && (json.ok || json.status === "success")) {
+            
+
+        setCloudIndicator("online", customMessage);
+                    return { ok: true, 
+
+json };
+                }
+                setCloudIndicator("offline", "Cloud Save Warning — 
+
+Check Apps Script");
+                return { ok: false, json };
+            } catch (err) {
+  
+
+              console.error("Cloud POST error:", err);
+                setCloudIndicator
+
+("offline", "Cloud Save Error — Check Web App URL");
+                return { ok: false, 
+
+error: err.toString() };
+            }
+        }
+
+        // Loads full state via doGet(?
+
+key=...)
+        async function syncFromCloud(showAlert = false) {
+            const url = 
+
+getCloudUrl();
+            if (!url) {
+                if (liveWorkers.length === 0) 
+
+loadSeedIntoMemory();
+                setCloudIndicator("offline", "Preview Mode — Web App 
+
+URL add karein");
+                renderActiveView();
+                return;
+            }
+
+    
+
+        setCloudIndicator("syncing", "Loading Data from Google Sheet...");
+            try {
  
 
-               renderActiveView();
+               const endpoint = `${url}?key=${encodeURIComponent(CLOUD_SYNC_KEY)}&_t=
+
+${Date.now()}`;
+                const res = await fetch(endpoint, { method: "GET" });
+        
+
+        const json = await res.json();
+
+                const snap = (json && (json.data || 
+
+json.record || json)) || null;
+                if (json && (json.ok || json.status === 
+
+"success") && snap && (Array.isArray(snap.policies) || Array.isArray(snap.workers) || 
+
+typeof snap.data === "string")) {
+                    applySnapshotData(snap);
+               
+
+     setCloudIndicator("online", `Online Live Sync Active — Policies: 
+
+${livePolicies.length}`);
+                    renderActiveView();
+                    if 
+
+(showAlert) alert(`✅ Google Sheet se data load ho gaya! (Policies: ${livePolicies.length})
+
+`);
+                } else {
+                    if (liveWorkers.length === 0) 
+
+loadSeedIntoMemory();
+                    setCloudIndicator("online", "Connected — Initial 
+
+data upload karne ke liye button dabayein");
+                    renderActiveView();
+         
+
+           if (showAlert) alert("ℹ️ Google Sheet abhi khali hai. 'Upload Area 7203 Data to 
+
+Cloud' dabayein.");
+                }
+            } catch (err) {
+                
+
+console.error("Cloud GET error:", err);
+                if (liveWorkers.length === 0) 
+
+loadSeedIntoMemory();
+                setCloudIndicator("offline", "Cloud Fetch Error — Web 
+
+App Access ('Anyone') check karein");
+                renderActiveView();
             }
+       
+
+ }
+
+        function openCloudConfigModal() {
+            document.getElementById
+
+('quickCloudUrl').value = getCloudUrl();
+            document.getElementById
+
+('cloudConfigModal').classList.remove('hidden');
         }
 
         function 
 
-openCloudConfigModal() {
-            document.getElementById('quickCloudUrl').value = 
+saveQuickCloudUrl() {
+            const val = document.getElementById
 
-getCloudUrl();
-            document.getElementById('cloudConfigModal').classList.remove
-
-('hidden');
-        }
-
-        function saveQuickCloudUrl() {
-            const val = 
-
-document.getElementById('quickCloudUrl').value.trim();
+('quickCloudUrl').value.trim();
             document.getElementById
 
 ('cloudWebAppUrlInput').value = val;
@@ -5856,126 +5896,131 @@ livePolicies;
             if (currentUserSession && !isAdmin) {
                 const 
 
-normCode = (v) => String(v || '').trim().replace(/^0+/, '').toLowerCase();
-                
+normCode = (v) => String(v || '').replace(/[^a-zA-Z0-9]/g, '').replace(/^0+/, 
 
-const uCode = normCode(currentUserSession.code);
-                const role = String
+'').toLowerCase();
+                const uCode = normCode(currentUserSession.code);
+          
 
-(currentUserSession.role || '').toUpperCase();
+      const role = String(currentUserSession.role || '').toUpperCase();
 
-                let allowedCodes = new Set
+                let 
 
-([uCode]);
+allowedCodes = new Set([uCode].filter(Boolean));
                 if (role === 'SSM') {
-                    // Collect all SMs 
+       
 
-reporting to this SSM, and all SRs reporting to those SMs
-                    const mySms = 
+             const mySms = liveWorkers.filter(w => String(w.role || '').toUpperCase() === 
 
-liveWorkers.filter(w => w.role === 'SM' && normCode(w.reportsToCode) === uCode);
-            
-
-        mySms.forEach(sm => {
-                        const smCode = normCode(sm.code);
+'SM' && normCode(w.reportsToCode) === uCode);
+                    mySms.forEach(sm => {
       
 
-                  allowedCodes.add(smCode);
+                  const smCode = normCode(sm.code);
+                        if (smCode) 
+
+allowedCodes.add(smCode);
                         liveWorkers
-              
+                            
 
-              .filter(w => w.role === 'SR' && normCode(w.reportsToCode) === smCode)
-         
+.filter(w => String(w.role || '').toUpperCase() === 'SR' && normCode(w.reportsToCode) === 
 
-                   .forEach(sr => allowedCodes.add(normCode(sr.code)));
-                    
+smCode)
+                            .forEach(sr => {
+                                const 
 
-});
-                } else if (role === 'SM') {
-                    // Collect all SRs 
+srCode = normCode(sr.code);
+                                if (srCode) allowedCodes.add
 
-reporting to this SM
+(srCode);
+                            });
+                    });
+                } else if 
+
+(role === 'SM') {
                     liveWorkers
                         .filter(w => 
 
-w.role === 'SR' && normCode(w.reportsToCode) === uCode)
-                        .forEach(sr 
+String(w.role || '').toUpperCase() === 'SR' && normCode(w.reportsToCode) === uCode)
+         
 
-=> allowedCodes.add(normCode(sr.code)));
+               .forEach(sr => {
+                            const srCode = normCode
+
+(sr.code);
+                            if (srCode) allowedCodes.add(srCode);
+                 
+
+       });
                 }
 
-                // Also match 
+                const allowedNames = new Set(
+                    
 
-worker name if sheet stores SM/SR name instead of numeric code
-                const 
-
-allowedNames = new Set(
-                    liveWorkers
-                        .filter(w => 
-
-allowedCodes.has(normCode(w.code)))
-                        .map(w => String(w.name || 
-
-'').trim().toLowerCase())
-                        .filter(Boolean)
-                );
-
+liveWorkers
+                        .filter(w => allowedCodes.has(normCode(w.code)))
          
 
-       filtered = filtered.filter(p => {
-                    const pSmCode = normCode(p.sm);
- 
-
-                   const pSrCode = normCode(p.sr);
-                    const pSmText = 
-
-String(p.sm || '').trim().toLowerCase();
-                    const pSrText = String(p.sr || 
-
-'').trim().toLowerCase();
-                    return (
-                        (pSmCode && 
-
-allowedCodes.has(pSmCode)) ||
-                        (pSrCode && allowedCodes.has(pSrCode)) 
-
-||
-                        (pSmText && allowedNames.has(pSmText)) ||
+               .map(w => String(w.name || '').trim().toLowerCase())
                         
 
-(pSrText && allowedNames.has(pSrText))
-                    );
+.filter(Boolean)
+                );
+
+                filtered = filtered.filter(p => {
+         
+
+           const pSmCode = normCode(p.sm);
+                    const pSrCode = normCode
+
+(p.sr);
+                    const pSmText = String(p.sm || '').trim().toLowerCase();
+         
+
+           const pSrText = String(p.sr || '').trim().toLowerCase();
+                    
+
+return (
+                        (pSmCode && allowedCodes.has(pSmCode)) ||
+                   
+
+     (pSrCode && allowedCodes.has(pSrCode)) ||
+                        (pSmText && 
+
+allowedNames.has(pSmText)) ||
+                        (pSrText && allowedNames.has(pSrText))
+ 
+
+                   );
                 });
-            
+            }
 
-}
+            if (statusFilter !== 
 
-            if (statusFilter !== "ALL") {
-                filtered = filtered.filter(p => 
+"ALL") {
+                filtered = filtered.filter(p => String(p.sts || "").toUpperCase() 
 
-String(p.sts || "").toUpperCase() === statusFilter);
+=== statusFilter);
             }
 
             if (query) {
-   
+                filtered = 
 
-             filtered = filtered.filter(p =>
+filtered.filter(p =>
+                    String(p.policyNo).toLowerCase().includes(query) ||
+ 
+
+                   String(p.nameFather).toLowerCase().includes(query) ||
+                    
+
+String(p.mobile).toLowerCase().includes(query) ||
                     String
 
-(p.policyNo).toLowerCase().includes(query) ||
-                    String
+(p.sm).toLowerCase().includes(query) ||
+                    String(p.sr).toLowerCase
 
-(p.nameFather).toLowerCase().includes(query) ||
-                    String
-
-(p.mobile).toLowerCase().includes(query) ||
-                    String(p.sm).toLowerCase
-
-().includes(query) ||
-                    String(p.sr).toLowerCase().includes(query)
-         
-
-       );
+().includes(query)
+                );
             }
 
             document.getElementById
@@ -6001,79 +6046,83 @@ totalPages = Math.max(1, Math.ceil(filtered.length / POLICIES_PER_PAGE));
             if (pageSlice.length === 0) {
                 
 
-tbody.innerHTML = `<tr><td colspan="12" class="p-6 text-center text-slate-500 font-
+tbody.innerHTML = `<tr><td colspan="12" class="p-6 text-center text-slate-500 font-bold">
 
-bold">Koi Policy Holder record nahi mila. Upar "Import Excel (.xlsx)" button se apni file 
+${livePolicies.length === 0 ? 'Koi Policy Holder record nahi mila. Upar "Import Excel 
 
-load karein.</td></tr>`;
-            } else {
-                tbody.innerHTML = 
+(.xlsx)" button se apni file load karein ya "Live Sync" dabayein.' : `Is login/team ke liye 
 
-pageSlice.map((p, idx) => {
-                    const sts = String(p.sts || "").toUpperCase
+koi matching policy nahi mili (Cloud mein kul ${livePolicies.length} policies load hain — 
 
-();
-                    const stsBadge = sts === 'INF' ? 'bg-emerald-100 text-emerald-800' :
- 
+check karein ke SM/SR code match kar raha hai ya "Live Sync" dabayein).`}</td></tr>`;
+       
 
-                                    sts === 'DTH' ? 'bg-red-100 text-red-800' :
-             
+     } else {
+                tbody.innerHTML = pageSlice.map((p, idx) => {
+                  
 
-                        sts === 'SUR' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 
+  const sts = String(p.sts || "").toUpperCase();
+                    const stsBadge = sts 
 
-text-slate-800';
+=== 'INF' ? 'bg-emerald-100 text-emerald-800' :
+                                     sts === 
+
+'DTH' ? 'bg-red-100 text-red-800' :
+                                     sts === 'SUR' ? 
+
+'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-800';
                     return `
-                        <tr class="hover:bg-
+  
 
-slblue-50/50">
-                            <td class="p-2 border-r text-center font-bold 
-
-text-slate-600">${p.srNo || (startIdx + idx + 1)}</td>
+                      <tr class="hover:bg-slblue-50/50">
                             <td 
 
-class="p-2 border-r font-mono font-extrabold text-slblue-900 whitespace-nowrap">
+class="p-2 border-r text-center font-bold text-slate-600">${p.srNo || (startIdx + idx + 
 
-${p.policyNo}</td>
-                            <td class="p-2 border-r font-semibold text-
+1)}</td>
+                            <td class="p-2 border-r font-mono font-extrabold text-
 
-slate-900">${p.nameFather}</td>
-                            <td class="p-2 border-r text-
-
-right font-bold">${Number(p.sumAss || 0).toLocaleString()}</td>
-                            
-
-<td class="p-2 border-r text-right font-bold text-emerald-700">${Number(p.prem || 
-
-0).toLocaleString()}</td>
-                            <td class="p-2 border-r text-center 
-
-font-mono whitespace-nowrap">${p.riskDate || ''}</td>
-                            <td 
-
-class="p-2 border-r text-center font-mono whitespace-nowrap">${p.nextDue || ''}</td>
-        
-
-                    <td class="p-2 border-r text-center font-mono font-bold">${p.sm || ''}
-
-</td>
-                            <td class="p-2 border-r text-center font-mono font-bold">
-
-${p.sr || ''}</td>
-                            <td class="p-2 border-r font-mono 
-
-whitespace-nowrap">${p.mobile || ''}</td>
+slblue-900 whitespace-nowrap">${p.policyNo}</td>
                             <td class="p-2 
 
-border-r text-center"><span class="px-2 py-0.5 rounded font-extrabold text-[10px] 
+border-r font-semibold text-slate-900">${p.nameFather}</td>
+                            <td 
 
-${stsBadge}">${sts}</span></td>
+class="p-2 border-r text-right font-bold">${Number(p.sumAss || 0).toLocaleString()}</td>
+    
+
+                        <td class="p-2 border-r text-right font-bold text-emerald-700">
+
+${Number(p.prem || 0).toLocaleString()}</td>
+                            <td class="p-2 
+
+border-r text-center font-mono whitespace-nowrap">${p.riskDate || ''}</td>
+                  
+
+          <td class="p-2 border-r text-center font-mono whitespace-nowrap">${p.nextDue || 
+
+''}</td>
+                            <td class="p-2 border-r text-center font-mono font-
+
+bold">${p.sm || ''}</td>
+                            <td class="p-2 border-r text-center 
+
+font-mono font-bold">${p.sr || ''}</td>
+                            <td class="p-2 border-r 
+
+font-mono whitespace-nowrap">${p.mobile || ''}</td>
+                            <td 
+
+class="p-2 border-r text-center"><span class="px-2 py-0.5 rounded font-extrabold text-
+
+[10px] ${stsBadge}">${sts}</span></td>
                             ${isAdmin ? `
-                    
+             
 
-        <td class="p-2 text-center no-print whitespace-nowrap space-x-1">
-                   
+               <td class="p-2 text-center no-print whitespace-nowrap space-x-1">
+            
 
-             <button onclick="openPolicyModal('${p.policyNo}')" class="crystal-btn 
+                    <button onclick="openPolicyModal('${p.policyNo}')" class="crystal-btn 
 
 crystal-glass-light px-2 py-0.5 rounded text-[10px] font-bold"><i class="fa-solid fa-
 

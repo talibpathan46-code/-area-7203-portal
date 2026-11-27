@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -563,14 +563,18 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase text-slate-600 mb-1">3. Select SR (Worker)</label>
-                                <select id="nbSrSelect" required class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold outline-none focus:border-slblue-700"></select>
+                                <select id="nbSrSelect" onchange="updateNbWorkerPreview()" required class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold outline-none focus:border-slblue-700"></select>
                             </div>
+                        </div>
+                        <div id="nbWorkerLiveSummary" class="bg-white border border-emerald-200 rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+                            <span class="font-bold text-slate-600">Selected Worker Maujooda Record:</span>
+                            <span id="nbWorkerCurrentStats" class="font-black text-slblue-800">Month: Rs. 0 (0 POL) | YTD: Rs. 0 (0 POL)</span>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Business Month</label>
-                                <select id="nbMonth" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slblue-800 outline-none">
+                                <select id="nbMonth" onchange="updateNbWorkerPreview()" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slblue-800 outline-none">
                                     <option value="JANUARY">JANUARY</option>
                                     <option value="FEBRUARY">FEBRUARY</option>
                                     <option value="MARCH">MARCH</option>
@@ -587,7 +591,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Year</label>
-                                <select id="nbYear" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slblue-800 outline-none">
+                                <select id="nbYear" onchange="updateNbWorkerPreview()" class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slblue-800 outline-none">
                                     <option value="2025">2025</option>
                                     <option value="2026" selected>2026</option>
                                     <option value="2027">2027</option>
@@ -869,20 +873,45 @@
                     </div>
                 </div>
 
-                <div class="p-3.5 bg-slblue-50 rounded-xl border border-slblue-200 space-y-2.5">
-                    <h4 class="text-xs font-extrabold text-slblue-900 uppercase">Business Figures (<span id="editMonthLabel">NOVEMBER 2026</span>)</h4>
+                <div class="p-3.5 bg-emerald-50/80 rounded-xl border border-emerald-200 space-y-2.5">
+                    <div class="flex flex-wrap items-center justify-between gap-1">
+                        <h4 class="text-xs font-extrabold text-emerald-950 uppercase">+ Add New Business (<span id="editMonthLabel">NOVEMBER 2026</span>)</h4>
+                        <span id="editExistingSummaryBadge" class="text-[11px] font-black text-slblue-800 bg-white px-2.5 py-0.5 rounded-lg border border-slblue-200">Maujooda: Rs. 0 (0 POL)</span>
+                    </div>
+                    <p class="text-[10px] text-emerald-800 font-semibold">Yahan sirf <b>nayi FPR</b> ki raqam likhein — F10 dabate hi pehle wale business mein khud jama (+) ho kar form blank ho jayega.</p>
                     <div class="grid grid-cols-3 gap-2.5">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-700 mb-1">Month FYP (Rs.)</label>
-                            <input type="number" id="editMonthFyp" required class="w-full px-2.5 py-2 bg-white border rounded-lg text-xs font-bold text-slblue-800" value="0">
+                            <label class="block text-[10px] font-bold text-slate-700 mb-1">+ Add FYP (Rs.)</label>
+                            <input type="number" id="editAddFyp" min="0" placeholder="e.g. 25000" class="w-full px-2.5 py-2 bg-white border border-emerald-300 rounded-lg text-xs font-black text-emerald-800 outline-none focus:border-emerald-600">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-700 mb-1">Month Policies</label>
-                            <input type="number" id="editMonthPol" required class="w-full px-2.5 py-2 bg-white border rounded-lg text-xs font-bold text-slblue-800" value="0">
+                            <label class="block text-[10px] font-bold text-slate-700 mb-1">+ Add Policies</label>
+                            <input type="number" id="editAddPol" min="0" placeholder="e.g. 1" class="w-full px-2.5 py-2 bg-white border border-emerald-300 rounded-lg text-xs font-black text-emerald-800 outline-none focus:border-emerald-600">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-700 mb-1">Policy Nos.</label>
-                            <input type="text" id="editMonthPolicyNos" placeholder="5025..." class="w-full px-2.5 py-2 bg-white border rounded-lg text-xs font-mono">
+                            <label class="block text-[10px] font-bold text-slate-700 mb-1">+ Policy No.</label>
+                            <input type="text" id="editAddPolicyNo" placeholder="5025..." class="w-full px-2.5 py-2 bg-white border border-emerald-300 rounded-lg text-xs font-mono outline-none focus:border-emerald-600">
+                        </div>
+                    </div>
+
+                    <div class="pt-1 border-t border-emerald-200/80">
+                        <label class="inline-flex items-center space-x-2 text-[11px] font-bold text-slate-700 cursor-pointer">
+                            <input type="checkbox" id="editOverwriteToggle" onchange="toggleEditOverwriteFields()" class="rounded text-slblue-700">
+                            <span>Purana Total Replace / Correct Karein (Sirf ghalti theek karne ke liye)</span>
+                        </label>
+                        <div id="editOverwriteBox" class="grid grid-cols-3 gap-2.5 mt-2 hidden bg-slblue-50 p-2.5 rounded-lg border border-slblue-200">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-700 mb-1">Total Month FYP</label>
+                                <input type="number" id="editMonthFyp" class="w-full px-2.5 py-1.5 bg-white border rounded-lg text-xs font-bold text-slblue-800" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-700 mb-1">Total Month POL</label>
+                                <input type="number" id="editMonthPol" class="w-full px-2.5 py-1.5 bg-white border rounded-lg text-xs font-bold text-slblue-800" value="0">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-700 mb-1">All Policy Nos.</label>
+                                <input type="text" id="editMonthPolicyNos" placeholder="5025..." class="w-full px-2.5 py-1.5 bg-white border rounded-lg text-xs font-mono">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1880,6 +1909,11 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
         // 7. BUSINESS ENTRY & WORKER ADD / COMPLETE EDIT
         // =========================================================================
         function initNewBusinessDropdowns() {
+            const filterMonth = document.getElementById('selectedMonthFilter')?.value;
+            const filterYear = document.getElementById('selectedYearFilter')?.value;
+            if (filterMonth) document.getElementById('nbMonth').value = filterMonth;
+            if (filterYear) document.getElementById('nbYear').value = filterYear;
+
             const ssms = liveWorkers.filter(w => w.role === 'SSM');
             const ssmSel = document.getElementById('nbSsmSelect');
             ssmSel.innerHTML = ssms.map(s => `<option value="${s.code}">${s.name} (${s.code})</option>`).join('');
@@ -1899,6 +1933,21 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
             const srs = liveWorkers.filter(w => w.role === 'SR' && String(w.reportsToCode) === String(smCode));
             const srSel = document.getElementById('nbSrSelect');
             srSel.innerHTML = srs.map(r => `<option value="${r.code}">${r.name} (${r.code})</option>`).join('');
+            updateNbWorkerPreview();
+        }
+
+        function updateNbWorkerPreview() {
+            const workerCode = document.getElementById('nbSrSelect')?.value || document.getElementById('nbSmSelect')?.value;
+            const month = document.getElementById('nbMonth')?.value || 'NOVEMBER';
+            const year = document.getElementById('nbYear')?.value || '2026';
+            const el = document.getElementById('nbWorkerCurrentStats');
+            if (!el) return;
+            if (!workerCode) {
+                el.innerText = "Month: Rs. 0 (0 POL) | YTD: Rs. 0 (0 POL)";
+                return;
+            }
+            const st = getWorkerDirectStats(workerCode, month, year);
+            el.innerText = `${month} ${year}: ${formatCurrency(st.monthFyp)} (${st.monthPol} POL)  |  YTD ${year}: ${formatCurrency(st.ytdFyp)} (${st.ytdPol} POL)`;
         }
 
         async function handleNewBusinessSubmit(e) {
@@ -1915,7 +1964,7 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
                 return;
             }
 
-            const existing = liveBusiness.find(b => String(b.workerCode) === String(workerCode) && b.month === month && String(b.year) === String(year));
+            const existing = liveBusiness.find(b => String(b.workerCode) === String(workerCode) && String(b.month).trim().toUpperCase() === String(month).trim().toUpperCase() && String(b.year).trim() === String(year).trim());
             if (existing) {
                 existing.fyp = Number(existing.fyp || 0) + fyp;
                 existing.pol = Number(existing.pol || 0) + pol;
@@ -1933,12 +1982,25 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
                 });
             }
 
-            const cloudRes = await pushStateToCloud("New Business Saved to Google Sheet");
+            document.getElementById('selectedMonthFilter').value = month;
+            document.getElementById('selectedYearFilter').value = year;
+
+            const cloudRes = await pushStateToCloud("New Business Added & Synced to Google Sheet");
+            // Blank the entry fields so next FPR can be entered immediately without calculator
             document.getElementById('nbPolicyNo').value = '';
             document.getElementById('nbFyp').value = '';
             document.getElementById('nbPol').value = '1';
-            alert(cloudRes.ok ? "✅ New Business Google Sheet mein save ho gaya aur AM/SSM/SM totals update ho gaye!" : "✅ Business save ho gaya (Local preview mode).");
-            switchMainTab('areaHierarchy');
+            updateNbWorkerPreview();
+            const updatedSt = getWorkerDirectStats(workerCode, month, year);
+            alert(cloudRes.ok
+                ? `✅ Entry Jama (+) Ho Kar Google Sheet Mein Save Ho Gayi!
+
+Naya Total (${month} ${year}): ${formatCurrency(updatedSt.monthFyp)} (${updatedSt.monthPol} POL)
+Naya YTD (${year}): ${formatCurrency(updatedSt.ytdFyp)} (${updatedSt.ytdPol} POL)
+
+Form ab khali (blank) hai — agli FPR seedha enter karein!`
+                : "✅ Business jama (+) ho gaya (Local preview mode).");
+            document.getElementById('nbFyp').focus();
         }
 
         function toggleRegHierarchyFields() {
@@ -2033,10 +2095,16 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
             document.getElementById('editWorkerCode').value = w.code;
             document.getElementById('editWorkerName').value = w.name;
             document.getElementById('editMonthLabel').innerText = `${month} ${year}`;
+            document.getElementById('editExistingSummaryBadge').innerText = `Maujooda: ${formatCurrency(st.monthFyp)} (${st.monthPol} POL) | YTD: ${formatCurrency(st.ytdFyp)}`;
+            document.getElementById('editAddFyp').value = '';
+            document.getElementById('editAddPol').value = '';
+            document.getElementById('editAddPolicyNo').value = '';
+            document.getElementById('editOverwriteToggle').checked = false;
+            document.getElementById('editOverwriteBox').classList.add('hidden');
             document.getElementById('editMonthFyp').value = st.monthFyp;
             document.getElementById('editMonthPol').value = st.monthPol;
             document.getElementById('editMonthPolicyNos').value = st.policyNos;
-            document.getElementById('editModalTitle').innerText = `Complete Edit Form (${w.name})`;
+            document.getElementById('editModalTitle').innerText = `Complete Edit / Add Business (${w.name})`;
 
             const ssms = liveWorkers.filter(x => x.role === 'SSM');
             const ssmSel = document.getElementById('editParentSsmSelect');
@@ -2081,6 +2149,13 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
             document.getElementById('editParentSmSelect').innerHTML = sms.map(m => `<option value="${m.code}">${m.name} (${m.code})</option>`).join('');
         }
 
+        function toggleEditOverwriteFields() {
+            const checked = document.getElementById('editOverwriteToggle').checked;
+            const box = document.getElementById('editOverwriteBox');
+            if (checked) box.classList.remove('hidden');
+            else box.classList.add('hidden');
+        }
+
         function closeEditModal() {
             document.getElementById('editModal').classList.add('hidden');
         }
@@ -2093,9 +2168,16 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
             const newName = document.getElementById('editWorkerName').value.trim().toUpperCase();
             const month = document.getElementById('selectedMonthFilter').value;
             const year = document.getElementById('selectedYearFilter').value;
-            const newFyp = Number(document.getElementById('editMonthFyp').value) || 0;
-            const newPol = Number(document.getElementById('editMonthPol').value) || 0;
-            const newPolNos = document.getElementById('editMonthPolicyNos').value.trim();
+
+            const addFyp = Number(document.getElementById('editAddFyp').value) || 0;
+            const addPolRaw = document.getElementById('editAddPol').value;
+            const addPol = addPolRaw !== '' ? (Number(addPolRaw) || 0) : (addFyp > 0 ? 1 : 0);
+            const addPolicyNo = document.getElementById('editAddPolicyNo').value.trim();
+
+            const isOverwrite = document.getElementById('editOverwriteToggle').checked;
+            const overwriteFyp = Number(document.getElementById('editMonthFyp').value) || 0;
+            const overwritePol = Number(document.getElementById('editMonthPol').value) || 0;
+            const overwritePolNos = document.getElementById('editMonthPolicyNos').value.trim();
 
             let reportsToCode = "7203";
             let reportsToName = "AREA MANAGER 7203";
@@ -2125,20 +2207,40 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
                 });
             }
 
-            let biz = liveBusiness.find(b => String(b.workerCode) === String(oldCode) && b.month === month && String(b.year) === String(year));
+            let biz = liveBusiness.find(b => String(b.workerCode) === String(oldCode) && String(b.month).trim().toUpperCase() === String(month).trim().toUpperCase() && String(b.year).trim() === String(year).trim());
             if (biz) {
                 biz.workerCode = newCode;
-                biz.fyp = newFyp;
-                biz.pol = newPol;
-                biz.policyNo = newPolNos;
+                if (isOverwrite) {
+                    biz.fyp = overwriteFyp;
+                    biz.pol = overwritePol;
+                    biz.policyNo = overwritePolNos;
+                } else {
+                    biz.fyp = Number(biz.fyp || 0) + addFyp;
+                    biz.pol = Number(biz.pol || 0) + addPol;
+                    if (addPolicyNo) biz.policyNo = biz.policyNo ? (biz.policyNo + ", " + addPolicyNo) : addPolicyNo;
+                }
             } else {
-                liveBusiness.push({ id: "BIZ-" + Date.now(), workerCode: newCode, month, year, fyp: newFyp, pol: newPol, policyNo: newPolNos });
+                const initFyp = isOverwrite ? overwriteFyp : addFyp;
+                const initPol = isOverwrite ? overwritePol : addPol;
+                const initPolNos = isOverwrite ? overwritePolNos : addPolicyNo;
+                if (initFyp > 0 || initPol > 0 || initPolNos) {
+                    liveBusiness.push({ id: "BIZ-" + Date.now(), workerCode: newCode, month, year, fyp: initFyp, pol: initPol, policyNo: initPolNos });
+                }
             }
 
-            await pushStateToCloud("Record Updated in Google Sheet");
+            // Reset add fields blank for clean state
+            document.getElementById('editAddFyp').value = '';
+            document.getElementById('editAddPol').value = '';
+            document.getElementById('editAddPolicyNo').value = '';
+
+            await pushStateToCloud("Record Auto-Calculated & Saved to Google Sheet");
             closeEditModal();
             renderActiveView();
-            alert("✅ Record automatic online save & update ho gaya!");
+            const updatedSt = getWorkerDirectStats(newCode, month, year);
+            alert(`✅ Record Jama (+) Ho Kar Online Save Ho Gaya!
+
+${newName} (${month} ${year}): ${formatCurrency(updatedSt.monthFyp)} (${updatedSt.monthPol} POL)
+YTD (${year}): ${formatCurrency(updatedSt.ytdFyp)} (${updatedSt.ytdPol} POL)`);
         }
 
         async function deleteWorkerRecord(code) {

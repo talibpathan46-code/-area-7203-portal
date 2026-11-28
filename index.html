@@ -1306,28 +1306,66 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
             );
         }
 
-        // Saves full state via doPost({ key, data })
+        const POLICY_CHUNK_SIZE = 400;
+
+        async function postJsonToCloud(url, payload) {
+            const res = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
+            });
+            return await res.json();
+        }
+
+        async function getJsonFromCloud(url, keyName) {
+            const endpoint = `${url}?key=${encodeURIComponent(keyName)}&_t=${Date.now()}`;
+            const res = await fetch(endpoint, { method: "GET" });
+            return await res.json();
+        }
+
+        // Saves core state + chunked policy batches so large datasets (6,400+ policies) save cleanly
         async function pushStateToCloud(customMessage = "Online Live Sync Active (Google Sheets)") {
             const url = getCloudUrl();
             if (!url) return { ok: false, reason: "no_url" };
             setCloudIndicator("syncing", "Saving to Google Sheet...");
             try {
-                const payload = {
-                    key: CLOUD_SYNC_KEY,
-                    data: buildMasterSnapshot()
+                const totalChunks = Math.ceil(livePolicies.length / POLICY_CHUNK_SIZE);
+                const metaSnapshot = {
+                    workers: liveWorkers,
+                    business: liveBusiness,
+                    policies: totalChunks === 0 ? [] : [],
+                    policyChunksCount: totalChunks,
+                    totalPoliciesCount: livePolicies.length,
+                    users: liveUsers,
+                    updatedAt: new Date().toISOString()
                 };
-                const res = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(payload)
+
+                // First save metadata (workers, business, users, chunk count)
+                const metaJson = await postJsonToCloud(url, {
+                    key: CLOUD_SYNC_KEY,
+                    data: metaSnapshot
                 });
-                const json = await res.json();
-                if (json && (json.ok || json.status === "success")) {
-                    setCloudIndicator("online", customMessage);
-                    return { ok: true, json };
+                if (!(metaJson && (metaJson.ok || metaJson.status === "success"))) {
+                    setCloudIndicator("offline", "Cloud Save Warning — Check Apps Script");
+                    return { ok: false, json: metaJson };
                 }
-                setCloudIndicator("offline", "Cloud Save Warning — Check Apps Script");
-                return { ok: false, json };
+
+                // Then upload policy chunks in batches
+                for (let i = 0; i < totalChunks; i++) {
+                    const chunkSlice = livePolicies.slice(i * POLICY_CHUNK_SIZE, (i + 1) * POLICY_CHUNK_SIZE);
+                    setCloudIndicator("syncing", `Saving Policies Batch ${i + 1}/${totalChunks} (${livePolicies.length} total)...`);
+                    const chunkRes = await postJsonToCloud(url, {
+                        key: `${CLOUD_SYNC_KEY}_pol_${i}`,
+                        data: { policies: chunkSlice, chunkIndex: i, totalChunks }
+                    });
+                    if (!(chunkRes && (chunkRes.ok || chunkRes.status === "success"))) {
+                        setCloudIndicator("offline", `Batch ${i + 1}/${totalChunks} Save Warning`);
+                        return { ok: false, json: chunkRes };
+                    }
+                }
+
+                setCloudIndicator("online", `${customMessage} — Policies: ${livePolicies.length}`);
+                return { ok: true, policiesCount: livePolicies.length };
             } catch (err) {
                 console.error("Cloud POST error:", err);
                 setCloudIndicator("offline", "Cloud Save Error — Check Web App URL");
@@ -1335,7 +1373,7 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
             }
         }
 
-        // Loads full state via doGet(?key=...)
+        // Loads core state + merges chunked policy batches if present
         async function syncFromCloud(showAlert = false) {
             const url = getCloudUrl();
             if (!url) {
@@ -1347,13 +1385,29 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
 
             setCloudIndicator("syncing", "Loading Data from Google Sheet...");
             try {
-                const endpoint = `${url}?key=${encodeURIComponent(CLOUD_SYNC_KEY)}&_t=${Date.now()}`;
-                const res = await fetch(endpoint, { method: "GET" });
-                const json = await res.json();
-
+                const json = await getJsonFromCloud(url, CLOUD_SYNC_KEY);
                 const snap = (json && (json.data || json.record || json)) || null;
-                if (json && (json.ok || json.status === "success") && snap && (Array.isArray(snap.policies) || Array.isArray(snap.workers) || typeof snap.data === "string")) {
-                    applySnapshotData(snap);
+                const parsed = parseSnapshotPayload(snap);
+
+                if (json && (json.ok || json.status === "success") && parsed && typeof parsed === "object") {
+                    applySnapshotData(parsed);
+
+                    const chunkCount = Number(parsed.policyChunksCount || 0);
+                    if (chunkCount > 0) {
+                        const mergedPolicies = [];
+                        for (let i = 0; i < chunkCount; i++) {
+                            setCloudIndicator("syncing", `Loading Policies Batch ${i + 1}/${chunkCount}...`);
+                            const cJson = await getJsonFromCloud(url, `${CLOUD_SYNC_KEY}_pol_${i}`);
+                            const cData = parseSnapshotPayload((cJson && (cJson.data || cJson.record || cJson)) || null);
+                            if (cData && Array.isArray(cData.policies)) {
+                                mergedPolicies.push(...cData.policies);
+                            }
+                        }
+                        if (mergedPolicies.length > 0) {
+                            livePolicies = mergedPolicies;
+                        }
+                    }
+
                     setCloudIndicator("online", `Online Live Sync Active — Policies: ${livePolicies.length}`);
                     renderActiveView();
                     if (showAlert) alert(`✅ Google Sheet se data load ho gaya! (Policies: ${livePolicies.length})`);
@@ -1368,6 +1422,7 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
                 if (liveWorkers.length === 0) loadSeedIntoMemory();
                 setCloudIndicator("offline", "Cloud Fetch Error — Web App Access ('Anyone') check karein");
                 renderActiveView();
+                if (showAlert) alert(`❌ Google Sheet se data load nahi ho saka: ${err.message || err}`);
             }
         }
 

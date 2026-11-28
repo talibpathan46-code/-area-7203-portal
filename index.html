@@ -1373,8 +1373,36 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
             }
         }
 
-        // Loads core state + merges chunked policy batches if present
-        async function syncFromCloud(showAlert = false) {
+        // Fast parallel batch loader so mobile & desktop open quickly without blocking UI
+        let isSyncInProgress = false;
+        let hasShownInitialCloudAlert = false;
+
+        async function loadPolicyChunksParallel(url, chunkCount) {
+            if (!chunkCount || chunkCount <= 0) return null;
+            const indices = Array.from({ length: chunkCount }, (_, i) => i);
+            let doneCount = 0;
+
+            const promises = indices.map(async (i) => {
+                try {
+                    const cJson = await getJsonFromCloud(url, `${CLOUD_SYNC_KEY}_pol_${i}`);
+                    const cData = parseSnapshotPayload((cJson && (cJson.data || cJson.record || cJson)) || null);
+                    doneCount++;
+                    setCloudIndicator("syncing", `Fast Sync: ${doneCount}/${chunkCount} batches...`);
+                    return (cData && Array.isArray(cData.policies)) ? { index: i, list: cData.policies } : { index: i, list: [] };
+                } catch (e) {
+                    doneCount++;
+                    return { index: i, list: [] };
+                }
+            });
+
+            const results = await Promise.all(promises);
+            results.sort((a, b) => a.index - b.index);
+            const merged = [];
+            results.forEach(r => merged.push(...r.list));
+            return merged;
+        }
+
+        async function syncFromCloud(showAlert = false, isBackground = false) {
             const url = getCloudUrl();
             if (!url) {
                 if (liveWorkers.length === 0) loadSeedIntoMemory();
@@ -1382,8 +1410,12 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
                 renderActiveView();
                 return;
             }
+            if (isSyncInProgress) return;
+            isSyncInProgress = true;
 
-            setCloudIndicator("syncing", "Loading Data from Google Sheet...");
+            if (!isBackground) {
+                setCloudIndicator("syncing", "Connecting to Google Sheet...");
+            }
             try {
                 const json = await getJsonFromCloud(url, CLOUD_SYNC_KEY);
                 const snap = (json && (json.data || json.record || json)) || null;
@@ -1391,26 +1423,24 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
 
                 if (json && (json.ok || json.status === "success") && parsed && typeof parsed === "object") {
                     applySnapshotData(parsed);
+                    // Render hierarchy/stats immediately so UI opens fast on mobile & PC
+                    renderActiveView();
 
                     const chunkCount = Number(parsed.policyChunksCount || 0);
                     if (chunkCount > 0) {
-                        const mergedPolicies = [];
-                        for (let i = 0; i < chunkCount; i++) {
-                            setCloudIndicator("syncing", `Loading Policies Batch ${i + 1}/${chunkCount}...`);
-                            const cJson = await getJsonFromCloud(url, `${CLOUD_SYNC_KEY}_pol_${i}`);
-                            const cData = parseSnapshotPayload((cJson && (cJson.data || cJson.record || cJson)) || null);
-                            if (cData && Array.isArray(cData.policies)) {
-                                mergedPolicies.push(...cData.policies);
-                            }
-                        }
-                        if (mergedPolicies.length > 0) {
+                        const mergedPolicies = await loadPolicyChunksParallel(url, chunkCount);
+                        if (mergedPolicies && mergedPolicies.length > 0) {
                             livePolicies = mergedPolicies;
+                            if (activeTab === 'policyHolders') {
+                                renderPolicyHolderTable(currentPolicyPage);
+                            }
                         }
                     }
 
-                    setCloudIndicator("online", `Online Live Sync Active — Policies: ${livePolicies.length}`);
-                    renderActiveView();
-                    if (showAlert) alert(`✅ Google Sheet se data load ho gaya! (Policies: ${livePolicies.length})`);
+                    setCloudIndicator("online", `Live Sync Ready — Policies: ${livePolicies.length}`);
+                    if (showAlert) {
+                        alert(`✅ Google Sheet se data load ho gaya! (Policies: ${livePolicies.length})`);
+                    }
                 } else {
                     if (liveWorkers.length === 0) loadSeedIntoMemory();
                     setCloudIndicator("online", "Connected — Initial data upload karne ke liye button dabayein");
@@ -1420,9 +1450,11 @@ const CLOUD_SYNC_KEY = "area_7203_master_state";
             } catch (err) {
                 console.error("Cloud GET error:", err);
                 if (liveWorkers.length === 0) loadSeedIntoMemory();
-                setCloudIndicator("offline", "Cloud Fetch Error — Web App Access ('Anyone') check karein");
+                setCloudIndicator("offline", "Slow Network / Retry — 'Live Sync' dabayein");
                 renderActiveView();
                 if (showAlert) alert(`❌ Google Sheet se data load nahi ho saka: ${err.message || err}`);
+            } finally {
+                isSyncInProgress = false;
             }
         }
 
@@ -2687,12 +2719,13 @@ YTD (${year}): ${formatCurrency(updatedSt.ytdFyp)} (${updatedSt.ytdPol} POL)`);
             alert(cloudRes.ok ? "✅ Password update aur Google Sheet mein save ho gaya!" : "✅ Password local memory mein update ho gaya (Web App URL add karein).");
         }
 
-        // Boot
+        // Fast Non-Blocking Boot
         window.addEventListener('DOMContentLoaded', () => {
             loadSeedIntoMemory();
+            renderActiveView();
             if (DEFAULT_CLOUD_API_URL && !DEFAULT_CLOUD_API_URL.includes("YAHAN_APNA_WEB_APP_URL_PASTE_KAREIN")) {
                 document.getElementById('cloudWebAppUrlInput').value = DEFAULT_CLOUD_API_URL;
-                syncFromCloud(false);
+                setTimeout(() => syncFromCloud(false, true), 50);
             } else {
                 setCloudIndicator("offline", "Ready — DEFAULT_CLOUD_API_URL ya Tab 07 mein Web App URL paste karein");
             }
